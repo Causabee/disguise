@@ -17,11 +17,12 @@ struct NameBenchTests {
     static var onMac: Bool { FileManager.default.fileExists(atPath: originals.path) }
 
     /// The SHA-256 of each case file, as committed on the Mac; a copy that differs is not the same cases.
+    /// F024 AC-2: re-pinned when every personal detail in the cases was made up.
     static let pins = [
-        "disguise-corpus.jsonl": "8fccf4fa36e307dbed0e0c09721a2c4c714aa5aa0c149ef0e8f2d4179a0724f3",
-        "disguise-unseen.jsonl": "d14ce54e3e361c977916ded8f5641318894b2b1751081130de0567443673e4cc",
-        "detection-tiers.jsonl": "8915e1a220fa1fa09508684f13271c501241506b262a991640728803ad296207",
-        "bench-names.jsonl": "8b95201ef05c2af20a64db8070c5bf9a7a2c96e50d79b06c4b5bc6efd4b561b4",
+        "disguise-corpus.jsonl": "8c81b9e652687051eecc5160f7d4ad1deddf9d236948590814fd1af876777333",
+        "disguise-unseen.jsonl": "fcd00eefdf0f9f6404cea40ab48f0c84c5b2fece436d995b3e8d47735023f687",
+        "detection-tiers.jsonl": "7f1c83efe108ef1bf64b1fe4c3c72c58be8893fec5ccd29c898f326872d9f978",
+        "bench-names.jsonl": "471f5760b68eef1afc1da0ac0b6e3f0d03593d8bcb5d7e3f38e672887adfa502",
     ]
 
     static func sha(_ url: URL) throws -> String {

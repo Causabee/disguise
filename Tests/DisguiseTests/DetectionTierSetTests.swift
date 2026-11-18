@@ -28,8 +28,9 @@ enum Tier: String, CaseIterable, Comparable {
 struct DetectionTierSetTests {
     static let file = "detection-tiers.jsonl"
     /// The set as committed alone in 1b42db4. A change of the set is a change of this pin, with a
-    /// README line, and goes to the owner.
-    static let pin = "8915e1a220fa1fa09508684f13271c501241506b262a991640728803ad296207"
+    /// README line, and goes to the owner. F024 AC-2: re-pinned when every personal detail in the
+    /// cases was made up (new names, birth dates and numbers; the cases and their kinds unchanged).
+    static let pin = "7f1c83efe108ef1bf64b1fe4c3c72c58be8893fec5ccd29c898f326872d9f978"
     static let sources = ["mail", "screenshot-chat", "screenshot-other", "photo", "scan", "note", "chat-typed", "todo-by-hand", "date-by-hand", "file-name"]
 
     struct Head: Decodable { var set: String; var by: String; var saw: String; var written: String; var made_up: Bool }

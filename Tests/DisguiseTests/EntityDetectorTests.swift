@@ -65,7 +65,7 @@ struct EntityDetectorTests {
     }
 
     @Test("A company writes its own name with its legal form on the end",
-          arguments: ["Thermotec Nowak GmbH", "Hausverwaltung Berger GmbH", "Northlight Studios Ltd",
+          arguments: ["Thermotec Kubiak GmbH", "Hausverwaltung Ferber GmbH", "Northlight Studios Ltd",
                       "Kiezgarten Prenzlauer Berg e. V."])
     func organisations(name: String) {
         #expect(found("Angebot von \(name) vom Montag").contains { $0.kind == .organization })
@@ -73,8 +73,8 @@ struct EntityDetectorTests {
 
     @Test("Email addresses, wherever they sit in a sentence")
     func emails() {
-        #expect(found("per Mail an post@berger-hv.example oder a.berger@berger-hv.example.")
-            .filter { $0.kind == .email }.map(\.text) == ["post@berger-hv.example", "a.berger@berger-hv.example"])
+        #expect(found("per Mail an post@ferber-hv.example oder a.ferber@ferber-hv.example.")
+            .filter { $0.kind == .email }.map(\.text) == ["post@ferber-hv.example", "a.ferber@ferber-hv.example"])
     }
 
     @Test("Nothing identifiable, nothing found")
@@ -85,7 +85,7 @@ struct EntityDetectorTests {
     @Test("Every entity's offsets point at its own text, which is what a disguise will use")
     func offsetsAreUsable() {
         let text = """
-        Sehr geehrte Frau Berger, anbei das Angebot von Thermotec Nowak GmbH,
+        Sehr geehrte Frau Ferber, anbei das Angebot von Thermotec Kubiak GmbH,
         Pollenfelder Straße 8, 10243 Berlin, Telefon +49 30 09778110, IBAN
         DE89 3704 0044 0532 0130 00, Rückfragen an angebote@thermotec.example.
         """
@@ -99,7 +99,7 @@ struct EntityDetectorTests {
 
     @Test("No two entities cover the same characters")
     func noOverlaps() {
-        let text = "Hausverwaltung Berger GmbH, Wabenhöfer Allee 12, 10435 Berlin, 030 0471 2288"
+        let text = "Hausverwaltung Ferber GmbH, Wabenhöfer Allee 12, 10435 Berlin, 030 0471 2288"
         let hits = Detection.finder().entities(in: text, field: .body)
         for (index, entity) in hits.enumerated() {
             for other in hits[(index + 1)...] {
@@ -117,7 +117,7 @@ struct EntityDetectorTests {
 
     @Test("Turning the tagger off only ever takes entities away")
     func taggerOnlyAdds() {
-        let text = "Annegret Berger von der Hausverwaltung Berger GmbH, Wabenhöfer Allee 12, 10435 Berlin"
+        let text = "Sibylle Ferber von der Hausverwaltung Ferber GmbH, Wabenhöfer Allee 12, 10435 Berlin"
         let withTagger = Set(Detection.finder().entities(in: text, field: .body).map(\.text))
         let without = Set(rulesOnly.entities(in: text, field: .body).map(\.text))
         #expect(without.isSubset(of: withTagger))
@@ -148,10 +148,10 @@ struct ContextRuleTests {
     }
 
     @Test("A name after a title or a greeting, and not a closing or a role", arguments: [
-        ("Hallo Frau Behrend,\ndie Unterlagen", "Frau Behrend"),
-        ("Inh. Petra Blume\nSteuernr", "Inh. Petra Blume"),
-        ("mit Herrn Dr. Brenner gesprochen", "Herrn Dr. Brenner"),
-        ("Hallo Georg,\nanbei", "Georg"),
+        ("Hallo Frau Volkmar,\ndie Unterlagen", "Frau Volkmar"),
+        ("Inh. Martina Baume\nSteuernr", "Inh. Martina Baume"),
+        ("mit Herrn Dr. Bittner gesprochen", "Herrn Dr. Bittner"),
+        ("Hallo Bertram,\nanbei", "Bertram"),
     ])
     func names(text: String, name: String) {
         #expect(found(text).contains { $0.0 == .person && $0.1 == name }, "\(found(text))")

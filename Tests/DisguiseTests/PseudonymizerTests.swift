@@ -17,26 +17,26 @@ private func learned(_ mode: Pseudonymizer.Mode, _ entities: [Entity]) -> Pseudo
 @Suite("Disguising a mail before it leaves the device")
 struct PseudonymizerTests {
     let hausverwaltung = [
-        found(.person, "Annegret Berger", by: .onDevice),
-        found(.organization, "Hausverwaltung Berger GmbH"),
+        found(.person, "Sibylle Ferber", by: .onDevice),
+        found(.organization, "Hausverwaltung Ferber GmbH"),
         found(.street, "Honigtauer Str. 14"),
         found(.postalCity, "10437 Berlin"),
-        found(.email, "a.berger@berger-hv.example"),
+        found(.email, "a.ferber@ferber-hv.example"),
         found(.phone, "030 0471 2288"),
         found(.iban, "DE89 3704 0044 0532 0130 00"),
     ]
 
     let letter = """
-    Sehr geehrte Frau Berger,
+    Sehr geehrte Frau Ferber,
     die Begehung in der Honigtauer Str 51 ist am 9. Oktober. WEG Honigtauer, 10437 Berlin.
-    Rückfragen an a.berger@berger-hv.example oder 030 0471 2288, IBAN DE89 3704 0044 0532 0130 00.
-    Berlin, im September. Annegret Berger, Hausverwaltung Berger GmbH
+    Rückfragen an a.ferber@ferber-hv.example oder 030 0471 2288, IBAN DE89 3704 0044 0532 0130 00.
+    Berlin, im September. Sibylle Ferber, Hausverwaltung Ferber GmbH
     """
 
     @Test("Nothing that was learned survives, in either mode", arguments: Pseudonymizer.Mode.allCases)
     func nothingSurvives(mode: Pseudonymizer.Mode) {
         let out = learned(mode, hausverwaltung).disguiser.apply(letter).text
-        for word in ["Berger", "Annegret", "Honigtauer", "Berlin", "10437", "berger-hv", "0471", "0532"] {
+        for word in ["Ferber", "Sibylle", "Honigtauer", "Berlin", "10437", "ferber-hv", "0471", "0532"] {
             #expect(!out.contains(word), "\(word) reached the disguised text: \(out)")
         }
     }
@@ -51,10 +51,10 @@ struct PseudonymizerTests {
         // Learned before, as it stands in a name list made by an earlier version: dropped when the list is read.
         let old = [Pseudonymizer.Entry(kind: .person, original: "Claude Design", standIn: "[Person SH]"),
                    Pseudonymizer.Entry(kind: .person, original: "Design", standIn: "[Person SH]", partOf: "Claude Design"),
-                   Pseudonymizer.Entry(kind: .person, original: "Annegret Berger", standIn: "[Person A]"),
-                   Pseudonymizer.Entry(kind: .person, original: "Berger", standIn: "[Person A]", partOf: "Annegret Berger")]
-        #expect(Pseudonymizer.withoutWordsAtTheEnd(old + [Pseudonymizer.Entry(kind: .person, original: "Jan Philipp Possmann", standIn: "[Person B]")])
-            .map(\.original) == ["Annegret Berger", "Berger", "Jan Philipp Possmann"])
+                   Pseudonymizer.Entry(kind: .person, original: "Sibylle Ferber", standIn: "[Person A]"),
+                   Pseudonymizer.Entry(kind: .person, original: "Ferber", standIn: "[Person A]", partOf: "Sibylle Ferber")]
+        #expect(Pseudonymizer.withoutWordsAtTheEnd(old + [Pseudonymizer.Entry(kind: .person, original: "Jan Philipp Bossmann", standIn: "[Person B]")])
+            .map(\.original) == ["Sibylle Ferber", "Ferber", "Jan Philipp Bossmann"])
     }
 
     @Test("Stand-ins: what comes back is exactly what went in")
@@ -65,20 +65,20 @@ struct PseudonymizerTests {
         #expect(pseudonymizer.restore(disguised) == letter.precomposedStringWithCanonicalMapping)
     }
 
-    /// `[Person A]` stood for `Annegret Berger` and for `Berger`, so the way back cannot know
+    /// `[Person A]` stood for `Sibylle Ferber` and for `Ferber`, so the way back cannot know
     /// which was written. It brings the fullest one, which is what a fact about a party wants.
     @Test("Placeholders: every tag comes back, as the fullest name it stood for")
     func placeholderRoundTrip() {
         let pseudonymizer = learned(.placeholder, hausverwaltung)
         let restored = pseudonymizer.restore(pseudonymizer.disguiser.apply(letter).text)
         #expect(!restored.contains("["))
-        #expect(pseudonymizer.restore("[Person A] schreibt") == "Annegret Berger schreibt")
+        #expect(pseudonymizer.restore("[Person A] schreibt") == "Sibylle Ferber schreibt")
     }
 
     @Test("Placeholders: one tag for one person, and a Frau stays readable")
     func placeholderPerson() {
         let pseudonymizer = learned(.placeholder, hausverwaltung)
-        let out = pseudonymizer.disguiser.apply("Annegret Berger. Frau Berger. Berger. Annegret.").text
+        let out = pseudonymizer.disguiser.apply("Sibylle Ferber. Frau Ferber. Ferber. Sibylle.").text
         #expect(out == "[Person A]. Frau [Person A]. [Person A]. [Person A].")
     }
 
@@ -96,36 +96,36 @@ struct PseudonymizerTests {
     @Test("A shared tag comes back as the plainest full name, not the longest")
     func plainestNameComesBack() {
         let pseudonymizer = learned(.placeholder, [
-            found(.person, "Jan Kramer via TestFlight"),
-            found(.person, "Frau Kramer"),
-            found(.person, "Jan Kramer"),
-            found(.person, "Robin Keller Contractor"),
-            found(.person, "Robin Keller"),
+            found(.person, "Jan Spengler via TestFlight"),
+            found(.person, "Frau Spengler"),
+            found(.person, "Jan Spengler"),
+            found(.person, "Rubin Keller Contractor"),
+            found(.person, "Rubin Keller"),
         ])
-        let me = pseudonymizer.standIn(for: "Jan Kramer") ?? ""
-        let robbie = pseudonymizer.standIn(for: "Robin Keller") ?? ""
-        #expect(pseudonymizer.restore(me) == "Jan Kramer")
-        #expect(pseudonymizer.restore(robbie) == "Robin Keller")
-        #expect(pseudonymizer.standIn(for: "Jan Kramer via TestFlight") == "\(me) via [Company A]")
+        let me = pseudonymizer.standIn(for: "Jan Spengler") ?? ""
+        let ronnie = pseudonymizer.standIn(for: "Rubin Keller") ?? ""
+        #expect(pseudonymizer.restore(me) == "Jan Spengler")
+        #expect(pseudonymizer.restore(ronnie) == "Rubin Keller")
+        #expect(pseudonymizer.standIn(for: "Jan Spengler via TestFlight") == "\(me) via [Company A]")
     }
 
     @Test("A company's name is learned without its legal form")
     func companyWithoutLegalForm() {
-        let entities = [found(.organization, "Thermotec Nowak GmbH")]
+        let entities = [found(.organization, "Thermotec Kubiak GmbH")]
         for mode in Pseudonymizer.Mode.allCases {
-            let out = learned(mode, entities).disguiser.apply("das Angebot von Thermotec Nowak").text
+            let out = learned(mode, entities).disguiser.apply("das Angebot von Thermotec Kubiak").text
             #expect(!out.contains("Thermotec"), "\(mode): \(out)")
         }
     }
 
     @Test("Stand-ins keep the shape: the title, the legal form, the kind of business, the house number")
     func standInShape() throws {
-        let pseudonymizer = learned(.standin, hausverwaltung + [found(.person, "Garcia, Mariana")])
+        let pseudonymizer = learned(.standin, hausverwaltung + [found(.person, "Moreno, Valentina")])
 
-        let frau = try #require(pseudonymizer.disguiser.apply("Frau Berger").text.split(separator: " ").map(String.init))
+        let frau = try #require(pseudonymizer.disguiser.apply("Frau Ferber").text.split(separator: " ").map(String.init))
         #expect(frau.count == 2 && frau[0] == "Frau")
 
-        let company = try #require(pseudonymizer.standIn(for: "Hausverwaltung Berger GmbH"))
+        let company = try #require(pseudonymizer.standIn(for: "Hausverwaltung Ferber GmbH"))
         #expect(company.hasPrefix("Hausverwaltung ") && company.hasSuffix(" GmbH"))
         // The company was named after the person, and in disguise it still is.
         #expect(company.split(separator: " ")[1] == frau[1])
@@ -133,12 +133,12 @@ struct PseudonymizerTests {
         let street = try #require(pseudonymizer.standIn(for: "Honigtauer Str. 14"))
         #expect(street.contains(" Str. ") && street.last?.isNumber == true && !street.hasSuffix(" 51"))
 
-        #expect(pseudonymizer.standIn(for: "Garcia, Mariana")?.contains(", ") == true)
+        #expect(pseudonymizer.standIn(for: "Moreno, Valentina")?.contains(", ") == true)
     }
 
     @Test("A stand-in is never one of the originals, even when the original is in the pool")
     func standInIsNeverAnOriginal() {
-        let entities = [found(.person, "Birgit Albers"), found(.person, "Jonas Brandt"), found(.person, "Heike Dietz")]
+        let entities = [found(.person, "Sigrun Ahlers"), found(.person, "Julian Brandt"), found(.person, "Ina Goetz")]
         let pseudonymizer = learned(.standin, entities)
         let originals = Set(entities.flatMap { $0.text.split(separator: " ").map(String.init) })
         for entry in pseudonymizer.entries {
@@ -165,20 +165,20 @@ struct PseudonymizerTests {
     func lowercaseInsideAName() {
         let pseudonymizer = learned(.placeholder, [
             found(.person, "Elisa ueckerhof", by: .onDevice),
-            found(.person, "Jonas von Ostwerth", by: .onDevice),
-            found(.person, "wendgard wirtz"),
+            found(.person, "Julian von Elmhorst", by: .onDevice),
+            found(.person, "wendgard kurtz"),
         ])
         #expect(pseudonymizer.standIn(for: "Elisa ueckerhof") != nil)
-        #expect(pseudonymizer.standIn(for: "Jonas von Ostwerth") != nil)
-        #expect(pseudonymizer.disguiser.apply("Herr Wirtz").text == "Herr [Person C]")
+        #expect(pseudonymizer.standIn(for: "Julian von Elmhorst") != nil)
+        #expect(pseudonymizer.disguiser.apply("Herr Kurtz").text == "Herr [Person C]")
     }
 
     @Test("A surname the tagger rarely finds alone is still learned from a full name")
     func partsAreNotOutvoted() {
-        let prose = String(repeating: "Hausmeister Brenner kommt. Brenner sagt. ", count: 10)
+        let prose = String(repeating: "Hausmeister Bittner kommt. Bittner sagt. ", count: 10)
         var pseudonymizer = Pseudonymizer(mode: .placeholder)
-        pseudonymizer.learn([found(.person, "Karl Brenner", by: .onDevice)], vocabulary: Vocabulary([prose]))
-        #expect(pseudonymizer.standIn(for: "Brenner") != nil)
+        pseudonymizer.learn([found(.person, "Alfred Bittner", by: .onDevice)], vocabulary: Vocabulary([prose]))
+        #expect(pseudonymizer.standIn(for: "Bittner") != nil)
     }
 
     @Test("A title is never learned as a name, not even out of a company's")
@@ -205,19 +205,19 @@ struct PseudonymizerTests {
 
     @Test("Whole words only, whatever the case, however the umlaut was encoded")
     func matching() {
-        let pseudonymizer = learned(.placeholder, [found(.person, "Sebastian Süß")])
-        let decomposed = "Herr Su\u{0308}ß, SÜß und die Bergerstraße"
-        #expect(pseudonymizer.disguiser.apply(decomposed).text == "Herr [Person A], [Person A] und die Bergerstraße")
+        let pseudonymizer = learned(.placeholder, [found(.person, "Patrick Schüßler")])
+        let decomposed = "Herr Schu\u{0308}ßler, SCHÜßLER und die Ferberstraße"
+        #expect(pseudonymizer.disguiser.apply(decomposed).text == "Herr [Person A], [Person A] und die Ferberstraße")
     }
 
     @Test("A mapping read back carries on where it stopped")
     func mappingCarriesOn() throws {
-        let first = learned(.placeholder, [found(.person, "Annegret Berger")])
+        let first = learned(.placeholder, [found(.person, "Sibylle Ferber")])
         let data = try JSONEncoder().encode(first.entries)
         var second = Pseudonymizer(mode: .placeholder, entries: try JSONDecoder().decode([Pseudonymizer.Entry].self, from: data))
-        second.learn([found(.person, "Tomasz Wierzbicki"), found(.person, "Annegret Berger")])
-        #expect(second.standIn(for: "Annegret Berger") == "[Person A]")
-        #expect(second.standIn(for: "Tomasz Wierzbicki") == "[Person B]")
+        second.learn([found(.person, "Krzysztof Warnecki"), found(.person, "Sibylle Ferber")])
+        #expect(second.standIn(for: "Sibylle Ferber") == "[Person A]")
+        #expect(second.standIn(for: "Krzysztof Warnecki") == "[Person B]")
     }
 
     @Test("The same folder gives the same stand-ins every time")
@@ -227,9 +227,9 @@ struct PseudonymizerTests {
 
     @Test("A person and their company in one display name are learned as each")
     func displayNameWithCompany() {
-        let pseudonymizer = learned(.placeholder, [found(.person, "Süß, Sebastian (Radwerk Berlin GmbH)")])
-        let out = pseudonymizer.disguiser.apply("Süß, Sebastian (Radwerk Berlin GmbH) und Radwerk Berlin").text
-        #expect(!out.contains("Süß") && !out.contains("Radwerk"))
+        let pseudonymizer = learned(.placeholder, [found(.person, "Schüßler, Patrick (Radwerk Berlin GmbH)")])
+        let out = pseudonymizer.disguiser.apply("Schüßler, Patrick (Radwerk Berlin GmbH) und Radwerk Berlin").text
+        #expect(!out.contains("Schüßler") && !out.contains("Radwerk"))
     }
 }
 
@@ -240,32 +240,32 @@ struct DisguisedSpikeTests {
 @Suite("Two people with one name in common are still two people")
 struct SharedNameTests {
     let people = [
-        found(.person, "Sebastian Albers"),
-        found(.person, "Sebastian Süß"),
-        found(.person, "Jan Kramer"),
-        found(.person, "Greta Kramer"),
-        found(.person, "Herr Albers"),
-        found(.person, "Albers, Sebastian"),
+        found(.person, "Patrick Ahlers"),
+        found(.person, "Patrick Schüßler"),
+        found(.person, "Jan Spengler"),
+        found(.person, "Lotta Spengler"),
+        found(.person, "Herr Ahlers"),
+        found(.person, "Ahlers, Patrick"),
     ]
 
     @Test("Each full name has its own tag; the same first and last name share one")
     func ownTags() throws {
         let p = learned(.placeholder, people)
-        let albers = try #require(p.standIn(for: "Sebastian Albers"))
-        #expect(p.standIn(for: "Sebastian Süß") != albers)
-        #expect(p.standIn(for: "Greta Kramer") != p.standIn(for: "Jan Kramer"))
-        #expect(p.standIn(for: "Albers, Sebastian") == albers)
-        #expect(p.standIn(for: "Herr Albers") == "Herr \(albers)")
-        #expect(learned(.placeholder, people + [found(.person, "'Jan Kramer'")]).standIn(for: "'Jan Kramer'")
-                == p.standIn(for: "Jan Kramer"))
+        let ahlers = try #require(p.standIn(for: "Patrick Ahlers"))
+        #expect(p.standIn(for: "Patrick Schüßler") != ahlers)
+        #expect(p.standIn(for: "Lotta Spengler") != p.standIn(for: "Jan Spengler"))
+        #expect(p.standIn(for: "Ahlers, Patrick") == ahlers)
+        #expect(p.standIn(for: "Herr Ahlers") == "Herr \(ahlers)")
+        #expect(learned(.placeholder, people + [found(.person, "'Jan Spengler'")]).standIn(for: "'Jan Spengler'")
+                == p.standIn(for: "Jan Spengler"))
     }
 
     @Test("Each one comes back as who they were, and a shared word alone comes back as itself")
     func wayBack() {
         let p = learned(.placeholder, people)
-        let text = "Sebastian Süß und Sebastian Albers. Meine Mutter Greta Kramer, ich Jan Kramer. Hallo Sebastian, Familie Kramer"
+        let text = "Patrick Schüßler und Patrick Ahlers. Meine Mutter Lotta Spengler, ich Jan Spengler. Hallo Patrick, Familie Spengler"
         let disguised = p.disguiser.apply(text).text
-        for word in ["Sebastian", "Süß", "Albers", "Greta", "Kramer", "Jan"] {
+        for word in ["Patrick", "Schüßler", "Ahlers", "Lotta", "Spengler", "Jan"] {
             #expect(!disguised.contains(word), "\(word) reached the disguised text: \(disguised)")
         }
         #expect(p.restore(disguised) == text)
@@ -273,24 +273,24 @@ struct SharedNameTests {
 
     @Test("A shared first name next to the full name comes back once, not twice")
     func noDoubleName() {
-        let p = learned(.placeholder, [found(.person, "Petra Lindner"), found(.person, "Petra Schaller"),
-                                       found(.person, "Dr. Petra")])
-        let disguised = p.disguiser.apply("Dr. Petra\u{00A0}Lindner").text
-        #expect(!disguised.contains("Petra"))
-        let cornelia = p.standIn(for: "Petra") ?? "", harz = p.standIn(for: "Petra Lindner") ?? ""
-        #expect(p.restore("Dr. \(cornelia) \(harz)") == "Dr. Petra Lindner")
-        #expect(p.restore("\(harz) \(p.standIn(for: "Lindner") ?? "")") == "Petra Lindner")
-        #expect(p.restore("\(cornelia) und \(harz)") == "Petra und Petra Lindner")
+        let p = learned(.placeholder, [found(.person, "Martina Lechner"), found(.person, "Martina Hiller"),
+                                       found(.person, "Dr. Martina")])
+        let disguised = p.disguiser.apply("Dr. Martina\u{00A0}Lechner").text
+        #expect(!disguised.contains("Martina"))
+        let cornelia = p.standIn(for: "Martina") ?? "", harz = p.standIn(for: "Martina Lechner") ?? ""
+        #expect(p.restore("Dr. \(cornelia) \(harz)") == "Dr. Martina Lechner")
+        #expect(p.restore("\(harz) \(p.standIn(for: "Lechner") ?? "")") == "Martina Lechner")
+        #expect(p.restore("\(cornelia) und \(harz)") == "Martina und Martina Lechner")
     }
 
     @Test("A caretaker is a role, not a first name: the word stays readable and the name comes back alone")
     func roleIsNotAName() {
-        let p = learned(.placeholder, [found(.person, "Hausmeister Brenner"), found(.street, "Honigtauer Str. 14")])
-        let out = p.disguiser.apply("Der Hausmeister kommt. Herr Brenner und Hausmeister Brenner.").text
+        let p = learned(.placeholder, [found(.person, "Hausmeister Bittner"), found(.street, "Honigtauer Str. 14")])
+        let out = p.disguiser.apply("Der Hausmeister kommt. Herr Bittner und Hausmeister Bittner.").text
         #expect(out.hasPrefix("Der Hausmeister kommt."))
-        #expect(!out.contains("Brenner"))
-        let tag = p.standIn(for: "Brenner") ?? "?"
-        #expect(p.restore("Herr \(tag)") == "Herr Brenner")
+        #expect(!out.contains("Bittner"))
+        let tag = p.standIn(for: "Bittner") ?? "?"
+        #expect(p.restore("Herr \(tag)") == "Herr Bittner")
         let street = p.standIn(for: "Honigtauer Str. 14") ?? "?"
         #expect(p.restore("Treffen in der \(street) 14, 10437") == "Treffen in der Honigtauer Str. 14, 10437")
         #expect(p.restore("\(street) 142") == "Honigtauer Str. 14 142")
@@ -298,18 +298,18 @@ struct SharedNameTests {
 
     @Test("A name typed without its umlaut or its ß is still disguised")
     func otherSpellings() {
-        let p = learned(.placeholder, [found(.person, "Sebastian Süß"), found(.person, "Ulf Mühlberger"), found(.person, "Hans Gross")])
-        let out = p.disguiser.apply("bei Herrn Süss, Herr Muehlberger und Herr Suess. Das ist groß.").text
-        for word in ["Süss", "Muehlberger", "Suess"] { #expect(!out.contains(word), "\(word): \(out)") }
+        let p = learned(.placeholder, [found(.person, "Patrick Schüßler"), found(.person, "Alf Hüttenberger"), found(.person, "Egbert Gross")])
+        let out = p.disguiser.apply("bei Herrn Schüssler, Herr Huettenberger und Herr Schuessler. Das ist groß.").text
+        for word in ["Schüssler", "Huettenberger", "Schuessler"] { #expect(!out.contains(word), "\(word): \(out)") }
         #expect(out.hasSuffix("Das ist groß."))
-        #expect(p.restore(p.disguiser.apply("Herrn Süss").text) == "Herrn Sebastian Süß")
+        #expect(p.restore(p.disguiser.apply("Herrn Schüssler").text) == "Herrn Patrick Schüßler")
     }
 
     @Test("A name learned with quote marks is disguised without them; kurz the word stays")
     func quotedAndLowercase() {
         let p = Pseudonymizer(mode: .placeholder, entries: [
-            .init(kind: .person, original: "'Kurz, Anna'", standIn: "[Person A]"),
-            .init(kind: .person, original: "'Kurz", standIn: "[Person A]", partOf: "'Kurz, Anna'"),
+            .init(kind: .person, original: "'Kurz, Hella'", standIn: "[Person A]"),
+            .init(kind: .person, original: "'Kurz", standIn: "[Person A]", partOf: "'Kurz, Hella'"),
         ])
         let out = p.disguiser.apply("Sehr geehrte Frau Kurz, ich frage kurz nach.").text
         #expect(out == "Sehr geehrte Frau [Person A], ich frage kurz nach.")
@@ -320,19 +320,19 @@ struct SharedNameTests {
         var mapping = Pseudonymizer.Mapping()
         mapping.version = 1
         mapping.placeholder = [
-            .init(kind: .person, original: "Sebastian Albers", standIn: "[Person A]"),
-            .init(kind: .person, original: "Sebastian", standIn: "[Person A]", partOf: "Sebastian Albers"),
-            .init(kind: .person, original: "Albers", standIn: "[Person A]", partOf: "Sebastian Albers"),
-            .init(kind: .person, original: "Sebastian Süß", standIn: "[Person A]"),
-            .init(kind: .person, original: "Süß", standIn: "[Person A]", partOf: "Sebastian Süß"),
+            .init(kind: .person, original: "Patrick Ahlers", standIn: "[Person A]"),
+            .init(kind: .person, original: "Patrick", standIn: "[Person A]", partOf: "Patrick Ahlers"),
+            .init(kind: .person, original: "Ahlers", standIn: "[Person A]", partOf: "Patrick Ahlers"),
+            .init(kind: .person, original: "Patrick Schüßler", standIn: "[Person A]"),
+            .init(kind: .person, original: "Schüßler", standIn: "[Person A]", partOf: "Patrick Schüßler"),
             .init(kind: .place, original: "Berlin", standIn: "[Place A]"),
         ]
         #expect(mapping.upgrade() > 0)
         #expect(mapping.version == Pseudonymizer.Mapping.current)
         let p = Pseudonymizer(mode: .placeholder, entries: mapping.placeholder)
-        #expect(p.standIn(for: "Sebastian Albers") != p.standIn(for: "Sebastian Süß"))
+        #expect(p.standIn(for: "Patrick Ahlers") != p.standIn(for: "Patrick Schüßler"))
         #expect(p.standIn(for: "Berlin") == "[Place A]")
-        #expect(p.restore(p.disguiser.apply("Sebastian Süß").text) == "Sebastian Süß")
+        #expect(p.restore(p.disguiser.apply("Patrick Schüßler").text) == "Patrick Schüßler")
         #expect(mapping.upgrade() == 0)
     }
 
@@ -341,16 +341,16 @@ struct SharedNameTests {
         var mapping = Pseudonymizer.Mapping()
         mapping.version = 2
         mapping.placeholder = [
-            .init(kind: .person, original: "Sebastian Süß", standIn: "[Person A]"),
-            .init(kind: .person, original: "Hausmeister Brenner", standIn: "[Person B]"),
-            .init(kind: .person, original: "Hausmeister", standIn: "[Person B]", partOf: "Hausmeister Brenner"),
-            .init(kind: .person, original: "Brenner", standIn: "[Person B]", partOf: "Hausmeister Brenner"),
+            .init(kind: .person, original: "Patrick Schüßler", standIn: "[Person A]"),
+            .init(kind: .person, original: "Hausmeister Bittner", standIn: "[Person B]"),
+            .init(kind: .person, original: "Hausmeister", standIn: "[Person B]", partOf: "Hausmeister Bittner"),
+            .init(kind: .person, original: "Bittner", standIn: "[Person B]", partOf: "Hausmeister Bittner"),
         ]
         #expect(mapping.upgrade() == 2)
         let p = Pseudonymizer(mode: .placeholder, entries: mapping.placeholder)
-        #expect(p.standIn(for: "Sebastian Süß") == "[Person A]")
+        #expect(p.standIn(for: "Patrick Schüßler") == "[Person A]")
         #expect(p.standIn(for: "Hausmeister") == nil)
-        #expect(p.disguiser.apply("Hausmeister Brenner").text == "Hausmeister [Person B]")
-        #expect(p.restore("Herr [Person B]") == "Herr Brenner")
+        #expect(p.disguiser.apply("Hausmeister Bittner").text == "Hausmeister [Person B]")
+        #expect(p.restore("Herr [Person B]") == "Herr Bittner")
     }
 }

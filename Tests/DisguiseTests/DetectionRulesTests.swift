@@ -28,16 +28,16 @@ struct DetectionRulesTests {
 
 
 
-    @Test("F021 AC-11 · P2 holds for calendar words only (3c): Milde and Süß alone are hidden, Treffen am Sonntag stays")
+    @Test("F021 AC-11 · P2 holds for calendar words only (3c): Selig and Schüßler alone are hidden, Treffen am Sonntag stays")
     func p2CalendarOnly() {
         Detection.$override.withValue(.new) {
             var list = Pseudonymizer(mode: .placeholder)
-            list.learnAdmitted([Entity(kind: .person, text: "Ralf Milde", field: .from, start: 0, length: 0, source: .rule),
-                                Entity(kind: .person, text: "Sebastian Süß", field: .from, start: 0, length: 0, source: .rule),
-                                Entity(kind: .person, text: "Anja Sonntag", field: .body, start: 0, length: 0, source: .rule)])
-            for text in ["Siehe Milde[link](http://x.example)", "Milde hat angerufen.", "SÜß und die Bergerstraße", "Gruß von Süß"] {
+            list.learnAdmitted([Entity(kind: .person, text: "Wulf Selig", field: .from, start: 0, length: 0, source: .rule),
+                                Entity(kind: .person, text: "Patrick Schüßler", field: .from, start: 0, length: 0, source: .rule),
+                                Entity(kind: .person, text: "Sonja Sonntag", field: .body, start: 0, length: 0, source: .rule)])
+            for text in ["Siehe Selig[link](http://x.example)", "Selig hat angerufen.", "SCHÜßLER und die Ferberstraße", "Gruß von Schüßler"] {
                 let out = list.disguiser.apply(text).text
-                #expect(!out.lowercased().contains("milde") && !out.lowercased().contains("süß"), "\(text) → \(out)")
+                #expect(!out.lowercased().contains("selig") && !out.lowercased().contains("schüßler"), "\(text) → \(out)")
             }
             #expect(list.disguiser.apply("Treffen am Sonntag").text == "Treffen am Sonntag")
         }
@@ -47,10 +47,10 @@ struct DetectionRulesTests {
     func surnameInFileName() {
         Detection.$override.withValue(.new) {
             var list = Pseudonymizer(mode: .placeholder)
-            list.learnAdmitted([Entity(kind: .person, text: "anja sonntag", field: .attachmentName, start: 0, length: 0, source: .rule)])
-            for name in ["scan-anja-sonntag.jpg", "Brief_Anja_Sonntag.pdf", "Anja-Sonntag.pdf"] {
+            list.learnAdmitted([Entity(kind: .person, text: "sonja sonntag", field: .attachmentName, start: 0, length: 0, source: .rule)])
+            for name in ["scan-sonja-sonntag.jpg", "Brief_Sonja_Sonntag.pdf", "Sonja-Sonntag.pdf"] {
                 let out = list.disguiser.apply(name).text
-                #expect(!out.lowercased().contains("sonntag") && !out.lowercased().contains("anja"), "\(name) → \(out)")
+                #expect(!out.lowercased().contains("sonntag") && !out.lowercased().contains("sonja"), "\(name) → \(out)")
             }
             #expect(list.disguiser.apply("Treffen am Sonntag").text.contains("Sonntag"))
         }
@@ -73,13 +73,13 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-12 · N5: the tagger's lone name is learned; a lone word the dictionary knows is not; a small word ends a span")
     func taggerAlone() {
-        let paket = Self.found("Das Paket liegt bei Kowalewski im Flur.")
-        #expect(paket.contains { $0.text == "Kowalewski" && $0.rule == .N5 }, "\(paket)")
-        let kasse = Self.found("Die Kasse zahlt den Fahrdienst für Herrn Dobberke.")
-        #expect(kasse.contains { $0.text.hasSuffix("Dobberke") }, "\(kasse)")
+        let paket = Self.found("Das Paket liegt bei Malinowski im Flur.")
+        #expect(paket.contains { $0.text == "Malinowski" && $0.rule == .N5 }, "\(paket)")
+        let kasse = Self.found("Die Kasse zahlt den Fahrdienst für Herrn Kobberke.")
+        #expect(kasse.contains { $0.text.hasSuffix("Kobberke") }, "\(kasse)")
         #expect(!kasse.contains { $0.text.contains("Kasse") || $0.text.contains("Fahrdienst") }, "\(kasse)")
         #expect(RuleFinder.span(of: "Kasse den Fahrdienst") == [["Kasse"], ["Fahrdienst"]])
-        #expect(RuleFinder.span(of: "Jonas von Ostwerth") == [["Jonas", "von", "Ostwerth"]])
+        #expect(RuleFinder.span(of: "Julian von Elmhorst") == [["Julian", "von", "Elmhorst"]])
     }
 
 
@@ -92,12 +92,12 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-15 · N6: a company by its kind word or legal form; the kind word alone is no one")
     func companies() {
-        let werkstatt = Self.found("Die Werkstatt Dombrowski hat angerufen.")
-        #expect(werkstatt.contains { $0.text.contains("Dombrowski") && $0.rule == .N6 }, "\(werkstatt)")
+        let werkstatt = Self.found("Die Werkstatt Sadowski hat angerufen.")
+        #expect(werkstatt.contains { $0.text.contains("Sadowski") && $0.rule == .N6 }, "\(werkstatt)")
         // The whole company is hidden, its kind word too (N6, the lead's word at Build); not the word before it.
-        let kroll = Self.found("Rückruf Sanitätshaus Kroll KG wegen Rollator")
-        #expect(kroll.contains { $0.text == "Sanitätshaus Kroll KG" && $0.rule == .N6 }, "\(kroll)")
-        #expect(!kroll.contains { $0.text.contains("Rückruf") }, "\(kroll)")
+        let krull = Self.found("Rückruf Sanitätshaus Krull KG wegen Rollator")
+        #expect(krull.contains { $0.text == "Sanitätshaus Krull KG" && $0.rule == .N6 }, "\(krull)")
+        #expect(!krull.contains { $0.text.contains("Rückruf") }, "\(krull)")
         let kasse = Self.found("Muss die Krankenkasse vorher zustimmen?")
         #expect(kasse.isEmpty, "\(kasse)")
     }
@@ -113,16 +113,16 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-16 · N4: a capitalised word no dictionary knows, in running text, is a person; a file's name is read by its words")
     func unknownWord() {
-        let found = Self.found("Gestern hat Brinkmeier wegen der Hecke angerufen.")
-        #expect(found.contains { $0.text == "Brinkmeier" && $0.rule == .N4 }, "\(found)")
+        let found = Self.found("Gestern hat Kottmeier wegen der Hecke angerufen.")
+        #expect(found.contains { $0.text == "Kottmeier" && $0.rule == .N4 }, "\(found)")
         #expect(!found.contains { $0.text == "Hecke" }, "\(found)")
         let file = Detection.$override.withValue(.new) {
             RuleFinder().entities(in: Email(source: URL(fileURLWithPath: "/tmp/x"), id: "x", headers: [:], subject: "Scan", from: "", to: [], cc: [],
-                                            date: Date(), body: "", attachments: [.init(filename: "Arztbrief_Sabine_Hollerbach_2026.pdf", contentType: "application/pdf", byteCount: 1)]))
+                                            date: Date(), body: "", attachments: [.init(filename: "Arztbrief_Simone_Hollenbach_2026.pdf", contentType: "application/pdf", byteCount: 1)]))
         }
-        #expect(file.contains { $0.text == "Sabine Hollerbach" }, "\(file)")
-        let inText = Self.found("Anbei Kuendigung_Jasper_Oltmanns.pdf und scan-greta-wegner.jpg")
-        #expect(inText.contains { $0.text == "Jasper Oltmanns" } && inText.contains { $0.text == "greta wegner" }, "\(inText)")
+        #expect(file.contains { $0.text == "Simone Hollenbach" }, "\(file)")
+        let inText = Self.found("Anbei Kuendigung_Casper_Hermanns.pdf und scan-lotta-lemke.jpg")
+        #expect(inText.contains { $0.text == "Casper Hermanns" } && inText.contains { $0.text == "lotta lemke" }, "\(inText)")
     }
 
     // MARK: AC-20 · L1, the second opinion
@@ -141,7 +141,7 @@ struct DetectionRulesTests {
     @Test("F021 AC-20 · a lowercase first name beside the word that stands before a person is found, whatever the dictionary knows")
     func lowercaseFirstNames() {
         for (text, name) in [("frag tobias ob er am samstag beim umzug hilft", "tobias"), ("was hat paulina zur kaution gesagt?", "paulina"),
-                             ("anruf bei almuth wegen dem garten", "almuth"), ("nina's idea: book the weekend", "nina")] {
+                             ("anruf bei irmtraud wegen dem garten", "irmtraud"), ("sina's idea: book the weekend", "sina")] {
             let found = Self.found(text)
             #expect(found.contains { $0.text == name && $0.rule == .L1 }, "\(text): \(found)")
         }
@@ -150,10 +150,10 @@ struct DetectionRulesTests {
         }
     }
 
-    @Test("F021 AC-20 · Anja Sonntag is")
+    @Test("F021 AC-20 · Sonja Sonntag is")
     func listBesideFirstName() {
-        let found = Self.found("Morgen kommt Anja Sonntag vorbei.")
-        #expect(found.contains { $0.text == "Anja Sonntag" }, "\(found)")
+        let found = Self.found("Morgen kommt Sonja Sonntag vorbei.")
+        #expect(found.contains { $0.text == "Sonja Sonntag" }, "\(found)")
     }
 
     @Test("F021 AC-20 · a list never raises a title or a small word")
@@ -162,12 +162,12 @@ struct DetectionRulesTests {
         for word in ["Frau", "Herr", "Herrn", "Dr.", "Prof.", "Bei", "Liebe", "der", "Die", "Von", "Und", "Mit"] {
             #expect(!opinion.isFirstName(word) && !opinion.isName(word), "\(word)")
         }
-        #expect(opinion.isFirstName("Anja") && opinion.isFirstName("Agathe"))
+        #expect(opinion.isFirstName("Sonja") && opinion.isFirstName("Gesche"))
     }
 
     @Test("F021 AC-20 · the lists' first load within 150 ms and 8 MB")
     func listsLoad() {
-        _ = SecondOpinion().isFirstName("Agathe")
+        _ = SecondOpinion().isFirstName("Gesche")
         let lists = NameKnowledge.shared
         print("F021 AC-20 · the lists: \(lists.loads) load(s), \(String(format: "%.0f", lists.loadSeconds * 1000)) ms, \(lists.bytesHeld / 1_000_000) MB held (this process, \(DetectionMeasureTests.isSimulator ? "simulator" : "device"))")
         #expect(lists.loads >= 1)
@@ -181,7 +181,7 @@ struct DetectionRulesTests {
 
     // MARK: AC-10, AC-17 · the owner's two sentences of 17 November, tier A
 
-    static let rehaMama = "Reha Mama – Ursula Behrend braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom 04.09.57 und muss entsprechend bei der Krankenkasse gemeldet werden."
+    static let rehaMama = "Reha Mama – Gudula Volkmar braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom 17.06.59 und muss entsprechend bei der Krankenkasse gemeldet werden."
 
 
 
@@ -222,9 +222,9 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-6 · C1: a date of birth by its label, in every written form; a date with no label stays")
     func birthDates() {
-        for (text, date) in [("Geburtsdatum vom 04.09.57", "04.09.57"), ("geb. 03.04.1938", "03.04.1938"), ("geboren am 7. Juni 1949", "7. Juni 1949"),
-                             ("born 2 May 1947", "2 May 1947"), ("DOB: 04/11/1955", "04/11/1955"), ("Date of birth: 1939-05-23", "1939-05-23"),
-                             ("*12.03.1958", "12.03.1958"), ("Jahrgang 1958", "1958"), ("geb.: 29.02.1952", "29.02.1952")] {
+        for (text, date) in [("Geburtsdatum vom 17.06.59", "17.06.59"), ("geb. 21.07.1939", "21.07.1939"), ("geboren am 7. Juni 1949", "7. Juni 1949"),
+                             ("born 19 May 1951", "19 May 1951"), ("DOB: 13/02/1953", "13/02/1953"), ("Date of birth: 1941-07-19", "1941-07-19"),
+                             ("*26.05.1958", "26.05.1958"), ("Jahrgang 1958", "1958"), ("geb.: 29.02.1964", "29.02.1964")] {
             let found = Self.found(text)
             #expect(found.contains { $0.text == date && $0.rule == .C1 }, "\(text): \(found.map(\.text))")
         }
@@ -253,9 +253,9 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-9 · what „A noun the tagger passes over nearly every time is not a name“ guarded, through the gate")
     func frequencyThroughTheGate() {
-        let list = Self.learned(String(repeating: "Rückfragen bitte an Brenner. ", count: 10))
+        let list = Self.learned(String(repeating: "Rückfragen bitte an Bittner. ", count: 10))
         #expect(list.standIn(for: "Rückfragen") == nil, "\(list.entries.map(\.original))")
-        #expect(list.standIn(for: "Brenner") != nil, "\(list.entries.map(\.original))")
+        #expect(list.standIn(for: "Bittner") != nil, "\(list.entries.map(\.original))")
     }
 
     @Test("F021 AC-9 · what „The tagger's common-word guesses are left alone“ guarded, through the gate")
@@ -269,13 +269,13 @@ struct DetectionRulesTests {
 
     @Test("F021 AC-12 · TestFlight 276: a tagger's span with two known words before a first name is cut without running past its end")
     func spanBeforeFirstName() {
-        let text = "Heute war der Schöner Garten Anna Berger hier."
+        let text = "Heute war der Schöner Garten Hella Ferber hier."
         var read = RuleFinder.Reading(text: text, finder: RuleFinder(runsTagger: false))
-        let span = text.range(of: "Schöner Garten Anna Berger")!
+        let span = text.range(of: "Schöner Garten Hella Ferber")!
         read.tagged = [RuleFinder.Tagged(kind: .person, range: span)]
         read.people = [span]
         let found = RuleFinder().taggedPeople(read, field: .body).map(\.text)
-        #expect(found == ["Anna Berger"], "\(found)")
+        #expect(found == ["Hella Ferber"], "\(found)")
     }
 
     // MARK: The gate, alone
@@ -291,6 +291,6 @@ struct DetectionRulesTests {
         #expect(Gate.admit(person("der", [.tagger]), typed: true, words: words) == nil)
         #expect(Gate.admit(person("Sonntag", [.tagger]), typed: true, words: words) == nil)
         #expect(Gate.admit(person("Krankenkasse", [.tagger]), typed: true, words: words) == nil)
-        #expect(Gate.admit(person("Anja Sonntag", [.firstName]), typed: false, words: words) != nil)
+        #expect(Gate.admit(person("Sonja Sonntag", [.firstName]), typed: false, words: words) != nil)
     }
 }

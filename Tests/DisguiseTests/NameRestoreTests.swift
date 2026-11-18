@@ -55,24 +55,24 @@ struct NameRestoreTests {
     @Test("Last name first comes back as first name first, and beside the surname tag it is one name")
     func surnameFirst() {
         let pseudonymizer = Pseudonymizer(mode: .placeholder, entries: [
-            .init(kind: .person, original: "Lindner, Petra", standIn: "[Person A]"),
-            .init(kind: .person, original: "Petra", standIn: "[Person A]", partOf: "Lindner, Petra"),
-            .init(kind: .person, original: "Lindner", standIn: "[Person B]", partOf: "Lindner, Petra"),
+            .init(kind: .person, original: "Lechner, Martina", standIn: "[Person A]"),
+            .init(kind: .person, original: "Martina", standIn: "[Person A]", partOf: "Lechner, Martina"),
+            .init(kind: .person, original: "Lechner", standIn: "[Person B]", partOf: "Lechner, Martina"),
         ])
-        #expect(pseudonymizer.restorer.apply("Sehr geehrte Frau [Person A] [Person B],").text == "Sehr geehrte Frau Petra Lindner,")
-        #expect(pseudonymizer.restorer.apply("Grüße an [Person A].").text == "Grüße an Petra Lindner.")
+        #expect(pseudonymizer.restorer.apply("Sehr geehrte Frau [Person A] [Person B],").text == "Sehr geehrte Frau Martina Lechner,")
+        #expect(pseudonymizer.restorer.apply("Grüße an [Person A].").text == "Grüße an Martina Lechner.")
     }
 
 
     @Test("A name that ran on into a signature's Tel comes back without it")
     func signatureLabel() {
         let pseudonymizer = Pseudonymizer(mode: .placeholder, entries: [
-            .init(kind: .person, original: "Frau Berger", standIn: "Frau [Person A]"),
-            .init(kind: .person, original: "Frau Berger Tel", standIn: "Frau [Person A]"),
+            .init(kind: .person, original: "Frau Ferber", standIn: "Frau [Person A]"),
+            .init(kind: .person, original: "Frau Ferber Tel", standIn: "Frau [Person A]"),
         ])
-        #expect(pseudonymizer.restorer.apply("Guten Tag Frau [Person A],").text == "Guten Tag Frau Berger,")
-        let found = Detection.finder(runsTagger: false).entities(in: "Ihre Frau Berger Tel.: 0331 1234567", field: .body)
-        #expect(found.contains { $0.kind == .person && $0.text == "Frau Berger" })
+        #expect(pseudonymizer.restorer.apply("Guten Tag Frau [Person A],").text == "Guten Tag Frau Ferber,")
+        let found = Detection.finder(runsTagger: false).entities(in: "Ihre Frau Ferber Tel.: 0331 1234567", field: .body)
+        #expect(found.contains { $0.kind == .person && $0.text == "Frau Ferber" })
         #expect(!found.contains { $0.text.hasSuffix("Tel") })
     }
 
@@ -82,25 +82,25 @@ struct NameRestoreTests {
         return pseudonymizer
     }
 
-    @Test("F019 AC-8 · Bergers Anwalt meldet sich, Annegrets Sohn, Priya's mother are disguised and come back as written")
+    @Test("F019 AC-8 · Ferbers Anwalt meldet sich, Sibylles Sohn, Divya's mother are disguised and come back as written")
     func endings() {
-        let pseudonymizer = Self.learned(["Annegret Berger", "Priya Raman"])
-        let text = "Bergers Anwalt meldet sich. Annegrets Sohn kommt. Priya's mother called, and Priya’s brother."
+        let pseudonymizer = Self.learned(["Sibylle Ferber", "Divya Rohan"])
+        let text = "Ferbers Anwalt meldet sich. Sibylles Sohn kommt. Divya's mother called, and Divya’s brother."
         let out = pseudonymizer.disguiser.apply(text).text
-        for name in ["Berger", "Annegret", "Priya"] { #expect(!out.contains(name), "\(out)") }
+        for name in ["Ferber", "Sibylle", "Divya"] { #expect(!out.contains(name), "\(out)") }
         #expect(out.contains("]s Anwalt") && out.contains("]s Sohn") && out.contains("]'s mother") && out.contains("]’s brother"), "\(out)")
         let back = pseudonymizer.restorer.apply(out).text
-        #expect(back.contains("Bergers Anwalt") && back.contains("Annegret") && back.contains("s Sohn") && back.contains("Priya") && back.contains("'s mother"), "\(back)")
-        // Only after the whole original: `Berg` is no part of `Berger`.
-        let berg = Self.learned(["Lena Berg"]).disguiser.apply("Herr Berger kommt, Bergs Hund auch.").text
-        #expect(berg.contains("Berger") && !berg.contains("Bergs"), "\(berg)")
+        #expect(back.contains("Ferbers Anwalt") && back.contains("Sibylle") && back.contains("s Sohn") && back.contains("Divya") && back.contains("'s mother"), "\(back)")
+        // Only after the whole original: `Berg` is no part of `Ferber`.
+        let berg = Self.learned(["Lara Berg"]).disguiser.apply("Herr Ferber kommt, Bergs Hund auch.").text
+        #expect(berg.contains("Ferber") && !berg.contains("Bergs"), "\(berg)")
     }
 
-    @Test("F019 AC-8 · [Person A]s the model wrote comes back as Bergers")
+    @Test("F019 AC-8 · [Person A]s the model wrote comes back as Ferbers")
     func endingWrittenByTheModel() {
-        let pseudonymizer = Self.learned(["Berger"])
-        let tag = pseudonymizer.disguiser.apply("Berger").text
+        let pseudonymizer = Self.learned(["Ferber"])
+        let tag = pseudonymizer.disguiser.apply("Ferber").text
         let back = pseudonymizer.restorer.apply("\(tag)s Anwalt meldet sich.").text
-        #expect(back == "Bergers Anwalt meldet sich.", "\(back)")
+        #expect(back == "Ferbers Anwalt meldet sich.", "\(back)")
     }
 }

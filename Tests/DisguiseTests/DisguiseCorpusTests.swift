@@ -88,7 +88,7 @@ struct DisguiseCorpusTests {
 
     static let titles: Set<String> = ["frau", "herr", "herrn", "dr", "med", "prof", "mr", "mrs", "ms", "von", "van", "der", "de", "uncle", "freiherr", "dipl", "ing"]
 
-    /// Still in what was sent? A name by any of its words — `Jan` left of `Jan Kramer` is a leak; a
+    /// Still in what was sent? A name by any of its words — `Jan` left of `Jan Spengler` is a leak; a
     /// number, an address, a mail address whole, with or without its spaces.
     static func survives(_ identifier: Case.Identifier, in sent: String) -> Bool {
         let shown = sent.replacing(/\[[^\[\]\n]{1,40}\]/, with: " ")
@@ -139,7 +139,7 @@ struct DisguiseCorpusTests {
     /// The owner, 16 November 2026 ("a"): AC-10 is the measured number, and these are the known gaps
     /// of the manifesto (section 7, principle 11) — a name the dictionary knows, with no title or rule beside it.
     /// Only these may go out; a new one fails. Closing one means taking it off this list.
-    static let knownGaps: Set<String> = ["Kessler", "Mats"]
+    static let knownGaps: Set<String> = ["Keppler", "Mats"]
 
 
 

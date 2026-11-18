@@ -178,7 +178,7 @@ struct DetectionMeasureTests {
     }
 
     /// The names the old rules left on the owner's devices besides the Mac's gaps (the device run).
-    static let deviceGaps: [String: Set<String>] = ["the corpus": ["tobias", "paulina", "almuth"], "the unseen set": ["nina"]]
+    static let deviceGaps: [String: Set<String>] = ["the corpus": ["tobias", "paulina", "irmtraud"], "the unseen set": ["sina"]]
 
     // MARK: AC-5, AC-6, AC-7 · tier by tier, A first
 
@@ -204,8 +204,8 @@ struct DetectionMeasureTests {
 
     /// The known gaps (the manifesto's section 7): only these may leave, and the set only shrinks.
     static let knownGaps: [String: Set<String>] = [
-        "the corpus": ["Kessler", "Mats"],
-        "the unseen set": ["QQ 12 34 56 C", "GB30 NWBK 6016 1331 9268 19", "Kanzlei Eisenreich & Partner", "8400 Winterthur", "Lindner"],
+        "the corpus": ["Keppler", "Mats"],
+        "the unseen set": ["QQ 12 34 56 C", "GB30 NWBK 6016 1331 9268 19", "Kanzlei Eisenhut & Partner", "8400 Winterthur", "Lechner"],
     ]
 
 

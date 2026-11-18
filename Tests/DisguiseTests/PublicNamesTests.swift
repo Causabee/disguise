@@ -13,11 +13,11 @@ struct PublicNamesTests {
         PublicNames.set(["Wanderlustia"])
         defer { PublicNames.set([]) }
         var pseudonymizer = Pseudonymizer(mode: .placeholder)
-        let skipped = pseudonymizer.learn([entity(.organization, "Wanderlustia Inc."), entity(.person, "Annegret Berger")])
+        let skipped = pseudonymizer.learn([entity(.organization, "Wanderlustia Inc."), entity(.person, "Sibylle Ferber")])
         #expect(skipped.contains { $0.text == "Wanderlustia Inc." && $0.reason.contains("public") })
-        let out = pseudonymizer.disguiser.apply("Annegret Berger booked the hotel with Wanderlustia Inc. in March.").text
+        let out = pseudonymizer.disguiser.apply("Sibylle Ferber booked the hotel with Wanderlustia Inc. in March.").text
         #expect(out.contains("Wanderlustia Inc."))
-        #expect(!out.contains("Annegret"))
+        #expect(!out.contains("Sibylle"))
     }
 
     @Test func aNameLearnedBeforeItWasMarkedIsLeftAloneToo() {

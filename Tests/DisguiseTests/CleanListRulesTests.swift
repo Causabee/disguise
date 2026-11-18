@@ -29,7 +29,7 @@ final class CountingNames: NameKnowing, @unchecked Sendable {
 struct CleanListRulesTests {
     static let ordinary = StubWords(known: ["Krankenkasse", "Fahrdienst", "Sonntag", "Apple", "Wolf", "Hirsch"])
 
-    func detector(_ words: any WordKnowledge = Self.ordinary, _ names: any NameKnowing = StubNames(last: ["sonntag", "berger"])) -> RuleFinder {
+    func detector(_ words: any WordKnowledge = Self.ordinary, _ names: any NameKnowing = StubNames(last: ["sonntag", "ferber"])) -> RuleFinder {
         var detector = RuleFinder(runsTagger: false)
         detector.words = words
         detector.opinion = SecondOpinion(lists: names)
@@ -58,7 +58,7 @@ extension CleanListRulesTests {
 @Suite("F020 · A lone ordinary word, and each paragraph in its own language")
 struct LoneWordAndLanguageTests {
     static let words = StubWords(known: ["fragen", "kessel", "sonntag", "wolf", "graf", "verfügung", "kasse", "fahrdienst"])
-    static let names = StubNames(first: ["anja", "mehmet"], last: ["sonntag", "berger"])
+    static let names = StubNames(first: ["sonja", "ahmet"], last: ["sonntag", "ferber"])
 
     func detector(_ words: any WordKnowledge = Self.words, _ names: any NameKnowing = Self.names, drops: Bool = true,
                   language: NLLanguage? = nil) -> RuleFinder {
@@ -83,8 +83,8 @@ struct LoneWordAndLanguageTests {
 
     @Test("F020 AC-18 · learned as before: two words, a listed word, a word after a title, a word the dictionary does not know small")
     func asBefore() {
-        for text in ["Morgen kommt Anja Sonntag vorbei.", "Das Paket liegt bei Sonntag im Flur.", "Bitte Frau Graf anrufen.",
-                     "Bitte Frau Kessel anrufen.", "Heute kam Mehmet vorbei, wegen der Heizung."] {
+        for text in ["Morgen kommt Sonja Sonntag vorbei.", "Das Paket liegt bei Sonntag im Flur.", "Bitte Frau Graf anrufen.",
+                     "Bitte Frau Kessel anrufen.", "Heute kam Ahmet vorbei, wegen der Heizung."] {
             #expect(people(text, detector()) == people(text, detector(drops: false)), "\(text)")
         }
     }
@@ -98,7 +98,7 @@ struct LoneWordAndLanguageTests {
 
     @Test("F020 AC-18 · the filter only removes: what it keeps is what the tagger found")
     func onlyRemoves() {
-        for text in [Self.closing, "Morgen kommt Anja Sonntag vorbei.", "Bei Fragen zu Herrn Wolf bitte melden."] {
+        for text in [Self.closing, "Morgen kommt Sonja Sonntag vorbei.", "Bei Fragen zu Herrn Wolf bitte melden."] {
             let all = detector(drops: false).entities(in: text, field: .body)
             let kept = detector().entities(in: text, field: .body)
             #expect(kept.allSatisfy { k in all.contains { $0.text == k.text && $0.start == k.start && $0.kind == k.kind } }, "\(text)")
@@ -113,7 +113,7 @@ struct LoneWordAndLanguageTests {
     static let note = "In diesen Fällen zahlt die Kasse den Fahrdienst."
     /// An English question over a matter's German notes and to-dos, as `prepare` joins them (the fixture's).
     static let notes = [
-        "2026-11-12: Almuth Milde, geb. 04.09.57, braucht ab Dezember einen Fahrdienst zur Dialyse.",
+        "2026-11-12: Irmtraud Selig, geb. 17.06.59, braucht ab Dezember einen Fahrdienst zur Dialyse.",
         "2026-11-13: Erstattung des Betrages bei der Krankenkasse beantragen. In diesen Fällen zahlt die Kasse den Fahrdienst.",
         "Widerspruch gegen den Bescheid der Pflegekasse einlegen, Frist beachten",
         "Fahrdienst bei der Krankenkasse beantragen",
@@ -136,10 +136,10 @@ struct LoneWordAndLanguageTests {
 
     @Test("F020 AC-19 · a German text with a line of names and numbers stays German; a text in one language is read as today")
     func oneLanguage() {
-        let german = "Sehr geehrte Frau Berger,\nAnja Sonntag 0171 1234567 Mehmet Yilmaz\nwir melden uns wegen der Heizung am Montag bei Ihnen."
+        let german = "Sehr geehrte Frau Ferber,\nSonja Sonntag 0171 1234567 Ahmet Yildiz\nwir melden uns wegen der Heizung am Montag bei Ihnen."
         #expect(people(german, detector(drops: false)) == people(german, detector(drops: false, language: .german)))
         #expect(people(Self.note, detector(drops: false)) == people(Self.note, detector(drops: false, language: .german)))
-        let english = "Hi Ralf,\nthe meeting with Jonathan Pryce moved to Tuesday. Margaret will send the notes afterwards."
+        let english = "Hi Wulf,\nthe meeting with Jordan Vaughan moved to Tuesday. Dorothy will send the notes afterwards."
         #expect(people(english, detector(drops: false)) == people(english, detector(drops: false, language: .english)))
     }
 }
@@ -151,6 +151,6 @@ extension LoneWordAndLanguageTests {
         real.opinion = SecondOpinion(lists: NameKnowledge())
         #expect(NameKnowledge().isFirstName("Bei") == true, "the world-wide list holds it")
         #expect(!people(Self.closing, real).contains("Fragen") || SystemWords.shared.knows("fragen") != true)
-        #expect(people("Morgen kommt Anja Sonntag vorbei.", real) == people("Morgen kommt Anja Sonntag vorbei.", { var d = real; d.typed = true; return d }()))
+        #expect(people("Morgen kommt Sonja Sonntag vorbei.", real) == people("Morgen kommt Sonja Sonntag vorbei.", { var d = real; d.typed = true; return d }()))
     }
 }
