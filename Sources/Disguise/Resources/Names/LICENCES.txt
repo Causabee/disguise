@@ -1,0 +1,24 @@
+F020 · The word lists the review's decision and the sender check read. On the device; nothing fetched.
+Built by scripts/name-lists.py and scripts/name-lists-pack.swift, 2026-11-17.
+
+first-names.lzfse
+  Source: Wikidata — items that are an instance of given name (Q202444), male given name (Q12308941),
+          female given name (Q11879590), unisex given name (Q3409032); single-word labels in de, en and mul,
+          Latin script, folded (lowercase), de-duplicated. Queried through QLever's Wikidata endpoint, 2026-11-17.
+  Licence: CC0 1.0 — "All structured data (i.e. the main, Property, Lexeme, and EntitySchema namespaces) is
+          released into the public domain under Creative Commons Zero." (wikidata.org, Wikidata:Licensing, read 2026-11-17)
+  Date: 2026-11-17
+
+surnames.lzfse
+  Source: Wikidata — items that are an instance of family name (Q101352); single-word labels in de, en and mul,
+          Latin script, folded; the 231,509 with at least one Wikipedia sitelink (the most widely known), under 0.8 MB packed.
+  Licence: CC0 1.0 (as above)
+  Date: 2026-11-17
+
+words.lzfse
+  Source: Mozilla Common Voice, German sentences (github.com/common-voice/common-voice, server/data/de): every file
+          but the Wikipedia extracts (wiki.de*) and the lists of cities and countries, which are mostly names. Words
+          counted case-folded; the 50,000 commonest, commonest first. Counts only; no sentence ships.
+  Licence: CC0 1.0 — the sentences "are released under a CC0 public domain Creative Commons license"
+          (Common Voice README, "Licensing and content source", read 2026-11-17)
+  Date: 2026-11-17

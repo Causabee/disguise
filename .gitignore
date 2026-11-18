@@ -1,0 +1,6 @@
+.build/
+.swiftpm/
+*.xcresult
+NameBench/Model/
+NameBench/Tests/NameBenchTests/Cases/Model/
+.DS_Store
