@@ -38,8 +38,8 @@ enum Ordinary {
 
     static func isKindWord(_ word: String) -> Bool { kindWords.contains(key(word)) }
 
-    /// What someone is to the owner, written before a name like a title (`Oma Liesel Vortkamp`,
-    /// `Aunt Rosalind`): no name, and no part of one.
+    /// What someone is to the owner, written before a name like a title (`Oma Gretl Furtkamp`,
+    /// `Aunt Winifred`): no name, and no part of one.
     static let kin: Set<String> = [
         "mama", "mami", "mutti", "mutter", "papa", "papi", "vati", "vater", "oma", "omi", "opa", "opi", "tante", "onkel",
         "sohn", "tochter", "bruder", "enkel", "enkelin", "cousin", "cousine", "schwager", "schwägerin", "schwiegermutter",
@@ -55,7 +55,7 @@ enum Ordinary {
     }
 
     /// The lowercase test: does the dictionary know the word written small? An ordinary German
-    /// noun it knows that way („treffen“, „fragen“, „hecke“); a name it does not („anja“). Nil when
+    /// noun it knows that way („treffen“, „fragen“, „hecke“); a name it does not („sonja“). Nil when
     /// the device has no dictionary: then nothing is said, and the candidate is kept — it fails
     /// toward hiding.
     static func knowsLower(_ word: String, words: any WordKnowledge) -> Bool? {
@@ -63,7 +63,7 @@ enum Ordinary {
     }
 
     /// The lowercase test in the text's own language (N8): a German text asks the German dictionary,
-    /// an English one the English. `malte` is a German word and `ida` an English one; neither is
+    /// an English one the English. `thore` is a German word and `ada` an English one; neither is
     /// asked of a text in the other language.
     static func knowsLower(_ word: String, words: any WordKnowledge, language: String?) -> Bool? {
         guard let language else { return knowsLower(word, words: words) }

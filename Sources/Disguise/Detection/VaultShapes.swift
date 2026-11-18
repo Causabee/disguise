@@ -12,13 +12,13 @@ public enum VaultShapes {
         /// Minimum digits, for the patterns that are mostly digits and easy to fool.
         public var minimumDigits: Int = 0
         /// The capture group that is the entity, when the pattern needs context around it:
-        /// `Frau Behrend` is found by its `Frau`, and the entity is the whole of it.
+        /// `Frau Volkmar` is found by its `Frau`, and the entity is the whole of it.
         public var group: Int = 0
         /// A name found by its context, checked against the list of ordinary words: "Liebe Grüße"
         /// is a closing, not Frau Grüße.
         var isName = false
         /// F019 AC-4: a lowercase word after a title or a greeting is a name only where the
-        /// dictionary does not know it: `frau kowalski` is, `die frau hat` is not.
+        /// dictionary does not know it: `frau wojciechowski` is, `die frau hat` is not.
         var unknownWord = false
         /// F019 AC-7: a street found by a word in front of it — `Am Markt 3` — whose first word is a
         /// day, a month or a common word is a date or a sentence: `Am Montag 12`, `Im Jahr 2026`.
@@ -81,7 +81,7 @@ public enum VaultShapes {
         // A British postcode, with the town in front of it when there is one: `London SW1A 1AA`.
         .init(kind: .postalCity, expression: #"(?:\b\p{Lu}[\p{Ll}]+[ \t]+)?\b[A-Z]{1,2}\d[A-Z\d]?[ \t]\d[A-Z]{2}\b"#, minimumDigits: 2),
         // A company writes its own name with its legal form attached, and that is the one shape
-        // an organisation reliably has. The tagger read `Thermotec Nowak GmbH` as a surname and
+        // an organisation reliably has. The tagger read `Thermotec Kubiak GmbH` as a surname and
         // nothing else, which would have sent a party's name straight to the API.
         // The trailing guard is a lookahead rather than \b, because a legal form that ends in a
         // full stop — `e. V.`, `Ltd.` — has no word boundary after it and was missed.
@@ -124,7 +124,7 @@ public enum VaultShapes {
               expression: #"(?i:\b(?:kfz[\- ]?)?kennzeichen|\b(?:licen[cs]e|number|registration)[ \t]+plate|\bplate)[ \t]*[:#.]?[ \t]*([A-ZÄÖÜ]{1,3}[\- ][A-Z]{1,2}[ \-]?\d{1,4}[EH]?)(?![\p{L}\p{N}])"#,
               minimumDigits: 1, group: 1),
         // A date of birth, found by the word before it — with a name in between, or not: "Geburtsdatum
-        // Erika Mustermann, 12.03.1950", "geb. 3.4.62". No other date is disguised: a deadline has to be read.
+        // Elfi Mustermann, 12.03.1950", "geb. 3.4.62". No other date is disguised: a deadline has to be read.
         // F019 AC-6: written out as well, `geb. am 12. März 1958`, and `*12.03.1958`, `Jahrgang 1958`.
         .init(kind: .reference,
               expression: #"(?i:\b(?:geburtsdatum|geburtstag|geboren(?:\s+am)?|geb\.(?:\s+am)?|date\s+of\s+birth|born(?:\s+on)?|dob))[^\d\n]{0,40}?(\d{1,2}\.\s?\d{1,2}\.\s?(?:\d{4}|\d{2})|\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{2,4}|\d{1,2}\.?\s?(?i:januar|februar|märz|maerz|april|mai|juni|juli|august|september|oktober|november|dezember|january|february|march|may|june|july|october|december|jan|feb|mär|apr|jun|jul|aug|sep|sept|okt|oct|nov|dez|dec)\.?\s\d{4})"#,
@@ -140,26 +140,26 @@ public enum VaultShapes {
         .init(kind: .reference,
               expression: #"(?<![A-Za-z0-9])[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}(?![A-Za-z0-9])|(?<![A-Za-z0-9])(?!0\d+(?![A-Za-z0-9]))[A-Za-z0-9]*\d{8,}[A-Za-z0-9]*(?![A-Za-z0-9])"#,
               leavesFileDates: true),
-        // A name found by what comes before it, where the tagger found nothing: "Frau Behrend",
-        // "Herrn Dr. Brenner", "Inh. Petra Blume". The title stays in the entity, and the
+        // A name found by what comes before it, where the tagger found nothing: "Frau Volkmar",
+        // "Herrn Dr. Bittner", "Inh. Martina Baume". The title stays in the entity, and the
         // disguise keeps it readable: "Frau [Person A]".
-        // F019 AC-5: any letter (`Frau Çelik`, `Herr Šimić`), more titles (`Freiherr von …`, `Mrs`,
+        // F019 AC-5: any letter (`Frau Çetin`, `Herr Šimić`), more titles (`Freiherr von …`, `Mrs`,
         // `Dr` without its dot), and an academic title between title and name (`Dr. med.`, `Dipl.-Ing.`).
-        // Found at Proof, 17 November: glued as well — `Dr.med. Hollerbach`, `Prof.Dr. Kerkmann`, `Dipl.-Ing.Brenneisen`.
+        // Found at Proof, 17 November: glued as well — `Dr.med. Hollenbach`, `Prof.Dr. Kortmann`, `Dipl.-Ing.Breitkopf`.
         .init(kind: .person,
               expression: #"\b(?:Frau|Herrn?|Freiherr|Freifrau|Graf|Gräfin|Mrs?\.?|Ms\.?|Miss|Dr\.?|Prof\.|Inh\.|Inhaber(?:in)?:?|Dipl\.-?\p{L}*\.)(?:(?<=\.)|(?![\p{L}]))(?:[ \t]+|(?<=\.))(?:(?:Dr|Prof|med|dent|vet|rer\.[ ]?nat|phil|jur|habil|Mag|Dipl\.?-?\p{L}*|Ing)\.[ \t]*)*(?:(?:von|van|de|zu|der|den|von der|van der|von und zu)[ \t]+)?(?:\p{Lu}[\p{Ll}\p{M}'’]+[ \-]){0,2}\p{Lu}[\p{Ll}\p{M}'’]+(?:-\p{Lu}[\p{Ll}\p{M}]+)?"#,
               isName: true),
-        // F019 AC-4: the same in lowercase — `frau kowalski`, `herrn wendt`, `frau dr. henneberg`: the
+        // F019 AC-4: the same in lowercase — `frau wojciechowski`, `herrn behnke`, `frau dr. hollenberg`: the
         // one word after the title, when the dictionary does not know it.
         .init(kind: .person,
               expression: #"(?i:\b(?:frau|herrn?|mrs?|ms|dr)\.?)[ \t]+(?:(?i:dr|prof)\.[ \t]*)?(\p{Ll}[\p{Ll}\p{M}]{2,})(?![\p{L}])"#,
               group: 1, isName: true, unknownWord: true),
-        // F019: a name after the label a form or a portal puts before one — `Versicherungsnehmer: Detlef
-        // Krummbein`, `Willkommen, Rüdiger Fehrmann`, `Signed in as Alistair Fenwick`.
+        // F019: a name after the label a form or a portal puts before one — `Versicherungsnehmer: Gerwin
+        // Schiefbein`, `Willkommen, Göran Tehrmann`, `Signed in as Hamish Lockhart`.
         .init(kind: .person,
               expression: #"(?i:\b(?:versicherungsnehmer(?:in)?|versicherte[r]?|patient(?:in)?|reisende[r]?|mieter(?:in)?|vermieter(?:in)?|kunde|kundin|inhaber(?:in)?|empfänger(?:in)?|absender(?:in)?|antragsteller(?:in)?|ansprechpartner(?:in)?|name|policyholder|passenger|tenant|landlord|customer|recipient|applicant|account holder|kontoinhaber(?:in)?|willkommen|welcome|signed ?in as|angemeldet als))[ \t]*[:,]?[ \t]+((?:\p{Lu}[\p{Ll}\p{M}'’]+[ \-]){0,2}\p{Lu}[\p{Ll}\p{M}'’]+)(?![\p{L}])"#,
               group: 1, isName: true),
-        // A first name after a greeting: "Hallo Georg,", "Lieber Tom".
+        // A first name after a greeting: "Hallo Bertram,", "Lieber Tim".
         .init(kind: .person,
               expression: #"\b(?:Hallo|Hi|Hey|Liebe|Lieber|Moin|Servus|Dear)[ \t]+(\p{Lu}[\p{Ll}\p{M}]{2,})(?=\s*[,!\n])"#,
               group: 1, isName: true),

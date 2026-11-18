@@ -89,7 +89,7 @@ enum Gate {
             if evidence.contains(.legalForm) { return admitted() }
             let names = Pseudonymizer.words(text).filter { !Ordinary.isKindWord($0) }
             guard !names.isEmpty, !names.allSatisfy({ Ordinary.isSmall($0) || Ordinary.isCalendar($0) }) else { return nil }
-            // The kind word beside it is its anchor, as a title is a person's: `Kanzlei Eisenreich`.
+            // The kind word beside it is its anchor, as a title is a person's: `Kanzlei Eisenhut`.
             if evidence.contains(.kindWord) { return admitted() }
             // A company of one ordinary word and no legal form is not hidden alone.
             if names.allSatisfy({ Ordinary.neverAlone($0) || Ordinary.knowsLower($0, words: words) == true }) { return nil }

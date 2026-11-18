@@ -1,0 +1,3898 @@
+[
+  {
+    "field" : "body",
+    "found" : [
+      "person:julian@21+6",
+      "person:frau wojciechowski@35+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r01.0",
+    "placeholder" : "kannst du morgen mit [Person B] reden? frau [Person A] hat wieder angerufen, wegen der wohnung in der lindenstraße 4",
+    "standin" : "kannst du morgen mit Birgit reden? frau Albers hat wieder angerufen, wegen der wohnung in der lindenstraße 4"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Ahmet@10+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r02.0",
+    "placeholder" : "Anruf bei [Person A] wegen Miete",
+    "standin" : "Anruf bei Birgit wegen Miete"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. Kaczmarczyk@11+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r02.1",
+    "placeholder" : "Termin bei Dr. [Person A]",
+    "standin" : "Termin bei Dr. Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Wustrow@23+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r02.2",
+    "placeholder" : "Praxis am Lindenplatz, [Place A]",
+    "standin" : "Praxis am Lindenplatz, Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r03.0",
+    "placeholder" : "Tim Beispiel",
+    "standin" : "Tim Beispiel"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r03.1",
+    "placeholder" : "Tim Beispiel",
+    "standin" : "Tim Beispiel"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r03.2",
+    "placeholder" : "Tim Beispiel: Ich hole dich ab.\nIch: Danke Tim!",
+    "standin" : "Tim Beispiel: Ich hole dich ab.\nIch: Danke Tim!"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:12 345 678 901@16+14",
+      "reference:65 170839 J 003@57+15",
+      "reference:VS-123/4567@97+11",
+      "reference:B-KM 4711@121+9",
+      "reference:L01X00T47@147+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r04.0",
+    "placeholder" : "Ihre Steuer-ID: [Nummer A]\nSozialversicherungsnummer [Nummer B]\nVersicherungsschein-Nr. [Nummer D]\nKennzeichen [Nummer C]\nPersonalausweis [Nummer E]",
+    "standin" : "Ihre Steuer-ID: [Nummer A]\nSozialversicherungsnummer [Nummer B]\nVersicherungsschein-Nr. [Nummer D]\nKennzeichen [Nummer C]\nPersonalausweis [Nummer E]"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Claims Desk@0+11",
+      "email:claims@example.com@13+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r05.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r05.1",
+    "placeholder" : "Your policy",
+    "standin" : "Your policy"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:4471-22-918@34+11",
+      "street:Birch Road 12@68+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r05.2",
+    "placeholder" : "Dear customer,\nyour Policy number [Nummer A] is renewed. Moving to [Street A] is noted.\nKind regards",
+    "standin" : "Dear customer,\nyour Policy number [Nummer A] is renewed. Moving to Lindauer Road 49 is noted.\nKind regards"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Am Markt 3@11+10",
+      "street:Unter den Linden 12@30+19",
+      "street:Hauptstr 5@65+10",
+      "street:Lindenstraße@90+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r06.0",
+    "placeholder" : "Treffpunkt [Street B], danach [Street A].\nPost bitte an [Street C] schicken.\nDie [Street D] ist gesperrt.",
+    "standin" : "Treffpunkt Lindauer 1, danach Lindauer 1.\nPost bitte an Lindauer 1 schicken.\nDie Lindauer Straße ist gesperrt."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "postalCity:1010 Wien@8+9",
+      "postalCity:8001 Zürich@31+11",
+      "postalCity:London SW1A 1AA@49+15",
+      "street:Pichlerweg 7@75+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r07.0",
+    "placeholder" : "Filiale [Postcode B] [Place A], Zweigstelle [Postcode C] [Place B], Büro [Postcode A].\nAußerdem [Street A].",
+    "standin" : "Filiale 3305 Friedrichshain, Zweigstelle 7241 Kassel, Büro [Postcode A].\nAußerdem Lindauer Weg 113."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Lotta Hollenbach@10+16",
+      "reference:12. März 1958@36+13",
+      "reference:26.05.1958@52+10",
+      "reference:1958@73+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r08.0",
+    "placeholder" : "Patientin [Person A], geb. am 12. März [Nummer C], *[Nummer B], Jahrgang [Nummer C], 67 Jahre alt.",
+    "standin" : "Patientin Birgit Albers, geb. am 12. März [Nummer C], *[Nummer B], Jahrgang [Nummer C], 67 Jahre alt."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Simone Hollenbach@0+0",
+      "person:Hollenbach@0+0",
+      "person:Simone Hollenbach@0+0",
+      "person:Hollenbach@17+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r09.0",
+    "placeholder" : "Arztbrief_[Person A]_2026.pdf",
+    "standin" : "Arztbrief_Birgit Albers_2026.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:lotta lemke@0+0"
+    ],
+    "id" : "disguise-corpus.jsonl#r10.0",
+    "placeholder" : "scan-[Person A].jpg",
+    "standin" : "scan-Birgit-Albers.jpg"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Jan Spengler@0+12",
+      "email:jan.spengler@example.org@14+24"
+    ],
+    "id" : "disguise-corpus.jsonl#r11.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r11.1",
+    "placeholder" : "Montag",
+    "standin" : "Montag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Thi Pham@55+8"
+    ],
+    "id" : "disguise-corpus.jsonl#r11.2",
+    "placeholder" : "Hallo Jan,\nMontag passt. Sag August Bescheid, dass Mai [Person A] auch kommt.\nJan",
+    "standin" : "Hallo Jan,\nMontag passt. Sag August Bescheid, dass Mai Birgit Albers auch kommt.\nJan"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kurz@0+9",
+      "person:Herr Post@25+9",
+      "person:Herr Mai@57+8",
+      "person:Frau Sonntag@80+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r12.0",
+    "placeholder" : "Frau [Person A] hat angerufen. Herr [Person B] bringt die Schlüssel. Herr [Person C] kommt morgen. Frau [Person D] auch.",
+    "standin" : "Frau Albers hat angerufen. Herr Brandt bringt die Schlüssel. Herr Dietz kommt morgen. Frau Ebert auch."
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Praxis Information@0+18",
+      "email:info@example.net@20+16"
+    ],
+    "id" : "disguise-corpus.jsonl#r13.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "Praxis Lindner <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r13.1",
+    "placeholder" : "Ihr Termin",
+    "standin" : "Ihr Termin"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Çetin@10+10",
+      "person:Herr Dr. med. Gunnar Wärtele@22+28",
+      "person:Freiherr von Gersdorff@65+22",
+      "person:Frau Dipl.-Ing. Manuela Hollenbach@114+34"
+    ],
+    "id" : "disguise-corpus.jsonl#r13.2",
+    "placeholder" : "Guten Tag Frau [Person D],\nHerr Dr. med. [Person A] erwartet Sie. Freiherr [Person C] ist ebenfalls eingeladen.\nFrau Dipl.-Ing. [Person B] leitet die Sitzung.",
+    "standin" : "Guten Tag Frau Ebert,\nHerr Dr. med. Birgit Albers erwartet Sie. Freiherr Heike Dietz ist ebenfalls eingeladen.\nFrau Dipl.-Ing. Jonas Brandt leitet die Sitzung."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sibylle Ferber@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r14.0",
+    "placeholder" : "[Person A] anrufen. [Person A]s Sohn kommt. [Person A]s Anwalt meldet sich.",
+    "standin" : "Birgit Albers anrufen. Birgits Sohn kommt. Alberss Anwalt meldet sich."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Divya Rohan@0+11",
+      "person:Divya's@20+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r15.0",
+    "placeholder" : "[Person A] called. [Person B] mother is in hospital since Tuesday.",
+    "standin" : "Birgit Albers called. Jonas mother is in hospital since Tuesday."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:XK7Q2P@28+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r16.0",
+    "placeholder" : "Rechnung 40917\nBuchungscode [Nummer A]\nBetrag 120,00 Euro",
+    "standin" : "Rechnung 40917\nBuchungscode [Nummer A]\nBetrag 120,00 Euro"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:tobias@5+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r17.0",
+    "placeholder" : "frag [Person A] ob er am samstag beim umzug hilft",
+    "standin" : "frag Birgit ob er am samstag beim umzug hilft"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Arjun@8+5",
+      "person:Jule@18+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r18.0",
+    "placeholder" : "Schreib [Person A] und [Person B] wegen der Party",
+    "standin" : "Schreib Birgit und Jonas wegen der Party"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Oskar@8+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r18.1",
+    "placeholder" : "Mail an [Person A] wegen der Kaution",
+    "standin" : "Mail an Birgit wegen der Kaution"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r18.2",
+    "placeholder" : "Unterlagen an Keppler übergeben",
+    "standin" : "Unterlagen an Keppler übergeben"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Hausverwaltung Kranich GmbH@0+27",
+      "email:post@example.org@29+16"
+    ],
+    "id" : "disguise-corpus.jsonl#r19.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "Hausverwaltung Lindner GmbH <birgit.ebert@hoffmeister.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r19.1",
+    "placeholder" : "Nebenkosten",
+    "standin" : "Nebenkosten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Oberndorf@13+14",
+      "street:Meisenweg 14@73+12",
+      "postalCity:12345 Musterstadt@87+17",
+      "iban:DE00 1203 0000 0012 3456 78@127+27",
+      "organization:Hausverwaltung Kranich GmbH@179+27"
+    ],
+    "id" : "disguise-corpus.jsonl#r19.2",
+    "placeholder" : "Sehr geehrte Frau [Person A],\nanbei die Abrechnung für die Wohnung in der [Street A], [Postcode A] [Place A].\nIBAN für Rückfragen: [IBAN A]\nMit freundlichen Grüßen\n[Company A]",
+    "standin" : "Sehr geehrte Frau Albers,\nanbei die Abrechnung für die Wohnung in der Lindauer Weg 36, 95031 Friedrichshain.\nIBAN für Rückfragen: DE59 9953 2595 9664 6454 19\nMit freundlichen Grüßen\nHausverwaltung Lindner GmbH"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Dr. Elise Bockhorst@0+19",
+      "email:bockhorst@example.net@21+21"
+    ],
+    "id" : "disguise-corpus.jsonl#r20.0",
+    "placeholder" : "Dr. [Person A] <[Email A]>",
+    "standin" : "Dr. Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r20.1",
+    "placeholder" : "Befund",
+    "standin" : "Befund"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Albrecht@6+13",
+      "phone:0331 4455667@59+12",
+      "person:Elise Bockhorst@85+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r20.2",
+    "placeholder" : "Liebe Frau [Person B],\nder Befund ist da. Rufen Sie mich an: [Phone A].\nLiebe Grüße\n[Person A]",
+    "standin" : "Liebe Frau Brandt,\nder Befund ist da. Rufen Sie mich an: 0306 1789850.\nLiebe Grüße\nBirgit Albers"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:rupert@example.com@20+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r21.0",
+    "placeholder" : "Rupert Whittington <[Email A]>",
+    "standin" : "Rupert Whittington <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r21.1",
+    "placeholder" : "Viewing on Friday",
+    "standin" : "Viewing on Friday"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dorothy@3+7",
+      "street:14 Hivemead Road@27+16",
+      "phone:+44 20 7946 0123@69+16",
+      "place:Rupert@93+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r21.2",
+    "placeholder" : "Hi [Person A],\nthe viewing at [Street A] is on Friday. Call me on +[Phone A].\nBest,\n[Place A]",
+    "standin" : "Hi Birgit,\nthe viewing at 42 Lindauer Road is on Friday. Call me on ++44 81 0267 5844.\nBest,\nFriedrichshain"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:service@example.org@22+19"
+    ],
+    "id" : "disguise-corpus.jsonl#r22.0",
+    "placeholder" : "Krankenkasse Service <[Email A]>",
+    "standin" : "Krankenkasse Service <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r22.1",
+    "placeholder" : "Ihr Antrag",
+    "standin" : "Ihr Antrag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herr Holmqvist@14+14",
+      "reference:A123456789@54+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r22.2",
+    "placeholder" : "Sehr geehrter Herr [Person A],\nIhre Versichertennummer [Nummer A] ist hinterlegt. Ihr Antrag vom 3. November ist eingegangen.\nMit freundlichen Grüßen",
+    "standin" : "Sehr geehrter Herr Albers,\nIhre Versichertennummer [Nummer A] ist hinterlegt. Ihr Antrag vom 3. November ist eingegangen.\nMit freundlichen Grüßen"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:b.suchland@example.com@18+22"
+    ],
+    "id" : "disguise-corpus.jsonl#r23.0",
+    "placeholder" : "Leopold Suchland <[Email A]>",
+    "standin" : "Leopold Suchland <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r23.1",
+    "placeholder" : "Schlüsselübergabe",
+    "standin" : "Schlüsselübergabe"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Carla@5+5",
+      "place:Bene@89+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r23.2",
+    "placeholder" : "Moin [Person A],\ndie Übergabe ist am Dienstag um 10 Uhr. Ich bringe beide Schlüssel mit.\nGruß [Place A]",
+    "standin" : "Moin Birgit,\ndie Übergabe ist am Dienstag um 10 Uhr. Ich bringe beide Schlüssel mit.\nGruß Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r23.3",
+    "placeholder" : "Protokoll_Suchland.pdf",
+    "standin" : "Protokoll_Suchland.pdf"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:School Office@0+13",
+      "email:office@example.org@15+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r24.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "School Lindner <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r24.1",
+    "placeholder" : "Trip on 12 December",
+    "standin" : "Trip on 12 December"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mrs Holbrook@5+12",
+      "person:Fraser@28+6",
+      "person:Mr Langdon@103+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r24.2",
+    "placeholder" : "Dear Mrs [Person A],\nyour son [Person C] may join the trip. Please pay 25 pounds by Monday.\nYours sincerely,\nMr [Person B]",
+    "standin" : "Dear Mrs Albers,\nyour son Birgit may join the trip. Please pay 25 pounds by Monday.\nYours sincerely,\nMr Brandt"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Finanzamt Nord@0+14",
+      "email:poststelle@example.net@16+22"
+    ],
+    "id" : "disguise-corpus.jsonl#r25.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "Finanzamt Lindner <birgit.ebert@hoffmeister.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r25.1",
+    "placeholder" : "Steuerbescheid 2025",
+    "standin" : "Steuerbescheid 2025"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Haferkorn@13+14",
+      "reference:27/123/45678@42+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r25.2",
+    "placeholder" : "Sehr geehrte Frau [Person A],\nSteuernummer [Nummer A]\nIhr Bescheid für 2025 liegt bei. Seite 2 von 4.\nMit freundlichen Grüßen",
+    "standin" : "Sehr geehrte Frau Albers,\nSteuernummer [Nummer A]\nIhr Bescheid für 2025 liegt bei. Seite 2 von 4.\nMit freundlichen Grüßen"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Hünning@8+7",
+      "email:info@example.com@17+16"
+    ],
+    "id" : "disguise-corpus.jsonl#r26.0",
+    "placeholder" : "Elektro [Person A] <[Email A]>",
+    "standin" : "Elektro Birgit <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r26.1",
+    "placeholder" : "Angebot Wallbox",
+    "standin" : "Angebot Wallbox"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herr Gruner@6+11",
+      "street:Ahornring 9@77+11",
+      "person:Markus Hünning@102+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r26.2",
+    "placeholder" : "Hallo Herr [Person B],\nanbei unser Angebot über 1.480,00 Euro für die Wallbox am [Street A].\nViele Grüße\n[Person A]",
+    "standin" : "Hallo Herr Brandt,\nanbei unser Angebot über 1.480,00 Euro für die Wallbox am Lindauer Ring 36.\nViele Grüße\nBirgit Albers"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Eleanor Okeke@0+13",
+      "email:eleanor.okeke@example.net@15+25"
+    ],
+    "id" : "disguise-corpus.jsonl#r27.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r27.1",
+    "placeholder" : "Re: the boiler",
+    "standin" : "Re: the boiler"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Matthew@3+7",
+      "phone:07700 900123@57+12",
+      "place:Eleanor@91+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r27.2",
+    "placeholder" : "Hi [Person A],\nthe engineer comes on Thursday. My number is [Phone A] if anything changes.\n[Place A]",
+    "standin" : "Hi Birgit,\nthe engineer comes on Thursday. My number is 07450 571819 if anything changes.\nFriedrichshain"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Tierarztpraxis Dr. Eisfeld@0+26",
+      "email:praxis@example.org@28+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r28.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+      "place:Bello@8+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r28.1",
+    "placeholder" : "Impfung [Place A]",
+    "standin" : "Impfung Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Siebert@14+7",
+      "reference:88213@60+5",
+      "person:Dr. Eisfeld@79+11",
+      "street:Kastanienallee 21@92+17",
+      "postalCity:14469 Potsdam@111+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r28.2",
+    "placeholder" : "Liebe Familie [Person B],\ndie Impfung ist fällig. Kundennummer [Nummer A].\nIhre Praxis Dr. [Person A], [Street A], [Postcode A] [Place A]",
+    "standin" : "Liebe Familie Birgit,\ndie Impfung ist fällig. Kundennummer [Nummer A].\nIhre Praxis Dr. Albers, Lindauer Allee 36, 86825 Friedrichshain"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:kontakt@example.com@22+19"
+    ],
+    "id" : "disguise-corpus.jsonl#r29.0",
+    "placeholder" : "Versicherung Service <[Email A]>",
+    "standin" : "Versicherung Service <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r29.1",
+    "placeholder" : "Schaden vom 2. Oktober",
+    "standin" : "Schaden vom 2. Oktober"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herr Wisniewski@14+15",
+      "reference:SN-2026-7781@45+12",
+      "reference:55 120 998@82+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r29.2",
+    "placeholder" : "Sehr geehrter Herr [Person A],\nSchadennummer [Nummer B]\nVersicherungsschein-Nr. [Nummer A]\nWir melden uns bis Freitag.",
+    "standin" : "Sehr geehrter Herr Albers,\nSchadennummer [Nummer B]\nVersicherungsschein-Nr. [Nummer A]\nWir melden uns bis Freitag."
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:bookings@example.org@10+20"
+    ],
+    "id" : "disguise-corpus.jsonl#r30.0",
+    "placeholder" : "Bookings <[Email A]>",
+    "standin" : "Bookings <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r30.1",
+    "placeholder" : "Your booking",
+    "standin" : "Your booking"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Ms Macauley@5+11",
+      "reference:QX8812T@36+7",
+      "reference:4400-1187@87+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r30.2",
+    "placeholder" : "Dear Ms [Person A],\nBooking reference [Nummer A] is confirmed for 3 nights. Customer number [Nummer B].\nRegards",
+    "standin" : "Dear Ms Albers,\nBooking reference [Nummer A] is confirmed for 3 nights. Customer number [Nummer B].\nRegards"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r31.0",
+    "placeholder" : "Familie",
+    "standin" : "Familie"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hanni Brockmann@6+15",
+      "person:Fiete@23+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r31.1",
+    "placeholder" : "Mama, [Person A], [Person B]",
+    "standin" : "Mama, Birgit Albers, Jonas"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hanni Brockmann@34+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r31.2",
+    "placeholder" : "Mama: Wer holt Opa am Freitag ab?\n[Person A]: Ich kann erst ab 16 Uhr.\nFiete: ich mach das",
+    "standin" : "Mama: Wer holt Opa am Freitag ab?\nBirgit Albers: Ich kann erst ab 16 Uhr.\nFiete: ich mach das"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Kelle Carstens@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r32.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Kelle Carstens@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r32.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Kelle Carstens@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r32.2",
+    "placeholder" : "[Person A]: Der Transporter steht ab 8 vor der Tür.\nIch: Super, danke!",
+    "standin" : "Birgit Albers: Der Transporter steht ab 8 vor der Tür.\nIch: Super, danke!"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Niamh Brennan@0+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r33.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Niamh Brennan@0+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r33.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Niamh Brennan@0+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r33.2",
+    "placeholder" : "[Person A]: can you send me the form tonight?\nMe: will do",
+    "standin" : "Birgit Albers: can you send me the form tonight?\nMe: will do"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r34.0",
+    "placeholder" : "Hausgemeinschaft",
+    "standin" : "Hausgemeinschaft"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sieglinde Klosskamp@0+19",
+      "person:Herr Kendirci@21+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r34.1",
+    "placeholder" : "[Person A], Herr [Person B]",
+    "standin" : "Birgit Albers, Herr Brandt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sieglinde Klosskamp@0+19",
+      "person:Herr Kendirci@51+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r34.2",
+    "placeholder" : "[Person A]: Der Aufzug ist wieder kaputt.\nHerr [Person B]: Ich rufe die Firma an.",
+    "standin" : "Birgit Albers: Der Aufzug ist wieder kaputt.\nHerr Brandt: Ich rufe die Firma an."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Nele@0+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r35.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Nele@0+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r35.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r35.2",
+    "placeholder" : "Nele: bin um 7 da, bring den kuchen mit\nIch: ok",
+    "standin" : "Nele: bin um 7 da, bring den kuchen mit\nIch: ok"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r36.0",
+    "placeholder" : "Book club",
+    "standin" : "Book club"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Priska@0+6",
+      "person:Bronwen Tennant@8+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r36.1",
+    "placeholder" : "[Person B], [Person A]",
+    "standin" : "Jonas, Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Priska@0+6",
+      "street:22 Larkspur Lane@30+16",
+      "person:Bronwen Tennant@47+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r36.2",
+    "placeholder" : "[Person B]: next meeting at mine, [Street A]\n[Person A]: lovely, see you there",
+    "standin" : "Jonas: next meeting at mine, 86 Lindauer Lane\nBirgit Albers: lovely, see you there"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Osterkorn@10+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r37.0",
+    "placeholder" : "Vermieter [Person A]",
+    "standin" : "Vermieter Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Osterkorn@10+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r37.1",
+    "placeholder" : "Vermieter [Person A]",
+    "standin" : "Vermieter Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Osterkorn@10+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r37.2",
+    "placeholder" : "Vermieter [Person A]: Die Heizung wird am Montag repariert.\nIch: Danke, ich bin zu Hause.",
+    "standin" : "Vermieter Birgit: Die Heizung wird am Montag repariert.\nIch: Danke, ich bin zu Hause."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Silja Rolfs@0+11"
+    ],
+    "id" : "disguise-corpus.jsonl#r38.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Silja Rolfs@0+11"
+    ],
+    "id" : "disguise-corpus.jsonl#r38.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r38.2",
+    "placeholder" : "Tim Beispiel",
+    "standin" : "Tim Beispiel"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Silja Rolfs@0+11",
+      "person:Tim@13+3"
+    ],
+    "id" : "disguise-corpus.jsonl#r38.3",
+    "placeholder" : "[Person A]: [Person B], hast du die Rechnung?\nIch: Ja, schicke ich dir.",
+    "standin" : "Birgit Albers: Jonas, hast du die Rechnung?\nIch: Ja, schicke ich dir."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hauke Johansen@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r39.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hauke Johansen@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r39.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hauke Johansen@0+14",
+      "phone:0172 5550199@38+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r39.2",
+    "placeholder" : "[Person A]: Meine neue Nummer ist [Phone A]\nIch: gespeichert",
+    "standin" : "Birgit Albers: Meine neue Nummer ist 0178 4257729\nIch: gespeichert"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Desmond@6+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r40.0",
+    "placeholder" : "Uncle [Person A]",
+    "standin" : "Uncle Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Desmond@6+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r40.1",
+    "placeholder" : "Uncle [Person A]",
+    "standin" : "Uncle Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Desmond@6+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r40.2",
+    "placeholder" : "Uncle [Person A]: the car is the blue one, park it behind the shed\nMe: thanks",
+    "standin" : "Uncle Birgit: the car is the blue one, park it behind the shed\nMe: thanks"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Göran Tehrmann@25+14",
+      "reference:7713-552-09@55+11",
+      "person:Strom Basis@78+11"
+    ],
+    "id" : "disguise-corpus.jsonl#r41.0",
+    "placeholder" : "Kundenportal\nWillkommen, [Person A]\nVertragsnummer [Nummer A]\nIhr Tarif: [Person B]",
+    "standin" : "Kundenportal\nWillkommen, Birgit Albers\nVertragsnummer [Nummer A]\nIhr Tarif: Jonas Brandt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Swantje Wissmann@10+21",
+      "street:Birkenweg 2@59+11",
+      "reference:00340434161094042557@86+20"
+    ],
+    "id" : "disguise-corpus.jsonl#r42.0",
+    "placeholder" : "Paket für Frau [Person A]\nZustellung an Packstation, [Street A]\nSendungsnummer [Nummer A]",
+    "standin" : "Paket für Frau Birgit Albers\nZustellung an Packstation, Lindauer Weg 100\nSendungsnummer [Nummer A]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hamish Lockhart@25+15",
+      "reference:30-99-88 41126789@56+17"
+    ],
+    "id" : "disguise-corpus.jsonl#r43.0",
+    "placeholder" : "Your account\nSignedin as [Person A]\nAccount number [Nummer A]\nStatement for October",
+    "standin" : "Your account\nSignedin as Birgit Albers\nAccount number [Nummer A]\nStatement for October"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. Zarnack@24+11",
+      "person:Engelbert Gessert@45+17"
+    ],
+    "id" : "disguise-corpus.jsonl#r44.0",
+    "placeholder" : "Termin bestätigt\nPraxis Dr. [Person B]\nPatient: [Person A]\nDonnerstag, 20. November, 09:30",
+    "standin" : "Termin bestätigt\nPraxis Dr. Brandt\nPatient: Birgit Albers\nDonnerstag, 20. November, 09:30"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hilke Blumenfeld@22+16",
+      "reference:7081 4113 2290 5512@52+19",
+      "place:Köln@85+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r45.0",
+    "placeholder" : "Bahn-Ticket\nReisende: [Person A]\nBahnCard-Nr. [Nummer A]\nHamburg nach [Place A]",
+    "standin" : "Bahn-Ticket\nReisende: Birgit Albers\nBahnCard-Nr. [Nummer A]\nHamburg nach Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Inken Barclay@28+13",
+      "street:7 Primrose Close@43+16",
+      "phone:+44 7700 900456@66+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r46.0",
+    "placeholder" : "Order confirmed\nDeliver to: [Person A], [Street A]\nPhone +[Phone A]",
+    "standin" : "Order confirmed\nDeliver to: Birgit Albers, 67 Lindauer Close\nPhone ++44 4731 775968"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Bredow@6+11",
+      "person:Herrn Erdmann@35+13",
+      "phone:040 22334455@79+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r47.0",
+    "placeholder" : "Liebe Frau [Person A],\nbitte rufen Sie Herrn [Person B] wegen des Gutachtens an.\nTel. [Phone A]\nMit freundlichen Grüßen",
+    "standin" : "Liebe Frau Albers,\nbitte rufen Sie Herrn Brandt wegen des Gutachtens an.\nTel. 046 23708412\nMit freundlichen Grüßen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mo Jaro@21+7",
+      "person:Di Leni@30+7",
+      "person:Mi Bastian@39+10",
+      "place:Müll@50+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r48.0",
+    "placeholder" : "Whiteboard: Putzplan\n[Person A], [Person B], [Person C]\n[Place A] raus: Freitag",
+    "standin" : "Whiteboard: Putzplan\nBirgit Albers, Birgit Brandt, Birgit Dietz\nFriedrichshain raus: Freitag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Autohaus Grevenbroich GmbH@9+26",
+      "reference:HH-TK 812@49+9",
+      "place:EUR@77+3"
+    ],
+    "id" : "disguise-corpus.jsonl#r49.0",
+    "placeholder" : "Quittung\n[Company A]\nKennzeichen: [Nummer A]\nInspektion 289,00 [Place A]",
+    "standin" : "Quittung\nAutohaus Lindner GmbH\nKennzeichen: [Nummer A]\nInspektion 289,00 Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mr Clemente@5+11",
+      "person:Dr Lennox@40+9",
+      "reference:19/10/1962@92+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r50.0",
+    "placeholder" : "Dear Mr [Person A],\nyour appointment with Dr [Person B] is on 4 December at 10:15.\nDate of birth: [Nummer A]",
+    "standin" : "Dear Mr Albers,\nyour appointment with Dr Brandt is on 4 December at 10:15.\nDate of birth: [Nummer A]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Nachbarin Frau Kaczmarek@29+24",
+      "street:Sperlingsgasse 4@65+16"
+    ],
+    "id" : "disguise-corpus.jsonl#r51.0",
+    "placeholder" : "Zettel an der Tür: Paket bei Nachbarin Frau [Person A], 2. Stock, [Street A]",
+    "standin" : "Zettel an der Tür: Paket bei Nachbarin Frau Albers, 2. Stock, Lindauer Gasse 62"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Ada@38+3",
+      "person:Frau Rosenthal@88+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r52.0",
+    "placeholder" : "Elternbrief\nLiebe Eltern von Mats und [Place A],\nder Ausflug ist am Mittwoch. Kosten 12 Euro.\nFrau [Person A]",
+    "standin" : "Elternbrief\nLiebe Eltern von Mats und Friedrichshain,\nder Ausflug ist am Mittwoch. Kosten 12 Euro.\nFrau Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Maximilian Wiegand@21+24",
+      "person:Frau Paola Batthyány@50+20",
+      "street:Fliederstraße 17@87+16",
+      "postalCity:04109 Leipzig@105+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r53.0",
+    "placeholder" : "Mietvertrag\nzwischen Herrn [Person A] und Frau [Person B]\nfür die Wohnung [Street A], [Postcode A] [Place A]",
+    "standin" : "Mietvertrag\nzwischen Herrn Birgit Albers und Frau Jonas Brandt\nfür die Wohnung Lindauer Straße 16, 04484 Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Wiegand@0+0"
+    ],
+    "id" : "disguise-corpus.jsonl#r53.1",
+    "placeholder" : "Mietvertrag_[Company A].pdf",
+    "standin" : "Mietvertrag_Lindner.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:12 150358 B 512@35+15",
+      "person:Frau Marianne Bultmann@51+22",
+      "reference:29.07.1958@86+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r54.0",
+    "placeholder" : "Rentenbescheid\nVersicherungsnummer [Nummer A]\nFrau [Person A], geboren am [Nummer B]",
+    "standin" : "Rentenbescheid\nVersicherungsnummer [Nummer A]\nFrau Birgit Albers, geboren am [Nummer B]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mr Nwosu@16+8",
+      "reference:QQ 12 34 56@52+11"
+    ],
+    "id" : "disguise-corpus.jsonl#r55.0",
+    "placeholder" : "HM Revenue\nDear Mr [Person A],\nNational Insurance number [Nummer A] C\nYour tax code has changed.",
+    "standin" : "HM Revenue\nDear Mr Albers,\nNational Insurance number [Nummer A] C\nYour tax code has changed."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gerwin Schiefbein@38+17",
+      "reference:M-DK 2049@68+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r56.0",
+    "placeholder" : "Kfz-Versicherung\nVersicherungsnehmer: [Person A]\nKennzeichen [Nummer A]\nBeitrag 412,30 Euro jährlich",
+    "standin" : "Kfz-Versicherung\nVersicherungsnehmer: Birgit Albers\nKennzeichen [Nummer A]\nBeitrag 412,30 Euro jährlich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:herrn behnke@10+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r57.0",
+    "placeholder" : "heute mit herrn [Person A] telefoniert, er schickt das angebot bis freitag",
+    "standin" : "heute mit herrn Albers telefoniert, er schickt das angebot bis freitag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hanne Ahlers@20+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r58.0",
+    "placeholder" : "Schlüssel liegt bei [Person A] im Briefkasten. Code für die Garage: 4471.",
+    "standin" : "Schlüssel liegt bei Birgit Albers im Briefkasten. Code für die Garage: 4471."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:mrs fellowes@9+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r59.0",
+    "placeholder" : "spoke to mrs [Person A] at the council, she will email the form",
+    "standin" : "spoke to mrs Albers at the council, she will email the form"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gretl@60+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r60.0",
+    "placeholder" : "Für Oma: Rezept bei Apotheke am Kirchplatz abholen, dann zu [Person A].",
+    "standin" : "Für Oma: Rezept bei Apotheke am Kirchplatz abholen, dann zu Birgit."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r61.0",
+    "placeholder" : "Tim Beispiel",
+    "standin" : "Tim Beispiel"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Tim Beispiel@0+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r61.1",
+    "placeholder" : "[Person A] braucht für den Antrag noch die Geburtsurkunde.",
+    "standin" : "Birgit Albers braucht für den Antrag noch die Geburtsurkunde."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Borchardt@8+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r62.0",
+    "placeholder" : "Schreib Frau [Person A], dass ich am Dienstag komme.",
+    "standin" : "Schreib Frau Albers, dass ich am Dienstag komme."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:paulina@8+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r63.0",
+    "placeholder" : "was hat [Person A] zur kaution gesagt?",
+    "standin" : "was hat Birgit zur kaution gesagt?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:fergus@18+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r64.0",
+    "placeholder" : "remind me to call [Person A] about the insurance",
+    "standin" : "remind me to call Birgit about the insurance"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r65.0",
+    "placeholder" : "Tim Beispiel",
+    "standin" : "Tim Beispiel"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Göppinger@26+15",
+      "person:Tim Beispiel@62+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r65.1",
+    "placeholder" : "Entwirf eine Nachricht an Herrn [Person B], unterschrieben mit [Person A].",
+    "standin" : "Entwirf eine Nachricht an Herrn Brandt, unterschrieben mit Birgit Albers."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "iban:DE00 5001 0517 5407 3249 31@13+27"
+    ],
+    "id" : "disguise-corpus.jsonl#r66.0",
+    "placeholder" : "Ist die IBAN [IBAN A] schon beim Vermieter hinterlegt?",
+    "standin" : "Ist die IBAN DE03 4758 7921 4523 6359 80 schon beim Vermieter hinterlegt?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr Obiara@9+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r67.0",
+    "placeholder" : "what did Dr [Person A] say about the scan?",
+    "standin" : "what did Dr Albers say about the scan?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:frau dr. hollenberg@14+19"
+    ],
+    "id" : "disguise-corpus.jsonl#r68.0",
+    "placeholder" : "ruf bitte bei frau dr. [Person A] an",
+    "standin" : "ruf bitte bei frau dr. Albers an"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Niemeyer@8+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r69.0",
+    "placeholder" : "Rückruf Frau [Person A] wegen Kaution",
+    "standin" : "Rückruf Frau Albers wegen Kaution"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Niemeyer@0+8"
+    ],
+    "id" : "disguise-corpus.jsonl#r69.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "phone:0151 23456789@0+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r69.2",
+    "placeholder" : "[Phone A]",
+    "standin" : "0193 01830295"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Henning@17+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r70.0",
+    "placeholder" : "Unterschrift von [Place A] holen",
+    "standin" : "Unterschrift von Friedrichshain holen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gernot@8+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r70.1",
+    "placeholder" : "Wohnung [Person A]",
+    "standin" : "Wohnung Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Lübbecke@17+8"
+    ],
+    "id" : "disguise-corpus.jsonl#r70.2",
+    "placeholder" : "Wir kündigen bei [Place A]",
+    "standin" : "Wir kündigen bei Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Benno@19+5"
+    ],
+    "id" : "disguise-corpus.jsonl#r71.0",
+    "placeholder" : "Umzug: Kartons bei [Person A] abholen",
+    "standin" : "Umzug: Kartons bei Birgit abholen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r71.1",
+    "placeholder" : "Zugangscode Lagerraum",
+    "standin" : "Zugangscode Lagerraum"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Romina@4+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r72.0",
+    "placeholder" : "Ask [Person A] about the deposit",
+    "standin" : "Ask Birgit about the deposit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Romina Ravenscroft@0+18"
+    ],
+    "id" : "disguise-corpus.jsonl#r72.1",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r73.0",
+    "placeholder" : "Hausverwaltung wegen Miete anschreiben",
+    "standin" : "Hausverwaltung wegen Miete anschreiben"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Malinowski@0+0"
+    ],
+    "id" : "disguise-corpus.jsonl#r73.1",
+    "placeholder" : "Mieterhoehung_[Person A]_2026.pdf",
+    "standin" : "Mieterhoehung_Birgit_2026.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:irmtraud@10+8"
+    ],
+    "id" : "disguise-corpus.jsonl#r74.0",
+    "placeholder" : "anruf bei [Person A] wegen dem garten",
+    "standin" : "anruf bei Birgit wegen dem garten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Tischner@10+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r75.0",
+    "placeholder" : "Fragen an Herrn [Person A] zur Abrechnung",
+    "standin" : "Fragen an Herrn Albers zur Abrechnung"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Firma Heidkamp@20+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r75.1",
+    "placeholder" : "Reparatur übernimmt [Person A]",
+    "standin" : "Reparatur übernimmt Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Rhys@20+4"
+    ],
+    "id" : "disguise-corpus.jsonl#r76.0",
+    "placeholder" : "Return the drill to [Person A]",
+    "standin" : "Return the drill to Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Hollybush Lane@11+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r76.1",
+    "placeholder" : "Kitchen at [Street A]",
+    "standin" : "Kitchen at Lindauer Lane"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kahlwald@17+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r77.0",
+    "placeholder" : "Besichtigung mit Frau [Person A]",
+    "standin" : "Besichtigung mit Frau Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Holunderweg 8@0+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r77.1",
+    "placeholder" : "[Street A]",
+    "standin" : "Lindauer Weg 14"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. Fredriksen@9+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r78.0",
+    "placeholder" : "Zahnarzt Dr. [Person A]",
+    "standin" : "Zahnarzt Dr. Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Kleinmachnow@23+12"
+    ],
+    "id" : "disguise-corpus.jsonl#r78.1",
+    "placeholder" : "Praxis am Lindenplatz, [Place A]",
+    "standin" : "Praxis am Lindenplatz, Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mr Ashworth@22+11"
+    ],
+    "id" : "disguise-corpus.jsonl#r79.0",
+    "placeholder" : "Parents' evening with Mr [Person A]",
+    "standin" : "Parents' evening with Mr Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Aldhelm's@3+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r79.1",
+    "placeholder" : "St [Person A] School",
+    "standin" : "St Birgit School"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Annemarie@11+9"
+    ],
+    "id" : "disguise-corpus.jsonl#r80.0",
+    "placeholder" : "Geburtstag [Person A]",
+    "standin" : "Geburtstag Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Manuela@4+7"
+    ],
+    "id" : "disguise-corpus.jsonl#r80.1",
+    "placeholder" : "bei [Person A]",
+    "standin" : "bei Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Dąbrowski@21+15"
+    ],
+    "id" : "disguise-corpus.jsonl#r81.0",
+    "placeholder" : "Übergabe Wohnung mit Herrn [Person A]",
+    "standin" : "Übergabe Wohnung mit Herrn Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Am Mühlbach 12@0+14"
+    ],
+    "id" : "disguise-corpus.jsonl#r81.1",
+    "placeholder" : "[Street A]",
+    "standin" : "Lindauer 1"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Casper Hermanns@0+0",
+      "person:Casper Hermanns@0+0"
+    ],
+    "id" : "disguise-corpus.jsonl#r82.0",
+    "placeholder" : "Kuendigung_[Person A].pdf",
+    "standin" : "Kuendigung_Birgit Albers.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Caoimhe Moran@0+0",
+      "person:Caoimhe@0+0",
+      "person:Caoimhe Moran@0+0",
+      "person:Caoimhe-Moran@16+13"
+    ],
+    "id" : "disguise-corpus.jsonl#r83.0",
+    "placeholder" : "Payslip_October_[Person B].pdf",
+    "standin" : "Payslip_October_Jonas.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Zeugnis-Thore-Mortensen@0+23",
+      "person:Thore Mortensen@0+0",
+      "person:Thore@0+0",
+      "person:Thore Mortensen@0+0"
+    ],
+    "id" : "disguise-corpus.jsonl#r84.0",
+    "placeholder" : "[Person B].jpg",
+    "standin" : "Jonas.jpg"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Bartelmann@0+0",
+      "person:Bartelmann@29+10"
+    ],
+    "id" : "disguise-corpus.jsonl#r85.0",
+    "placeholder" : "Rechnung_2026-11_Schreinerei_[Person A].pdf",
+    "standin" : "Rechnung_2026-11_Schreinerei_Birgit.pdf"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:simone.kast@example.org@13+23"
+    ],
+    "id" : "disguise-corpus.jsonl#r86.0",
+    "placeholder" : "Simone Kast <[Email A]>",
+    "standin" : "Simone Kast <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r86.1",
+    "placeholder" : "Unser Umzug",
+    "standin" : "Unser Umzug"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Simone@95+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r86.2",
+    "placeholder" : "Hallo ihr Lieben,\nwir ziehen am 5. Jan 2027 um. Die neue Adresse schicke ich noch.\nLiebe Grüße\n[Person A]",
+    "standin" : "Hallo ihr Lieben,\nwir ziehen am 5. Jan 2027 um. Die neue Adresse schicke ich noch.\nLiebe Grüße\nBirgit"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:hausmeister@example.net@18+23"
+    ],
+    "id" : "disguise-corpus.jsonl#r87.0",
+    "placeholder" : "Herr Hausmeister <[Email A]>",
+    "standin" : "Herr Hausmeister <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-corpus.jsonl#r87.1",
+    "placeholder" : "Wasser abgestellt",
+    "standin" : "Wasser abgestellt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mieter@6+6"
+    ],
+    "id" : "disguise-corpus.jsonl#r87.2",
+    "placeholder" : "Liebe [Person A],\nam Mittwoch wird das Wasser von 9 bis 12 Uhr abgestellt.\nIhr Hausmeister",
+    "standin" : "Liebe Birgit,\nam Mittwoch wird das Wasser von 9 bis 12 Uhr abgestellt.\nIhr Hausmeister"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Dr. Veronika Hellwig-Rast@0+25",
+      "email:k.hellwig@example.org@27+21"
+    ],
+    "id" : "disguise-unseen.jsonl#u01.0",
+    "placeholder" : "Dr. [Person A] <[Email A]>",
+    "standin" : "Dr. Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-unseen.jsonl#u01.1",
+    "placeholder" : "Ihre Nachfrage zur Rechnung",
+    "standin" : "Ihre Nachfrage zur Rechnung"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herr Theimer@14+12",
+      "iban:DE45 5001 0517 5407 3249 31@159+27",
+      "street:Gartenweg 14@219+12",
+      "postalCity:34117 Kassel@233+12",
+      "phone:030 5551 7743@264+13",
+      "person:Veronika Hellwig-Rast@298+21"
+    ],
+    "id" : "disguise-unseen.jsonl#u01.2",
+    "placeholder" : "Sehr geehrter Herr [Person B],\n\nvielen Dank für Ihre Nachricht. Die Rechnung über 120 Euro für den Termin am 4. Dezember liegt bei. Bitte überweisen Sie auf IBAN [IBAN A]. Die Unterlagen schicken wir an [Street A], [Postcode A] [Place A]. Rückfragen unter [Phone A].\n\nFreundliche Grüße\n[Person A]",
+    "standin" : "Sehr geehrter Herr Brandt,\n\nvielen Dank für Ihre Nachricht. Die Rechnung über 120 Euro für den Termin am 4. Dezember liegt bei. Bitte überweisen Sie auf IBAN DE18 9962 4185 7253 0010 25. Die Unterlagen schicken wir an Lindauer Weg 3, 12199 Friedrichshain. Rückfragen unter 037 8066 2258.\n\nFreundliche Grüße\nBirgit Albers"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Divya Krishnan@0+14",
+      "email:divya.n@example.com@16+19"
+    ],
+    "id" : "disguise-unseen.jsonl#u02.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "disguise-unseen.jsonl#u02.1",
+    "placeholder" : "Re: deposit for the flat",
+    "standin" : "Re: deposit for the flat"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mr Fellowes@3+11",
+      "street:14 Birch Road@93+13",
+      "postalCity:Leeds LS6 2AB@108+13",
+      "organization:QQ@173+2",
+      "person:Divya@236+5"
+    ],
+    "id" : "disguise-unseen.jsonl#u02.2",
+    "placeholder" : "Hi Mr [Person A],\n\nThanks for your call. I've sent the deposit of £1,200 today. The tenancy at [Street A], [Postcode A] starts on 1 March. My National Insurance number is [Company A] 12 34 56 C if you need it for the reference.\n\nKind regards,\n[Person B]",
+    "standin" : "Hi Mr Albers,\n\nThanks for your call. I've sent the deposit of £1,200 today. The tenancy at 100 Lindauer Road, [Postcode A] starts on 1 March. My National Insurance number is Lindner 12 34 56 C if you need it for the reference.\n\nKind regards,\nBirgit"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Versicherung Kundenservice@10+26",
+      "email:service@example.net@38+19"
+    ],
+    "id" : "disguise-unseen.jsonl#u03.0",
+    "placeholder" : "Nordlicht [Company A] <[Email A]>",
+    "standin" : "Nordlicht Versicherung Lindner <birgit.ebert@hoffmeister.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+      "reference:VS-123/4567@24+11"
+    ],
+    "id" : "disguise-unseen.jsonl#u03.1",
+    "placeholder" : "Versicherungsschein-Nr. [Nummer A] – Ihre Beitragsänderung",
+    "standin" : "Versicherungsschein-Nr. [Nummer A] – Ihre Beitragsänderung"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Hartenstein@10+16",
+      "reference:VS-908/2231@92+11",
+      "reference:HH-RT 2218@117+10",
+      "person:Frau Sieglinde Hartenstein@155+26",
+      "street:Eppendorfer Weg 88@183+18",
+      "postalCity:20259 Hamburg@203+13",
+      "phone:040 5557 3320@253+13",
+      "person:Knud Stellmacher@293+16"
+    ],
+    "id" : "disguise-unseen.jsonl#u03.2",
+    "placeholder" : "Guten Tag Frau [Person A],\n\nzum 1. Januar ändert sich Ihr Beitrag. Versicherungsschein-Nr. [Nummer B], Kennzeichen [Nummer A]. Versicherungsnehmerin ist Frau [Person A], [Street A], [Postcode A] [Place A]. Bei Fragen erreichen Sie uns unter [Phone A].\n\nMit freundlichen Grüßen\n[Person B]",
+    "standin" : "Guten Tag Frau Albers,\n\nzum 1. Januar ändert sich Ihr Beitrag. Versicherungsschein-Nr. [Nummer B], Kennzeichen [Nummer A]. Versicherungsnehmerin ist Frau Birgit Albers, Lindauer Weg 7, 99552 Friedrichshain. Bei Fragen erreichen Sie uns unter 040 9832 7416.\n\nMit freundlichen Grüßen\nJonas Brandt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hendrik@0+7",
+      "person:Silke@10+5"
+    ],
+    "id" : "disguise-unseen.jsonl#u04.0",
+    "placeholder" : "[Person A] & [Person B]",
+    "standin" : "Birgit & Jonas"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hendrik@0+7",
+      "person:Silke@9+5"
+    ],
+    "id" : "disguise-unseen.jsonl#u04.1",
+    "placeholder" : "[Person A], [Person B]",
+    "standin" : "Birgit, Jonas"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hendrik@0+7",
+      "person:Silke@58+5",
+      "person:herr birkenbach@69+15",
+      "person:Hendrik@104+7",
+      "person:Silke@191+5"
+    ],
+    "id" : "disguise-unseen.jsonl#u04.2",
+    "placeholder" : "[Person B]: hast du schon mit der hausverwaltung gesprochen?\n[Person C]: ja, herr [Person A] meldet sich morgen\n[Person B]: ok. tante marianne kommt um 15 uhr, bring den kuchen von bäckerei Lechner mit\n[Person C]: mach ich",
+    "standin" : "Birgit: hast du schon mit der hausverwaltung gesprochen?\nJonas: ja, herr Albers meldet sich morgen\nBirgit: ok. tante marianne kommt um 15 uhr, bring den kuchen von bäckerei Lechner mit\nJonas: mach ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-unseen.jsonl#u05.0",
+    "placeholder" : "Elternabend 3b",
+    "standin" : "Elternabend 3b"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kaczmarczyk@0+16",
+      "person:Dilara@18+6",
+      "person:Markus@26+6"
+    ],
+    "id" : "disguise-unseen.jsonl#u05.1",
+    "placeholder" : "Frau [Person A], [Person B], [Person C]",
+    "standin" : "Frau Albers, Birgit, Jonas"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kaczmarczyk@0+16",
+      "person:Dilara@75+6",
+      "person:herr heindl@101+11"
+    ],
+    "id" : "disguise-unseen.jsonl#u05.2",
+    "placeholder" : "Frau [Person A]: Liebe Eltern, der Elternabend ist am Mittwoch um 19 Uhr.\n[Person C]: danke, kommt auch herr [Person B]?\nMarkus: der ist krank, ich sag ihm bescheid",
+    "standin" : "Frau Albers: Liebe Eltern, der Elternabend ist am Mittwoch um 19 Uhr.\nBirgit: danke, kommt auch herr Brandt?\nMarkus: der ist krank, ich sag ihm bescheid"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Tim@0+3"
+    ],
+    "id" : "disguise-unseen.jsonl#u06.0",
+    "placeholder" : "[Person A] (flatmate)",
+    "standin" : "Birgit (flatmate)"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Chloe@5+5"
+    ],
+    "id" : "disguise-unseen.jsonl#u06.1",
+    "placeholder" : "Tim, [Place A]",
+    "standin" : "Tim, Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Tim@0+3",
+      "person:Mr Pownall@14+10",
+      "person:Chloe@61+5",
+      "person:Tim@107+3",
+      "person:Martha@133+6",
+      "phone:07700 900431@143+12"
+    ],
+    "id" : "disguise-unseen.jsonl#u06.2",
+    "placeholder" : "[Person B]: landlord Mr [Person A] is coming Thursday about the boiler\n[Person C]: ok. did you send him the £450 for Jan?\n[Person B]: yes, he said to ring [Person D] on [Phone A] if I'm out",
+    "standin" : "Birgit: landlord Mr Albers is coming Thursday about the boiler\nJonas: ok. did you send him the £450 for Jan?\nBirgit: yes, he said to ring Heike on 07528 610473 if I'm out"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Heidrun Möhrle-Schäfer@23+22",
+      "iban:DE12 3704 0044 0532 0130 00@52+27"
+    ],
+    "id" : "disguise-unseen.jsonl#u07.0",
+    "placeholder" : "Überweisung\nEmpfänger: [Person A]\nIBAN: [IBAN A]\nVerwendungszweck: Miete Dezember\nBetrag: 780,00 EUR\nAusführung: 01.12.2026",
+    "standin" : "Überweisung\nEmpfänger: Birgit Albers\nIBAN: DE28 4232 5884 8728 7318 84\nVerwendungszweck: Miete Dezember\nBetrag: 780,00 EUR\nAusführung: 01.12.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mrs Blackwell@23+13",
+      "place:Oakfield@46+8",
+      "street:22 Elm Lane@64+11",
+      "postalCity:Bristol BS3 4QR@77+15",
+      "phone:0117 496 0842@143+13",
+      "email:office@example.org@158+18"
+    ],
+    "id" : "disguise-unseen.jsonl#u08.0",
+    "placeholder" : "Parent-teacher meeting\nMrs [Person A] – Year 4\n[Place A] Primary, [Street A], [Postcode A]\nThursday 4 December, 16:15\nContact: school office [Phone A], [Email A]",
+    "standin" : "Parent-teacher meeting\nMrs Albers – Year 4\nFriedrichshain Primary, 28 Lindauer Lane, [Postcode A]\nThursday 4 December, 16:15\nContact: school office 0106 947 6035, birgit.ebert@lindner.example"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Murat Bektaş@30+12",
+      "street:Kastanienallee 7@58+16",
+      "postalCity:1010 Wien@76+9",
+      "person:Nachbar Frau Pichler@101+20"
+    ],
+    "id" : "disguise-unseen.jsonl#u09.0",
+    "placeholder" : "Sendungsverfolgung\nEmpfänger: [Person A]\nZustellung an: [Street A], [Postcode A] [Place A]\nHinterlegt bei Nachbar Frau [Person B], 2. Stock\nAbholung bis Freitag",
+    "standin" : "Sendungsverfolgung\nEmpfänger: Birgit Albers\nZustellung an: Lindauer Allee 33, 3305 Friedrichshain\nHinterlegt bei Nachbar Frau Brandt, 2. Stock\nAbholung bis Freitag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "disguise-unseen.jsonl#u10.0",
+    "placeholder" : "IMG_2231.HEIC",
+    "standin" : "IMG_2231.HEIC"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Domaszewski@27+11",
+      "person:frau Dang@60+9",
+      "phone:0151 5550 4417@76+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u10.1",
+    "placeholder" : "bitte klingeln bei familie [Person B], 3. OG\nschlüssel bei frau [Person A]\nhandy [Phone A]",
+    "standin" : "bitte klingeln bei familie Birgit, 3. OG\nschlüssel bei frau Albers\nhandy 0157 8737 2679"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mrs D. Whittington@5+18",
+      "street:31 Orchard Close@32+16",
+      "postalCity:Oxford OX2 6PE@49+14",
+      "phone:01865 555 0182@68+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u11.0",
+    "placeholder" : "Mr & Mrs [Person A]\nFlat 2, [Street A]\n[Postcode A]\nTel [Phone A]\nFragile - handle with care",
+    "standin" : "Mr & Mrs Birgit Albers\nFlat 2, 56 Lindauer Close\n[Postcode A]\nTel 01660 979 0495\nFragile - handle with care"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gottfried Mosbach@8+17",
+      "street:Bahnhofstr. 22@41+14",
+      "postalCity:82110 Germering@57+15",
+      "phone:089 5550 1923@78+13",
+      "email:mail@mosbach-elektro.example.com@92+32"
+    ],
+    "id" : "disguise-unseen.jsonl#u12.0",
+    "placeholder" : "Elektro [Person A]\nMeisterbetrieb\n[Street A], [Postcode A] [Place A]\nTel. [Phone A]\n[Email A]\nMontag bis Freitag 8–17 Uhr",
+    "standin" : "Elektro Birgit Albers\nMeisterbetrieb\nLindauer Str. 88, 10198 Friedrichshain\nTel. 084 4923 5464\nbirgit.ebert@lindner.example\nMontag bis Freitag 8–17 Uhr"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Freytag@0+0"
+    ],
+    "id" : "disguise-unseen.jsonl#u13.0",
+    "placeholder" : "Befund_[Person A]_2026-11.pdf",
+    "standin" : "Befund_Birgit_2026-11.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. med. Gunnar Wärtele@26+23",
+      "person:Horst Freytag@57+13",
+      "street:Waldstraße 9@71+12",
+      "postalCity:79098 Freiburg@84+14",
+      "place:Freiburg@100+8",
+      "person:Herr Freytag@143+12",
+      "reference:A123456789@298+10",
+      "reference:24.11.1960@315+10",
+      "person:Dr. Wärtele@350+11"
+    ],
+    "id" : "disguise-unseen.jsonl#u13.1",
+    "placeholder" : "Praxis für Innere Medizin\nDr. med. [Person A]\n\nHerrn\n[Person B]\n[Street A]\n[Postcode A] [Place A]\n\n[Place A], 12. November 2026\n\nSehr geehrter Herr [Person B],\nbei der Kontrolle am 10. November zeigte sich ein stabiler Befund. Wir empfehlen eine weitere Kontrolle in drei Monaten.\nVersichertennummer: [Nummer A]\nGeb.: [Nummer B]\n\nMit kollegialen Grüßen\nDr. [Person A]",
+    "standin" : "Praxis für Innere Medizin\nDr. med. Birgit Albers\n\nHerrn\nJonas Brandt\nLindauer Straße 93\n45112 Friedrichshain\n\nFriedrichshain, 12. November 2026\n\nSehr geehrter Herr Brandt,\nbei der Kontrolle am 10. November zeigte sich ein stabiler Befund. Wir empfehlen eine weitere Kontrolle in drei Monaten.\nVersichertennummer: [Nummer A]\nGeb.: [Nummer B]\n\nMit kollegialen Grüßen\nDr. Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Ms Okeke-Holmqvist@5+18",
+      "street:8 Quarry Hill@30+13",
+      "postalCity:Sheffield S10 3FG@45+17",
+      "iban:GB30 NWBK 6016 1331 9268 19@152+27",
+      "person:Rhys Klym@199+9"
+    ],
+    "id" : "disguise-unseen.jsonl#u14.0",
+    "placeholder" : "Dear Ms [Person B],\n\nRe: [Street A], [Postcode A]\n\nYour rent of £950 is due on the 1st of each month. Please pay by standing order to IBAN [IBAN A].\n\nYours sincerely,\n[Person A]",
+    "standin" : "Dear Ms Brandt,\n\nRe: Lindauer 1, [Postcode A]\n\nYour rent of £950 is due on the 1st of each month. Please pay by standing order to IBAN GB74 7106 4020 8807 3520 38.\n\nYours sincerely,\nBirgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Finanzamt Neustadt@0+18",
+      "person:Frau Palmer-Altin@62+17",
+      "reference:98 765 432 109@113+14",
+      "person:Herrn Niederhauser@201+18",
+      "reference:26.05.1958@256+10"
+    ],
+    "id" : "disguise-unseen.jsonl#u15.0",
+    "placeholder" : "[Company A]\nEinkommensteuerbescheid 2025\n\nSehr geehrte Frau [Person A],\n\nanbei Ihr Bescheid. Steuer-ID: [Nummer A]. Die Nachzahlung beträgt 480 Euro, fällig am 15. Dezember. Rückfragen an Herrn [Person B], Zimmer 4. Geburtsdatum laut Akte: *[Nummer B].",
+    "standin" : "Finanzamt Lindner\nEinkommensteuerbescheid 2025\n\nSehr geehrte Frau Albers,\n\nanbei Ihr Bescheid. Steuer-ID: [Nummer A]. Die Nachzahlung beträgt 480 Euro, fällig am 15. Dezember. Rückfragen an Herrn Brandt, Zimmer 4. Geburtsdatum laut Akte: *[Nummer B]."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:frau sandkuhl@9+13",
+      "phone:0151 5550 2288@46+14",
+      "reference:M-PK 7731@118+9",
+      "person:herrn kalkbrenner@137+17",
+      "street:Lindenstraße@164+12"
+    ],
+    "id" : "disguise-unseen.jsonl#u16.0",
+    "placeholder" : "anrufen: frau [Person A] wegen der heizung, tel [Phone A]\nnicht vergessen: martinas auto muss zum tüv, kennzeichen [Nummer A]\nmiete an herrn [Person B], wohnung [Street A]",
+    "standin" : "anrufen: frau Albers wegen der heizung, tel 0192 6258 3701\nnicht vergessen: martinas auto muss zum tüv, kennzeichen [Nummer A]\nmiete an herrn Brandt, wohnung Lindauer Straße"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:dr mehta@4+8",
+      "phone:0161 496 0775@49+13",
+      "person:mrs d'aubert's@87+14",
+      "person:sina@128+4",
+      "street:27 Harcourt Street@146+18"
+    ],
+    "id" : "disguise-unseen.jsonl#u17.0",
+    "placeholder" : "ask dr [Person A] about the bloods, ring reception on [Phone A]. dads birthday 14 june. mrs [Person B] letter - reply by friday. [Person C]'s idea: book [Street A], Bath for the weekend",
+    "standin" : "ask dr Albers about the bloods, ring reception on 0122 627 1127. dads birthday 14 june. mrs Brandt letter - reply by friday. Birgit's idea: book 82 Lindauer Street, Bath for the weekend"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gebhard Eisenhut@15+16",
+      "organization:Kanzlei Eisenhut & Partner@33+26",
+      "phone:0211 5550 618@65+13",
+      "reference:133/5847/0092@93+13"
+    ],
+    "id" : "disguise-unseen.jsonl#u18.0",
+    "placeholder" : "Steuerberater: [Person A], [Company A], Tel [Phone A]. Steuernummer [Nummer A]. Steuererklärung bis 31. Juli, Unterlagen vom Finanzamt mitbringen.",
+    "standin" : "Steuerberater: Birgit Albers, Kanzlei Albers & Partner, Tel 0280 1186 857. Steuernummer [Nummer A]. Steuererklärung bis 31. Juli, Unterlagen vom Finanzamt mitbringen."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:ismail@14+6",
+      "person:frau stüvemann@28+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u19.0",
+    "placeholder" : "kannst du mit [Person B] reden? frau [Person A] hat gestern angerufen und will wissen ob die miete schon da ist",
+    "standin" : "kannst du mit Birgit reden? frau Albers hat gestern angerufen und will wissen ob die miete schon da ist"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr Marinetti-Mensah@23+19",
+      "person:Lucy's@72+6",
+      "person:Mr Fennamore@89+12",
+      "street:5 Mill Lane@134+11"
+    ],
+    "id" : "disguise-unseen.jsonl#u20.0",
+    "placeholder" : "hi, can you check what Dr [Person A] wrote about my knee? and did [Person C] solicitor Mr [Person B] say anything about the lease on [Street A]?",
+    "standin" : "hi, can you check what Dr Albers wrote about my knee? and did Birgit solicitor Mr Brandt say anything about the lease on 18 Lindauer Lane?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Prof. Dr. Walburga Leithäuser@39+29",
+      "reference:X204117386@129+10",
+      "person:Lenny@154+5",
+      "reference:17. Mai 2016@169+12"
+    ],
+    "id" : "disguise-unseen.jsonl#u21.0",
+    "placeholder" : "Hallo, wann ist der nächste Termin bei Prof. Dr. [Person A] und was kostet die Behandlung? Meine Versichertennummer ist [Nummer B] und mein Sohn [Person B], geb. am [Nummer A], braucht auch einen.",
+    "standin" : "Hallo, wann ist der nächste Termin bei Prof. Dr. Birgit Albers und was kostet die Behandlung? Meine Versichertennummer ist [Nummer B] und mein Sohn Jonas, geb. am [Nummer A], braucht auch einen."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Petrovic@13+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u22.0",
+    "placeholder" : "Schlüssel an Herrn [Person A] bringen, Hausmeister fragen wegen Waschmaschine",
+    "standin" : "Schlüssel an Herrn Albers bringen, Hausmeister fragen wegen Waschmaschine"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Schwanenstraße 12@0+17"
+    ],
+    "id" : "disguise-unseen.jsonl#u22.1",
+    "placeholder" : "[Street A]",
+    "standin" : "Lindauer Straße 32"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mrs Macaulay@6+12",
+      "email:rob@example.com@46+15"
+    ],
+    "id" : "disguise-unseen.jsonl#u23.0",
+    "placeholder" : "email Mrs [Person A] about the invoice, copy in [Email A]",
+    "standin" : "email Mrs Albers about the invoice, copy in birgit.ebert@lindner.example"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Marsh Lane@8+10"
+    ],
+    "id" : "disguise-unseen.jsonl#u23.1",
+    "placeholder" : "Cafe on [Street A]",
+    "standin" : "Cafe on Lindauer Lane"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. Arnulf Kistner@9+18",
+      "phone:0711 5550 4491@67+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u24.0",
+    "placeholder" : "Zahnarzt Dr. [Person A] anrufen und Termin verschieben, Nummer [Phone A]",
+    "standin" : "Zahnarzt Dr. Birgit Albers anrufen und Termin verschieben, Nummer 0782 2070 6898"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Übergabe@0+8",
+      "person:Stückelberger@28+13"
+    ],
+    "id" : "disguise-unseen.jsonl#u25.0",
+    "placeholder" : "[Place A] Wohnung an Familie [Person A]",
+    "standin" : "Friedrichshain Wohnung an Familie Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Gartenstraße 3@0+14"
+    ],
+    "id" : "disguise-unseen.jsonl#u25.1",
+    "placeholder" : "[Street A], 8400 Winterthur",
+    "standin" : "Lindauer Straße 87, 8400 Winterthur"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mrs Delacourt-Moffat@21+20"
+    ],
+    "id" : "disguise-unseen.jsonl#u26.0",
+    "placeholder" : "Viewing of flat with Mrs [Person A]",
+    "standin" : "Viewing of flat with Mrs Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:17 Kingsley Terrace@0+19",
+      "postalCity:Edinburgh EH3 9QQ@21+17"
+    ],
+    "id" : "disguise-unseen.jsonl#u26.1",
+    "placeholder" : "[Street A], [Postcode A]",
+    "standin" : "Lindauer 1, [Postcode A]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Rosalie Kurländer@19+22"
+    ],
+    "id" : "disguise-unseen.jsonl#u27.0",
+    "placeholder" : "Elterngespräch bei Frau [Person A]",
+    "standin" : "Elterngespräch bei Frau Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Lessingstraße 8@21+15",
+      "postalCity:04109 Leipzig@38+13"
+    ],
+    "id" : "disguise-unseen.jsonl#u27.1",
+    "placeholder" : "Grundschule am Park, [Street A], [Postcode A] [Place A]",
+    "standin" : "Grundschule am Park, Lindauer Straße 41, 04484 Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Eckhardt@0+0"
+    ],
+    "id" : "disguise-unseen.jsonl#u28.0",
+    "placeholder" : "Rechnung_Tischlerei_[Person A]_Oktober-2026.pdf",
+    "standin" : "Rechnung_Tischlerei_Birgit_Oktober-2026.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Emine Albrecht@0+0",
+      "person:Emine Albrecht@0+0"
+    ],
+    "id" : "disguise-unseen.jsonl#u29.0",
+    "placeholder" : "Mietvertrag-[Person A]-unterschrieben.pdf",
+    "standin" : "Mietvertrag-Birgit-Albers-unterschrieben.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Fraser Ferguson@0+0",
+      "person:Fraser Ferguson@0+0"
+    ],
+    "id" : "disguise-unseen.jsonl#u30.0",
+    "placeholder" : "Lease_Agreement_[Person A]_signed.pdf",
+    "standin" : "Lease_Agreement_Birgit Albers_signed.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Reha@0+4",
+      "person:Rosemarie Ossenkamp@26+19",
+      "reference:17.06.59@121+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-01.0",
+    "placeholder" : "[Person B] Mama – Die Patientin [Person A] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden. Was muss ich tun?",
+    "standin" : "Jonas Mama – Die Patientin Birgit Albers braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden. Was muss ich tun?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:BKK Hafenwerk@65+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-02.0",
+    "placeholder" : "Zahlt die Krankenkasse den Fahrdienst zur Reha, wenn ich bei der [Company A] versichert bin?",
+    "standin" : "Zahlt die Krankenkasse den Fahrdienst zur Reha, wenn ich bei der BKK Lindner versichert bin?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-03.0",
+    "placeholder" : "Muss die Krankenkasse vorher zustimmen, oder reicht die Verordnung vom Hausarzt?",
+    "standin" : "Muss die Krankenkasse vorher zustimmen, oder reicht die Verordnung vom Hausarzt?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Sobotzki@10+14",
+      "phone:0151 0000 4821@55+14",
+      "street:Amselweg 9@91+10",
+      "postalCity:24937 Flensburg@103+15"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-04.0",
+    "placeholder" : "Kannst du Herrn [Person A] sagen, dass seine neue Nummer [Phone A] ist und der Brief an [Street A], [Postcode A] [Place A] geht? Frist ist Freitag.",
+    "standin" : "Kannst du Herrn Albers sagen, dass seine neue Nummer 0164 9402 9092 ist und der Brief an Lindauer Weg 104, 15180 Friedrichshain geht? Frist ist Freitag."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Arnulf Hufnagel@22+15",
+      "reference:7. Juni 1949@50+12",
+      "reference:K318204569@83+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-05.0",
+    "placeholder" : "Für den Antrag: Vater [Person A], geboren am [Nummer A], Versichertennummer [Nummer B]. Antrag bis 15.12.2026 abgeben.",
+    "standin" : "Für den Antrag: Vater Birgit Albers, geboren am [Nummer A], Versichertennummer [Nummer B]. Antrag bis 15.12.2026 abgeben."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dorothy Marwood@10+15",
+      "reference:19 May 1951@32+11",
+      "iban:DE33 2664 7378 2883 0052 61@60+27"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-06.0",
+    "placeholder" : "My mother [Person A] (born [Nummer A]) needs her IBAN [IBAN A] on the form by Monday.",
+    "standin" : "My mother Birgit Albers (born [Nummer A]) needs her IBAN DE70 8875 6312 4982 3079 17 on the form by Monday."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hiltraud Kottmeier@0+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-07.0",
+    "placeholder" : "[Person A] wegen der Hecke anrufen – erinnerst du mich morgen?",
+    "standin" : "Birgit Albers wegen der Hecke anrufen – erinnerst du mich morgen?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Liselotte Kast@80+14",
+      "reference:09.12.1945@104+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-08.0",
+    "placeholder" : "What does this mean: „In diesen Fällen zahlt die Kasse den Fahrdienst.“ My aunt [Person A] was born [Nummer A], does that matter?",
+    "standin" : "What does this mean: „In diesen Fällen zahlt die Kasse den Fahrdienst.“ My aunt Birgit Albers was born [Nummer A], does that matter?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gretl Furtkamp@4+14",
+      "reference:21.07.1939@25+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-09.0",
+    "placeholder" : "Oma [Person A], geb. [Nummer A], braucht einen neuen Ausweis. Termin im Bürgeramt am Dienstag, 24.11.",
+    "standin" : "Oma Birgit Albers, geb. [Nummer A], braucht einen neuen Ausweis. Termin im Bürgeramt am Dienstag, 24.11."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Kay Ortwein@13+11",
+      "reference:HB-KO 4417@45+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-chat-10.0",
+    "placeholder" : "Das Auto von [Person A] hat das Kennzeichen [Nummer A], Strafzettel bis 01.12. zahlen.",
+    "standin" : "Das Auto von Birgit Albers hat das Kennzeichen [Nummer A], Strafzettel bis 01.12. zahlen."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hiltraud Kottmeier@0+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-01.0",
+    "placeholder" : "[Person A] wegen der Hecke anrufen",
+    "standin" : "Birgit Albers wegen der Hecke anrufen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Sonntag@0+12"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-02.0",
+    "placeholder" : "Frau [Person A] Bescheid geben",
+    "standin" : "Frau Albers Bescheid geben"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-03.0",
+    "placeholder" : "Treffen am Sonntag vorbereiten",
+    "standin" : "Treffen am Sonntag vorbereiten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-03.1",
+    "placeholder" : "Kuchen besorgen",
+    "standin" : "Kuchen besorgen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-04.0",
+    "placeholder" : "Fahrdienst für Papa bestellen",
+    "standin" : "Fahrdienst für Papa bestellen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Günther Flink@4+13",
+      "reference:14.06.1947@32+10",
+      "reference:B402771936@66+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-04.1",
+    "placeholder" : "Für [Person A]: Geburtsdatum [Nummer A] und Versichertennummer [Nummer B] angeben",
+    "standin" : "Für Birgit Albers: Geburtsdatum [Nummer A] und Versichertennummer [Nummer B] angeben"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Kastanienweg 3@9+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-04.2",
+    "placeholder" : "Abholung [Street A]",
+    "standin" : "Abholung Lindauer Weg 1"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Sanitätshaus Krull KG@8+21"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-05.0",
+    "placeholder" : "Rückruf [Company A]",
+    "standin" : "Rückruf Sanitätshaus Lindner KG"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "phone:0151 0000 7340@0+14",
+      "email:hilfsmittel@example.com@20+23"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-05.1",
+    "placeholder" : "[Phone A] oder [Email A], bis Mittwoch",
+    "standin" : "0165 6565 8130 oder birgit.ebert@lindner.example, bis Mittwoch"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hauke Carstensen@9+16",
+      "reference:27.10.2014@43+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-06.0",
+    "placeholder" : "Pass für [Person A] beantragen (geb. [Nummer A])",
+    "standin" : "Pass für Birgit Albers beantragen (geb. [Nummer A])"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-06.1",
+    "placeholder" : "Foto mitnehmen",
+    "standin" : "Foto mitnehmen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-06.2",
+    "placeholder" : "Bürgeramt, 2. Stock",
+    "standin" : "Bürgeramt, 2. Stock"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:1963-04-17@9+10",
+      "person:Keith Cogswell@24+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-07.0",
+    "placeholder" : "Send DOB [Nummer A] for [Person A] to the insurer",
+    "standin" : "Send DOB [Nummer A] for Birgit Albers to the insurer"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:PL-0000-55127@11+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-07.1",
+    "placeholder" : "policy no. [Nummer A] before Friday",
+    "standin" : "policy no. [Nummer A] before Friday"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Vermieter Siegbert@9+18",
+      "person:Brüker@28+6"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-08.0",
+    "placeholder" : "Miete an [Place A] [Person A] überweisen",
+    "standin" : "Miete an Friedrichshain Birgit überweisen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "iban:DE41 2330 6697 0587 1505 11@5+27"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-08.1",
+    "placeholder" : "IBAN [IBAN A], Verwendungszweck Miete Dezember",
+    "standin" : "IBAN DE61 5768 5685 8389 4985 52, Verwendungszweck Miete Dezember"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Freitag@11+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-09.0",
+    "placeholder" : "Termin mit Herrn [Person A] verschieben",
+    "standin" : "Termin mit Herrn Albers verschieben"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-todo-09.1",
+    "placeholder" : "neuer Termin am Donnerstag",
+    "standin" : "neuer Termin am Donnerstag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-01.0",
+    "placeholder" : "Nachbarn",
+    "standin" : "Nachbarn"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Brigitte@0+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-01.1",
+    "placeholder" : "[Person A], Ich",
+    "standin" : "Birgit, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hiltraud Kottmeier@10+18",
+      "person:Henri@59+5"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-01.2",
+    "placeholder" : "Brigitte: [Person A] wegen der Hecke anrufen, sagt [Person B].\nIch: Mach ich.",
+    "standin" : "Brigitte: Birgit Albers wegen der Hecke anrufen, sagt Jonas.\nIch: Mach ich."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Simone Kistler@0+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-02.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Simone Kistler@0+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-02.1",
+    "placeholder" : "[Person A], Ich",
+    "standin" : "Birgit Albers, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Simone Kistler@0+14",
+      "person:Annemarie Tiesler@30+17",
+      "reference:23.11.41@123+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-02.2",
+    "placeholder" : "[Person A]: Die Patientin [Person B] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.\nIch: Ich kümmere mich drum.",
+    "standin" : "Birgit Albers: Die Patientin Jonas Brandt braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.\nIch: Ich kümmere mich drum."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Tobias@0+6"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-03.0",
+    "placeholder" : "[Place A]",
+    "standin" : "Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Tobias@0+6"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-03.1",
+    "placeholder" : "[Place A], Ich",
+    "standin" : "Friedrichshain, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Tobias@0+6",
+      "street:Möwenstraße 21@22+14",
+      "postalCity:18119 Rostock@38+13",
+      "phone:+49 151 0000 2290@59+17"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-03.2",
+    "placeholder" : "[Place B]: Neue Adresse: [Street A], [Postcode A] [Place A]. Handy +[Phone A]\nIch: Danke, trag ich ein!",
+    "standin" : "Kassel: Neue Adresse: Lindauer Straße 63, 78613 Friedrichshain. Handy ++49 292 3944 1326\nIch: Danke, trag ich ein!"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-04.0",
+    "placeholder" : "Aunt Winifred",
+    "standin" : "Aunt Winifred"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Winifred@5+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-04.1",
+    "placeholder" : "Aunt [Place A], Me",
+    "standin" : "Aunt Friedrichshain, Me"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Bernard Fernbrook@23+17",
+      "reference:14 March 1931@53+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-04.2",
+    "placeholder" : "Aunt Winifred: Grandpa [Person A] was born on [Nummer A], the hospital asked again.\nMe: Thanks, I'll tell them on Tuesday.",
+    "standin" : "Aunt Winifred: Grandpa Birgit Albers was born on [Nummer A], the hospital asked again.\nMe: Thanks, I'll tell them on Tuesday."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-05.0",
+    "placeholder" : "Mama",
+    "standin" : "Mama"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-05.1",
+    "placeholder" : "Mama, Ich",
+    "standin" : "Mama, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "iban:DE33 0728 5672 2073 1332 11@44+27",
+      "reference:02.07.1951@94+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-05.2",
+    "placeholder" : "Mama: Für die Rente brauchen die meine IBAN [IBAN A] und mein Geburtsdatum [Nummer A].\nIch: Schick ich bis Montag ab.",
+    "standin" : "Mama: Für die Rente brauchen die meine IBAN DE75 6512 1641 2006 7434 19 und mein Geburtsdatum [Nummer A].\nIch: Schick ich bis Montag ab."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Manuela Montag@0+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-06.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Manuela Montag@0+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-06.1",
+    "placeholder" : "[Person A], Ich",
+    "standin" : "Birgit Albers, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Manuela Montag@0+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-06.2",
+    "placeholder" : "[Person A]: Bin am Samstag da, bring den Salat mit.\nIch: Super, bis dann!",
+    "standin" : "Birgit Albers: Bin am Samstag da, bring den Salat mit.\nIch: Super, bis dann!"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Werkstatt Sadowski@0+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-07.0",
+    "placeholder" : "[Company A]",
+    "standin" : "Werkstatt Lindner"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Werkstatt Sadowski@0+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-07.1",
+    "placeholder" : "[Company A], Ich",
+    "standin" : "Werkstatt Lindner, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Werkstatt Sadowski@0+18",
+      "reference:HH-RT 3091@30+10",
+      "email:rechnung@example.org@71+20"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-07.2",
+    "placeholder" : "[Company A]: Der Wagen [Nummer A] ist fertig. Rechnung kommt an [Email A].\nIch: Danke, Termin für den TÜV dann im Januar?",
+    "standin" : "Werkstatt Lindner: Der Wagen [Nummer A] ist fertig. Rechnung kommt an birgit.ebert@hoffmeister.example.\nIch: Danke, Termin für den TÜV dann im Januar?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Knud@0+4"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-08.0",
+    "placeholder" : "[Person A]",
+    "standin" : "Birgit"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Knud@0+4"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-08.1",
+    "placeholder" : "[Person A], Ich",
+    "standin" : "Birgit, Ich"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Knud@0+4",
+      "phone:0151 0000 6612@103+14",
+      "person:Knud@119+4"
+    ],
+    "id" : "detection-tiers.jsonl#t-shotchat-08.2",
+    "placeholder" : "[Person A]: Für die Anmeldung im Verein brauche ich dein Geburtsdatum.\nIch: 11.04.1987, und meine Nummer ist [Phone A].\n[Person A]: Danke, Beitrag ist bis 31.12. fällig.",
+    "standin" : "Birgit: Für die Anmeldung im Verein brauche ich dein Geburtsdatum.\nIch: 11.04.1987, und meine Nummer ist 0111 5152 5035.\nBirgit: Danke, Beitrag ist bis 31.12. fällig."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kortemeyer@13+15",
+      "person:Klaus-Dieter Röhrs@199+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-01.0",
+    "placeholder" : "Sehr geehrte Frau [Person B],\nIhr Antrag auf Kostenübernahme liegt uns vor. Bitte reichen Sie die Verordnung bis zum 05.12.2026 nach.\nBei Fragen stehe ich gern zur Verfügung.\nMit freundlichen Grüßen\n[Person A]\nSachbearbeitung",
+    "standin" : "Sehr geehrte Frau Brandt,\nIhr Antrag auf Kostenübernahme liegt uns vor. Bitte reichen Sie die Verordnung bis zum 05.12.2026 nach.\nBei Fragen stehe ich gern zur Verfügung.\nMit freundlichen Grüßen\nBirgit Albers\nSachbearbeitung"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Weserland BKK@0+13",
+      "person:Heinz-Werner Hübers@46+19",
+      "street:Ulmenweg 14@77+11",
+      "postalCity:28195 Bremen@90+12",
+      "reference:M704219385@123+10",
+      "reference:07.08.1958@148+10",
+      "person:Herrn Oberndorf@189+15",
+      "phone:+49 30 000000 41@214+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-02.0",
+    "placeholder" : "[Company A] · Bescheid vom 13.11.2026\nName: [Person A]\nAnschrift: [Street A], [Postcode A] [Place A]\nVersichertennummer: [Nummer A]\nGeburtsdatum: [Nummer B]\nBei Fragen wenden Sie sich an Herrn [Person B], Telefon +[Phone A].",
+    "standin" : "Lindner BKK · Bescheid vom 13.11.2026\nName: Birgit Albers\nAnschrift: Lindauer Weg 72, 26486 Friedrichshain\nVersichertennummer: [Nummer A]\nGeburtsdatum: [Nummer B]\nBei Fragen wenden Sie sich an Herrn Brandt, Telefon ++49 96 207445 78."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mechthild Pickenpack@30+20",
+      "reference:15.01.38@126+8",
+      "person:Dr. med. Hilke Diekmann@195+23"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-03.0",
+    "placeholder" : "Ärztliche Notiz\nDie Patientin [Person B] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.\nDr. med. [Person A]",
+    "standin" : "Ärztliche Notiz\nDie Patientin Jonas Brandt braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.\nDr. med. Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Martina Sobolek@64+15",
+      "street:Kiebitzweg 2b@81+13",
+      "reference:000/000/41275@108+13",
+      "reference:00 000 000 318@144+14",
+      "iban:DE98 8786 3528 6457 8650 64@193+27"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-04.0",
+    "placeholder" : "Finanzamt · Bescheid für 2025 über Einkommensteuer\nfür Kuno und [Person A], [Street A]\nSteuernummer [Nummer B]\nIdentifikationsnummer [Nummer A]\nDie Erstattung geht auf das Konto [IBAN A].",
+    "standin" : "Finanzamt · Bescheid für 2025 über Einkommensteuer\nfür Kuno und Birgit Albers, Lindauer Weg 73\nSteuernummer [Nummer B]\nIdentifikationsnummer [Nummer A]\nDie Erstattung geht auf das Konto DE92 8379 1338 1182 3778 25."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Graham Fernsby   DOB@27+20",
+      "reference:13/02/1953@49+10",
+      "reference:000 000 4417@70+12"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-05.0",
+    "placeholder" : "Outpatient letter\nPatient: [Person A]: [Nummer B]   NHS no. [Nummer A]\nAppointment: Thursday 26 November 2026, 9:40",
+    "standin" : "Outpatient letter\nPatient: Birgit Albers: [Nummer B]   NHS no. [Nummer A]\nAppointment: Thursday 26 November 2026, 9:40"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gerwin Schiefsiek@31+17",
+      "reference:20.09.1966@55+10",
+      "reference:OL-DK 552@79+9"
+    ],
+    "id" : "detection-tiers.jsonl#t-scan-06.0",
+    "placeholder" : "Anhörungsbogen\nFahrzeughalter: [Person A], geb. [Nummer B]\nKennzeichen: [Nummer A]\nTattag: 03.11.2026\nZahlung bis 24.11.2026",
+    "standin" : "Anhörungsbogen\nFahrzeughalter: Birgit Albers, geb. [Nummer B]\nKennzeichen: [Nummer A]\nTattag: 03.11.2026\nZahlung bis 24.11.2026"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:service.nord@example.org@14+24"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-01.0",
+    "placeholder" : "Krankenkasse <[Email A]>",
+    "standin" : "Krankenkasse <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-01.1",
+    "placeholder" : "Ihr Antrag auf Fahrkosten",
+    "standin" : "Ihr Antrag auf Fahrkosten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-01.2",
+    "placeholder" : "Guten Tag,\nwir haben Ihren Antrag erhalten. Bitte senden Sie uns die Verordnung bis Freitag.\nBei Fragen stehe ich gern zur Verfügung.\nIhre Krankenkasse",
+    "standin" : "Guten Tag,\nwir haben Ihren Antrag erhalten. Bitte senden Sie uns die Verordnung bis Freitag.\nBei Fragen stehe ich gern zur Verfügung.\nIhre Krankenkasse"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:dispo.ost@example.net@12+21"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-02.0",
+    "placeholder" : "Fahrdienst <[Email A]>",
+    "standin" : "Fahrdienst <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-02.1",
+    "placeholder" : "Abholung am Dienstag",
+    "standin" : "Abholung am Dienstag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Beckhusen@24+14",
+      "street:Rosenstraße 40@70+14",
+      "reference:09.05.1940@142+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-02.2",
+    "placeholder" : "Hallo, die Abholung für Frau [Person A] ist am Dienstag um 8:15 an der [Street A]. Bitte halten Sie das Geburtsdatum der Patientin bereit: [Nummer A].\nIhr Fahrdienst",
+    "standin" : "Hallo, die Abholung für Frau Albers ist am Dienstag um 8:15 an der Lindauer Straße 22. Bitte halten Sie das Geburtsdatum der Patientin bereit: [Nummer A].\nIhr Fahrdienst"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Lara Reichert@0+13",
+      "email:lara.reichert@example.com@15+25"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-03.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+      "street:Gartenstraße@8+12"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-03.1",
+    "placeholder" : "Wohnung [Street A]",
+    "standin" : "Wohnung Lindauer Straße"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "iban:DE55 0127 0718 9839 9582 12@48+27",
+      "place:Lara@95+4"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-03.2",
+    "placeholder" : "Hallo, anbei der Vertrag. Die Kaution bitte auf [IBAN A] überweisen.\nGrüße, [Place A]",
+    "standin" : "Hallo, anbei der Vertrag. Die Kaution bitte auf DE32 6175 3545 7318 6253 39 überweisen.\nGrüße, Friedrichshain"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Hausverwaltung Behling GmbH@0+27",
+      "email:info@example.org@29+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-04.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-04.1",
+    "placeholder" : "Nebenkostenabrechnung 2025",
+    "standin" : "Nebenkostenabrechnung 2025"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herr Tischner@14+13",
+      "street:Lerchenfeld 8@66+13",
+      "reference:HV-000-7731@149+11",
+      "person:Regine Behling@203+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-04.2",
+    "placeholder" : "Sehr geehrter Herr [Person B],\nanbei die Abrechnung für die Wohnung [Street A], 2. OG. Die Nachzahlung ist bis zum 15.01.2027 fällig. Kundennummer: [Nummer A].\nBei Fragen stehe ich gern zur Verfügung.\n[Person A]",
+    "standin" : "Sehr geehrter Herr Brandt,\nanbei die Abrechnung für die Wohnung Lindauer 1, 2. OG. Die Nachzahlung ist bis zum 15.01.2027 fällig. Kundennummer: [Nummer A].\nBei Fragen stehe ich gern zur Verfügung.\nBirgit Albers"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:standesamt@example.net@12+22"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-05.0",
+    "placeholder" : "Standesamt <[Email A]>",
+    "standin" : "Standesamt <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+      "person:Mattis Teuber@12+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-05.1",
+    "placeholder" : "Urkunde für [Person A]",
+    "standin" : "Urkunde für Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mattis Teuber@27+13",
+      "reference:05.03.2026@53+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-05.2",
+    "placeholder" : "Für die Geburtsurkunde von [Person A], geboren am [Nummer A], fehlt noch die Unterschrift. Termin: Mittwoch, 25.11.2026.",
+    "standin" : "Für die Geburtsurkunde von Birgit Albers, geboren am [Nummer A], fehlt noch die Unterschrift. Termin: Mittwoch, 25.11.2026."
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "person:Ashworth Lettings Ltd@0+21",
+      "email:lettings@example.com@23+20"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-06.0",
+    "placeholder" : "[Person A] <[Email A]>",
+    "standin" : "Birgit Albers <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-06.1",
+    "placeholder" : "Tenancy reference",
+    "standin" : "Tenancy reference"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Ms Nwosu-Lowe@5+13",
+      "reference:24/08/1980@55+10",
+      "street:14 Larchmere Road@93+17",
+      "iban:GB94 NWBK 7035 2596 7977 28@172+27",
+      "person:Matthew Lockhart@215+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-06.2",
+    "placeholder" : "Dear Ms [Person B],\nplease confirm your date of birth ([Nummer A]) and your current address, [Street A], before Friday 27 November, and set up the standing order to [IBAN A].\nKind regards,\n[Person A]",
+    "standin" : "Dear Ms Brandt,\nplease confirm your date of birth ([Nummer A]) and your current address, 44 Lindauer Road, before Friday 27 November, and set up the standing order to GB46 4094 7403 2706 4554 63.\nKind regards,\nBirgit Albers"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Versicherungsbüro Hinterhäuser & Lütke OHG@0+42",
+      "email:buero@example.net@44+17"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-07.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "Versicherungsbüro Lindner & Lindner OHG <birgit.ebert@hoffmeister.example>"
+  },
+  {
+    "field" : "subject",
+    "found" : [
+      "reference:KR-0000-23871@12+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-07.1",
+    "placeholder" : "Ihre Police [Nummer A]",
+    "standin" : "Ihre Police [Nummer A]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Kozlowski-Rey@13+18",
+      "reference:06.10.1973@86+10",
+      "phone:0160 0000 5518@146+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-mail-07.2",
+    "placeholder" : "Sehr geehrte Frau [Person A],\nfür die Änderung brauchen wir Ihr Geburtsdatum (geb. [Nummer A]) und die neue Handynummer. Ihre bisherige Nummer [Phone A] ist nicht mehr erreichbar.",
+    "standin" : "Sehr geehrte Frau Albers,\nfür die Änderung brauchen wir Ihr Geburtsdatum (geb. [Nummer A]) und die neue Handynummer. Ihre bisherige Nummer 0166 2135 9585 ist nicht mehr erreichbar."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-01.0",
+    "placeholder" : "Foto vom 14.11.2026",
+    "standin" : "Foto vom 14.11.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Elise Weghorst@26+14",
+      "phone:0151 0000 3307@72+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-01.1",
+    "placeholder" : "Praxis für Physiotherapie\n[Person A]\nTermine nach Vereinbarung\nTel. [Phone A]",
+    "standin" : "Praxis für Physiotherapie\nBirgit Albers\nTermine nach Vereinbarung\nTel. 0157 6534 4000"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-02.0",
+    "placeholder" : "Ausweis",
+    "standin" : "Ausweis"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:HAGEMEIER@32+9",
+      "person:ROSWITHA@51+8",
+      "reference:18.11.1954@74+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-02.1",
+    "placeholder" : "PERSONALAUSWEIS\nL01X00T47\nName: [Person A]\nVorname: [Person B]\nGeburtsdatum: [Nummer A]\nGültig bis: 10.07.2031",
+    "standin" : "PERSONALAUSWEIS\nL01X00T47\nName: Birgit\nVorname: Jonas\nGeburtsdatum: [Nummer A]\nGültig bis: 10.07.2031"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-03.0",
+    "placeholder" : "Parkplatz",
+    "standin" : "Parkplatz"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:B-HV 2041@26+9",
+      "person:Hollweck@66+8",
+      "phone:0151 0000 9083@76+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-03.1",
+    "placeholder" : "Bitte umparken! Ihr Wagen [Nummer A] steht vor meiner Einfahrt.\nG. [Person A], [Phone A]",
+    "standin" : "Bitte umparken! Ihr Wagen [Nummer A] steht vor meiner Einfahrt.\nG. Birgit, 0145 7345 2507"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-04.0",
+    "placeholder" : "Überweisungsträger",
+    "standin" : "Überweisungsträger"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "organization:Tierarztpraxis Homeyer@11+22",
+      "iban:DE61255594312126520136@40+22"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-04.1",
+    "placeholder" : "Empfänger: [Company A]\nIBAN: [IBAN A]\nBetrag: 84,20 EUR\nVerwendungszweck: Rechnung 2026-1187",
+    "standin" : "Empfänger: Tierarztpraxis Lindner\nIBAN: DE08705760524096873947\nBetrag: 84,20 EUR\nVerwendungszweck: Rechnung 2026-1187"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-05.0",
+    "placeholder" : "Impfpass",
+    "standin" : "Impfpass"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Tosten Overmann@52+15",
+      "reference:29.02.1964@74+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-05.1",
+    "placeholder" : "Internationale Bescheinigungen über Impfungen\nName: [Person A]\ngeb.: [Nummer A]\nImpfung: Grippe 2026, 06.10.2026",
+    "standin" : "Internationale Bescheinigungen über Impfungen\nName: Birgit Albers\ngeb.: [Nummer A]\nImpfung: Grippe 2026, 06.10.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-06.0",
+    "placeholder" : "Hospital wristband",
+    "standin" : "Hospital wristband"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:WARD@0+4",
+      "person:FAIRCLOUGH@8+10",
+      "place:STANLEY@20+7",
+      "reference:28/09/1937@32+10",
+      "reference:000-482-19@47+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-06.1",
+    "placeholder" : "[Person A] 4B\n[Person B], [Place A]\nDOB [Nummer A]\nMRN [Nummer B]",
+    "standin" : "Birgit 4B\nJonas, Friedrichshain\nDOB [Nummer A]\nMRN [Nummer B]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-07.0",
+    "placeholder" : "Briefkasten",
+    "standin" : "Briefkasten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hermanns-Bode@8+13",
+      "street:Ahornring 5@22+11"
+    ],
+    "id" : "detection-tiers.jsonl#t-photo-07.1",
+    "placeholder" : "Familie [Person A]\n[Street A]",
+    "standin" : "Familie Birgit\nLindauer Ring 91"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-file-01.0",
+    "placeholder" : "Scan_20261113_Befund.pdf",
+    "standin" : "Scan_20261113_Befund.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Christel Kuhlmeyer@0+0",
+      "person:Kuhlmeyer@0+0",
+      "person:Christel@0+0",
+      "person:Kuhlmeyer@32+9"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-02.0",
+    "placeholder" : "Scan_20261102_Bescheid_[Person A].pdf",
+    "standin" : "Scan_20261102_Bescheid_Birgit Albers.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:KV-0000-31876@7+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-03.0",
+    "placeholder" : "Police_[Nummer A]_2026.pdf",
+    "standin" : "Police_[Nummer A]_2026.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Brueckner geb@0+0",
+      "person:Brueckner@0+0"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-04.0",
+    "placeholder" : "Ausweis_[Person A]_1958-08-07.pdf",
+    "standin" : "Ausweis_Birgit Albers_1958-08-07.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mela Haferkorn@15+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-05.0",
+    "placeholder" : "Geburtsurkunde [Person A] 03.05.2019.pdf",
+    "standin" : "Geburtsurkunde Birgit Albers 03.05.2019.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hansjörg Veltmann@0+0",
+      "person:Veltmann@0+0",
+      "reference:C000045718@9+10",
+      "person:Veltmann@29+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-06.0",
+    "placeholder" : "KV-Karte_[Nummer A]_[Person A]_19470815.pdf",
+    "standin" : "KV-Karte_[Nummer A]_Birgit Albers_19470815.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Kfz-Schein@0+10",
+      "reference:M-RW 4471@11+9"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-07.0",
+    "placeholder" : "[Person A] [Nummer A].jpg",
+    "standin" : "Birgit [Nummer A].jpg"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Fliederweg_17@12+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-08.0",
+    "placeholder" : "Mietvertrag_[Street A]_Robbe.pdf",
+    "standin" : "Mietvertrag_Lindauer 1_Robbe.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "iban:DE08290578633281767340@13+22"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-09.0",
+    "placeholder" : "bank_details_[IBAN A].txt",
+    "standin" : "bank_details_DE28585112659373250096.txt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Bramwell DOB@0+0"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-10.0",
+    "placeholder" : "passport_scan_[Person A]_1984-06-22.png",
+    "standin" : "passport_scan_Birgit Albers_1984-06-22.png"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Krull@0+0",
+      "organization:Sanitätshaus Krull@0+0"
+    ],
+    "id" : "detection-tiers.jsonl#t-file-11.0",
+    "placeholder" : "Rechnung_2026-11-05_[Company A].pdf",
+    "standin" : "Rechnung_2026-11-05_Sanitätshaus Birgit.pdf"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Kobberke@54+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-01.0",
+    "placeholder" : "In diesen Fällen zahlt die Kasse den Fahrdienst. Laut Herrn [Person A] reicht die Verordnung.",
+    "standin" : "In diesen Fällen zahlt die Kasse den Fahrdienst. Laut Herrn Albers reicht die Verordnung."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-01.1",
+    "placeholder" : "What does the note say?",
+    "standin" : "What does the note say?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-02.0",
+    "placeholder" : "Garten",
+    "standin" : "Garten"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hiltraud Kottmeier@0+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-02.1",
+    "placeholder" : "[Person A] wegen der Hecke anrufen. Gärtner kommt erst im März.",
+    "standin" : "Birgit Albers wegen der Hecke anrufen. Gärtner kommt erst im März."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Reha@0+4"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-03.0",
+    "placeholder" : "[Place A] Mama",
+    "standin" : "Friedrichshain Mama"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gertraud Lesch@14+14",
+      "reference:17.06.59@104+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-03.1",
+    "placeholder" : "Die Patientin [Person A] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.",
+    "standin" : "Die Patientin Birgit Albers braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-04.0",
+    "placeholder" : "Familie",
+    "standin" : "Familie"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Daniela Sonntag@0+15",
+      "street:Reiherstraße@29+12",
+      "person:Schwester Ilka Montag@48+21",
+      "street:Dohlenstraße 3@77+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-04.1",
+    "placeholder" : "[Person B] wohnt in der [Street B], ihre Schwester [Person A] in der [Street A].",
+    "standin" : "Jonas Brandt wohnt in der Lindauer Straße, ihre Schwester Birgit Albers in der Lindauer Straße 119."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-05.0",
+    "placeholder" : "Daten Papa",
+    "standin" : "Daten Papa"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Alfons Rosenhagen@0+17",
+      "reference:25.08.1940@24+10",
+      "reference:D519406627@55+10",
+      "person:Dr. Klöpper@75+11",
+      "phone:+49 30 000000 77@93+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-05.1",
+    "placeholder" : "[Person A], geb. [Nummer A]\nVersichertennummer: [Nummer B]\nHausarzt Dr. [Person B], Tel. +[Phone A]\nNächster Termin: Donnerstag, 03.12.",
+    "standin" : "Birgit Albers, geb. [Nummer A]\nVersichertennummer: [Nummer B]\nHausarzt Dr. Brandt, Tel. ++49 45 142592 65\nNächster Termin: Donnerstag, 03.12."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-06.0",
+    "placeholder" : "Kids",
+    "standin" : "Kids"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Amelia Ashcastle@0+16",
+      "reference:19/03/2018@24+10",
+      "person:Samuel Ashcastle@36+16",
+      "reference:06/07/2021@60+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-06.1",
+    "placeholder" : "[Person A] – born [Nummer A]; [Person B] – born [Nummer B]. School forms due Wednesday.",
+    "standin" : "Birgit Albers – born [Nummer A]; Jonas Albers – born [Nummer B]. School forms due Wednesday."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-note-07.0",
+    "placeholder" : "Verein",
+    "standin" : "Verein"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Helge Zarnow@12+12",
+      "email:kasse.tsv@example.org@26+21",
+      "iban:AT20 4406 3261 5227 0728@61+24",
+      "reference:WOB-TV 88@98+9"
+    ],
+    "id" : "detection-tiers.jsonl#t-note-07.1",
+    "placeholder" : "Kassenwart: [Person A], [Email A]\nVereinskonto [IBAN A]\nVereinsbus: [Nummer A]\nBeitrag bis 31.01. zahlen",
+    "standin" : "Kassenwart: Birgit Albers, birgit.ebert@lindner.example\nVereinskonto AT13 4154 7498 1716 8020\nVereinsbus: [Nummer A]\nBeitrag bis 31.01. zahlen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-01.0",
+    "placeholder" : "Pflegeportal",
+    "standin" : "Pflegeportal"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Mathilde Dassow@22+15",
+      "reference:12.10.49@128+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-01.1",
+    "placeholder" : "Hinweis zur Patientin [Person A]: Die Patientin braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.",
+    "standin" : "Hinweis zur Patientin Birgit Albers: Die Patientin braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-02.0",
+    "placeholder" : "Erinnerungen",
+    "standin" : "Erinnerungen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Hiltraud Kottmeier@8+18"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-02.1",
+    "placeholder" : "Heute\n☐ [Person A] wegen der Hecke anrufen\n☐ Müll rausstellen (Mittwoch)",
+    "standin" : "Heute\n☐ Birgit Albers wegen der Hecke anrufen\n☐ Müll rausstellen (Mittwoch)"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-03.0",
+    "placeholder" : "Banking",
+    "standin" : "Banking"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Casper Malinowski@15+17",
+      "iban:DE57 4533 3157 8932 8804 07@38+27"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-03.1",
+    "placeholder" : "Überweisung an [Person A]\nIBAN [IBAN A]\nBetrag 250,00 €\nAusführung am 20.11.2026",
+    "standin" : "Überweisung an Birgit Albers\nIBAN DE71 7836 1405 6292 4832 27\nBetrag 250,00 €\nAusführung am 20.11.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-04.0",
+    "placeholder" : "Online-Termin Bürgeramt",
+    "standin" : "Online-Termin Bürgeramt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Jördis Bertelsen@19+16",
+      "reference:03.05.1943@50+10",
+      "email:joerdis.b@example.com@69+21"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-04.1",
+    "placeholder" : "Ihre Angaben\nName: [Person A]\nGeburtsdatum: [Nummer A]\nE-Mail: [Email A]\nTermin: Montag, 30.11.2026, 10:20 Uhr",
+    "standin" : "Ihre Angaben\nName: Birgit Albers\nGeburtsdatum: [Nummer A]\nE-Mail: birgit.ebert@lindner.example\nTermin: Montag, 30.11.2026, 10:20 Uhr"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-05.0",
+    "placeholder" : "Pharmacy app",
+    "standin" : "Pharmacy app"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gerald Pendelton-Lloyd@18+22",
+      "reference:1941-07-19@56+10",
+      "phone:+44 20 7946 0158@115+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-05.1",
+    "placeholder" : "Prescription for: [Person A]\nDate of birth: [Nummer A]\nCollect by: Saturday 21 November\nPhone on file: +[Phone A]",
+    "standin" : "Prescription for: Birgit Albers\nDate of birth: [Nummer A]\nCollect by: Saturday 21 November\nPhone on file: ++44 65 8070 9232"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-06.0",
+    "placeholder" : "Krankenkassen-App",
+    "standin" : "Krankenkassen-App"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sibylle Böhmer-Riemann@13+22",
+      "reference:F207731948@42+10",
+      "reference:16.02.1962@58+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-06.1",
+    "placeholder" : "Versicherte: [Person A]\nKVNR: [Nummer A]\ngeb. [Nummer B]\nBonusheft: 3 von 5 Stempeln",
+    "standin" : "Versicherte: Birgit Albers\nKVNR: [Nummer A]\ngeb. [Nummer B]\nBonusheft: 3 von 5 Stempeln"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-07.0",
+    "placeholder" : "Parkausweis",
+    "standin" : "Parkausweis"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:K-LM 7302@41+9",
+      "person:Vilhelm Ahlmuth@59+15",
+      "street:Holunderweg 11@76+14",
+      "postalCity:50999 Köln@92+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-07.1",
+    "placeholder" : "Bewohnerparkausweis Zone 14\nKennzeichen: [Nummer A]\nHalter: [Person A], [Street A], [Postcode A] [Place A]\ngültig bis 31.03.2027",
+    "standin" : "Bewohnerparkausweis Zone 14\nKennzeichen: [Nummer A]\nHalter: Birgit Albers, Lindauer Weg 18, 41433 Friedrichshain\ngültig bis 31.03.2027"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Kalender@0+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-08.0",
+    "placeholder" : "[Place A]",
+    "standin" : "Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Montag@6+11"
+    ],
+    "id" : "detection-tiers.jsonl#t-shot-08.1",
+    "placeholder" : "10:00 Frau [Person A] – Beratung\n14:00 Zahnarzt",
+    "standin" : "10:00 Frau Albers – Beratung\n14:00 Zahnarzt"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herta Willstätter@11+17"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-01.0",
+    "placeholder" : "Geburtstag [Person A]",
+    "standin" : "Geburtstag Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-01.1",
+    "placeholder" : "11.04.2027",
+    "standin" : "11.04.2027"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:11.04.1936@5+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-01.2",
+    "placeholder" : "geb. [Nummer A], wird 91",
+    "standin" : "geb. [Nummer A], wird 91"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. Wesseling@9+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-02.0",
+    "placeholder" : "Hausarzt Dr. [Person A]",
+    "standin" : "Hausarzt Dr. Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-02.1",
+    "placeholder" : "24.11.2026 09:30",
+    "standin" : "24.11.2026 09:30"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Tulpenweg 6@0+11",
+      "postalCity:26122 Oldenburg@13+15"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-02.2",
+    "placeholder" : "[Street A], [Postcode A] [Place A]",
+    "standin" : "Lindauer Weg 85, 61213 Friedrichshain"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Verspätung@4+10",
+      "phone:0151 0000 6175@24+14"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-02.3",
+    "placeholder" : "Bei [Person A] anrufen: [Phone A]",
+    "standin" : "Bei Birgit anrufen: 0148 3883 9381"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-03.0",
+    "placeholder" : "Fahrdienst anmelden",
+    "standin" : "Fahrdienst anmelden"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-03.1",
+    "placeholder" : "Freitag, 27.11.2026",
+    "standin" : "Freitag, 27.11.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Margit Düsterhoff@14+17",
+      "reference:17.06.59@107+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-03.2",
+    "placeholder" : "Die Patientin [Person A] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.",
+    "standin" : "Die Patientin Birgit Albers braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Ludger Holmqvist@21+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-04.0",
+    "placeholder" : "Termin Bürgeramt für [Person A]",
+    "standin" : "Termin Bürgeramt für Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-04.1",
+    "placeholder" : "02.12.2026 14:00",
+    "standin" : "02.12.2026 14:00"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:22.12.2020@50+10",
+      "reference:G330918452@85+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-04.2",
+    "placeholder" : "Kinderreisepass; mitbringen: Geburtsurkunde (geb. [Nummer A]), Versichertenkarte Nr. [Nummer B]",
+    "standin" : "Kinderreisepass; mitbringen: Geburtsurkunde (geb. [Nummer A]), Versichertenkarte Nr. [Nummer B]"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Clifford Langdon@17+16"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-05.0",
+    "placeholder" : "Dad's birthday – [Person A]",
+    "standin" : "Dad's birthday – Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-05.1",
+    "placeholder" : "6 March 2027",
+    "standin" : "6 March 2027"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:6 March 1944@5+12",
+      "phone:020 7946 0732@45+13"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-05.2",
+    "placeholder" : "born [Nummer A]; table booked at 7pm, call [Phone A]",
+    "standin" : "born [Nummer A]; table booked at 7pm, call 020 0575 5766"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "place:Übergabe@0+8"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-06.0",
+    "placeholder" : "[Place A] Wohnung",
+    "standin" : "Friedrichshain Wohnung"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-06.1",
+    "placeholder" : "Samstag, 05.12.2026",
+    "standin" : "Samstag, 05.12.2026"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "street:Brombeerstraße 2a@0+17"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-06.2",
+    "placeholder" : "[Street A]",
+    "standin" : "Lindauer Straße 113"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Vermieterin Frau Gawlik@0+23",
+      "email:gawlik.vermietung@example.net@25+29",
+      "reference:HB-UW 990@68+9"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-06.3",
+    "placeholder" : "[Person A], [Email A]; Umzugswagen [Nummer A] vor dem Haus",
+    "standin" : "Birgit Albers, birgit.ebert@lindner.example; Umzugswagen [Nummer A] vor dem Haus"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Burkhard Wüpperling@20+19"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-07.0",
+    "placeholder" : "100. Geburtstag Opa [Person A]",
+    "standin" : "100. Geburtstag Opa Birgit Albers"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "detection-tiers.jsonl#t-date-07.1",
+    "placeholder" : "14.05.2027",
+    "standin" : "14.05.2027"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "reference:14.05.1927@12+10"
+    ],
+    "id" : "detection-tiers.jsonl#t-date-07.2",
+    "placeholder" : "Opa geboren [Nummer A] – Saal reservieren bis 31.01.",
+    "standin" : "Opa geboren [Nummer A] – Saal reservieren bis 31.01."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Reha@0+4",
+      "person:Gudula Volkmar@12+14",
+      "reference:17.06.59@102+8"
+    ],
+    "id" : "bench-names.jsonl#b01.0",
+    "placeholder" : "[Person B] Mama – [Person A] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.",
+    "standin" : "Jonas Mama – Birgit Albers braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gudula Volkmar@0+14",
+      "reference:17.06.59@90+8"
+    ],
+    "id" : "bench-names.jsonl#b02.0",
+    "placeholder" : "[Person A] braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden.",
+    "standin" : "Birgit Albers braucht einen Fahrdienst, und der Fahrdienst benötigt ihr Geburtsdatum vom [Nummer A] und muss entsprechend bei der Krankenkasse gemeldet werden."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sonja Sonntag@0+13",
+      "street:Hechtstraße@27+11"
+    ],
+    "id" : "bench-names.jsonl#b03.0",
+    "placeholder" : "[Person A] wohnt in der [Street A]",
+    "standin" : "Birgit Albers wohnt in der Lindauer Straße"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sonja Montag@0+12"
+    ],
+    "id" : "bench-names.jsonl#b04.0",
+    "placeholder" : "[Person A] ist meine Schwester",
+    "standin" : "Birgit Albers ist meine Schwester"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Frau Sonntag@0+12"
+    ],
+    "id" : "bench-names.jsonl#b05.0",
+    "placeholder" : "Frau [Person A] Bescheid geben",
+    "standin" : "Frau Albers Bescheid geben"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b06.0",
+    "placeholder" : "Treffen am Sonntag",
+    "standin" : "Treffen am Sonntag"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b07.0",
+    "placeholder" : "Die Unterlagen liegen bei. Bei Fragen stehe ich gern zur Verfügung.\n\nMit freundlichen Grüßen",
+    "standin" : "Die Unterlagen liegen bei. Bei Fragen stehe ich gern zur Verfügung.\n\nMit freundlichen Grüßen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Herrn Keppler@58+13"
+    ],
+    "id" : "bench-names.jsonl#b08.0",
+    "placeholder" : "Ihr Antrag ist eingegangen. Bei Fragen wenden Sie sich an Herrn [Person A].",
+    "standin" : "Ihr Antrag ist eingegangen. Bei Fragen wenden Sie sich an Herrn Albers."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Martina Holmqvist-Rau@46+21"
+    ],
+    "id" : "bench-names.jsonl#b09.0",
+    "placeholder" : "Die Kasse zahlt den Fahrdienst. Rückfrage bei [Person A].",
+    "standin" : "Die Kasse zahlt den Fahrdienst. Rückfrage bei Birgit Albers."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b10.0",
+    "placeholder" : "What does the note say? Die Kasse zahlt den Fahrdienst.",
+    "standin" : "What does the note say? Die Kasse zahlt den Fahrdienst."
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b11.0",
+    "placeholder" : "Scan_20261113_Bescheid.pdf",
+    "standin" : "Scan_20261113_Bescheid.pdf"
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:service@kk-nord.example@14+23"
+    ],
+    "id" : "bench-names.jsonl#b12.0",
+    "placeholder" : "Krankenkasse <[Email A]>",
+    "standin" : "Krankenkasse <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b12.1",
+    "placeholder" : "Ihre Bescheinigung liegt im Postfach.",
+    "standin" : "Ihre Bescheinigung liegt im Postfach."
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "email:dispo@fahrdienst-ost.example@12+28"
+    ],
+    "id" : "bench-names.jsonl#b13.0",
+    "placeholder" : "Fahrdienst <[Email A]>",
+    "standin" : "Fahrdienst <birgit.ebert@lindner.example>"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b13.1",
+    "placeholder" : "Die Abholung am Dienstag um 8 Uhr ist bestätigt.",
+    "standin" : "Die Abholung am Dienstag um 8 Uhr ist bestätigt."
+  },
+  {
+    "field" : "from",
+    "found" : [
+      "organization:Hausverwaltung Ferber GmbH@0+26",
+      "email:info@ferber-hv.example@28+22"
+    ],
+    "id" : "bench-names.jsonl#b14.0",
+    "placeholder" : "[Company A] <[Email A]>",
+    "standin" : "Hausverwaltung Lindner GmbH <birgit.ebert@hoffmeister.example>"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Jan Spengler@0+12"
+    ],
+    "id" : "bench-names.jsonl#b14.1",
+    "placeholder" : "[Person A] übernimmt ab Januar die Betreuung Ihres Hauses.",
+    "standin" : "Birgit Albers übernimmt ab Januar die Betreuung Ihres Hauses."
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gesche Mühlenhoff@0+17"
+    ],
+    "id" : "bench-names.jsonl#b15.0",
+    "placeholder" : "[Person A] wegen der Hecke anrufen",
+    "standin" : "Birgit Albers wegen der Hecke anrufen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gesche Mühlenhoff@0+17"
+    ],
+    "id" : "bench-names.jsonl#b16.0",
+    "placeholder" : "[Person A] wegen der Hecke anrufen",
+    "standin" : "Birgit Albers wegen der Hecke anrufen"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gesche Mühlenhoff@11+17"
+    ],
+    "id" : "bench-names.jsonl#b17.0",
+    "placeholder" : "Erinnerung\n[Person A] wegen der Hecke anrufen\nheute, 17:00",
+    "standin" : "Erinnerung\nBirgit Albers wegen der Hecke anrufen\nheute, 17:00"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Dr. med. Gunnar Wärtele@7+23"
+    ],
+    "id" : "bench-names.jsonl#b18.0",
+    "placeholder" : "Praxis Dr. med. [Person A]\nAllgemeinmedizin\nSprechzeiten Mo–Fr 8–12 Uhr\nBitte klingeln",
+    "standin" : "Praxis Dr. med. Birgit Albers\nAllgemeinmedizin\nSprechzeiten Mo–Fr 8–12 Uhr\nBitte klingeln"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b19.0",
+    "placeholder" : "Zahlt die Krankenkasse den Rollator?",
+    "standin" : "Zahlt die Krankenkasse den Rollator?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+
+    ],
+    "id" : "bench-names.jsonl#b20.0",
+    "placeholder" : "Zahlt die Krankenkasse hkk den Rollator, oder muss ich zuzahlen?",
+    "standin" : "Zahlt die Krankenkasse hkk den Rollator, oder muss ich zuzahlen?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Gesche Mühlenhoff@26+17"
+    ],
+    "id" : "bench-names.jsonl#b21.0",
+    "placeholder" : "Can you remind me to call [Person A] about the hedge on Sunday?",
+    "standin" : "Can you remind me to call Birgit Albers about the hedge on Sunday?"
+  },
+  {
+    "field" : "body",
+    "found" : [
+      "person:Sonja Sonntag@0+13"
+    ],
+    "id" : "bench-names.jsonl#b22.0",
+    "placeholder" : "[Person A]: I'll bring the forms on Monday. If you have questions, just ask.",
+    "standin" : "Birgit Albers: I'll bring the forms on Monday. If you have questions, just ask."
+  }
+]

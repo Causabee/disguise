@@ -15,12 +15,12 @@ struct SecondOpinion: Sendable {
             || (Ordinary.isCommon(word) && !Ordinary.isCalendar(word))
     }
 
-    /// A first name, by the list: `Anja`, `Agathe`; `Klaus-Dieter` by its first part. Nil-safe: a
+    /// A first name, by the list: `Sonja`, `Gesche`; `Klaus-Dieter` by its first part. Nil-safe: a
     /// list that cannot be read says no, and no rule needs it alone.
     func isFirstName(_ word: String) -> Bool {
         guard word.count >= 2, word.first?.isUppercase == true, !Self.neverRaised(word), !Ordinary.isCalendar(word) else { return false }
         if lists.isFirstName(word) == true { return true }
-        // `Klaus-Dieter`, `Anna-Lena`: each part a first name.
+        // `Klaus-Dieter`, `Hella-Lara`: each part a first name.
         let parts = word.split(separator: "-").map(String.init)
         if parts.count == 2, parts.allSatisfy({ $0.count >= 2 && $0.first?.isUppercase == true }) {
             return parts.allSatisfy { lists.isFirstName($0) == true }
@@ -55,7 +55,7 @@ struct SecondOpinion: Sendable {
 
     /// P2 (the owner's 3c, 18 November 2026): a surname that is a day or a month — a word of
     /// `Pseudonymizer.calendarWords` (`Sonntag`, `Montag`, `Mai`). Every other part that is an
-    /// ordinary word (`Milde`, `Süß`, `Koch`) is hidden wherever it stands, as today.
+    /// ordinary word (`Selig`, `Schüßler`, `Fleischer`) is hidden wherever it stands, as today.
     static func isOrdinarySurname(_ word: String) -> Bool {
         Ordinary.isCalendar(word)
     }

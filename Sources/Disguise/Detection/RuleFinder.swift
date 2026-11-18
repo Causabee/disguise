@@ -186,7 +186,7 @@ public struct RuleFinder: NameFinding {
             let key = word.text.lowercased()
             // `med.`, `dent.`, `phil.` stand between a title and a name, never in front alone: `med. Beträge` is no person.
             let between: Set<String> = ["med", "dent", "vet", "rer", "nat", "phil", "jur", "habil", "ing", "mag"]
-            // `Inh.`, `Inhaber`: a title as the old rules read it, kept in the name: `Inh. Petra Blume`.
+            // `Inh.`, `Inhaber`: a title as the old rules read it, kept in the name: `Inh. Martina Baume`.
             let owner = ["inh", "inhaber", "inhaberin"].contains(key)
             let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner) && !between.contains(key)
             let isLabel = Self.labels.contains(key) || (Self.greetingLabels.contains(key) && word.capital)
@@ -200,7 +200,7 @@ public struct RuleFinder: NameFinding {
             guard j < tokens.count else { continue }
             let first = tokens[j]
             let gap = first.gap.trimmingCharacters(in: .whitespaces)
-            // A label may have its colon or comma: `Versicherungsnehmer: Detlef Krummbein`, `Hallo Georg,`.
+            // A label may have its colon or comma: `Versicherungsnehmer: Gerwin Schiefbein`, `Hallo Bertram,`.
             let allowed = isLabel && !isTitle ? ["", ":", ",", "."] : ["", "."]
             guard !first.gap.contains(where: \.isNewline) || (isLabel && gap == ":"), allowed.contains(gap) || gap.isEmpty else { continue }
             let firstKey = first.text.lowercased()
@@ -210,11 +210,11 @@ public struct RuleFinder: NameFinding {
                 if !isTitle, Ordinary.neverAlone(first.text) { continue }
                 if !isTitle, Self.greetingLabels.contains(key), !isFirstName(j, in: read), Ordinary.knowsLower(first.text, words: words) == true { continue }
             } else {
-                // `frau kowalski`: lowercase after a title, only where the dictionary does not know it.
+                // `frau wojciechowski`: lowercase after a title, only where the dictionary does not know it.
                 guard isTitle, first.text.count >= 3, !Ordinary.isCommon(first.text), Ordinary.knowsLower(first.text, words: words) == false else { continue }
             }
             var end = j
-            // An initial and the surname after it: `Mrs D. Pennington`.
+            // An initial and the surname after it: `Mrs D. Whittington`.
             let initial = first.text.count == 1 && first.dot && first.capital
             if initial {
                 guard j + 1 < tokens.count, tokens[j + 1].capital, tokens[j + 1].gap == ". " else { continue }
@@ -241,9 +241,9 @@ public struct RuleFinder: NameFinding {
     // MARK: N3 · a pair
 
     /// A first name beside a capitalised word is a person, the second word the surname whatever the
-    /// dictionary says of it (`Anja Sonntag`). At the start of a line or a sentence, where any word
+    /// dictionary says of it (`Sonja Sonntag`). At the start of a line or a sentence, where any word
     /// is capitalised, a first name from the list alone needs a second word no dictionary knows
-    /// (`Agathe Mühlenkamp wegen …`).
+    /// (`Gesche Mühlenhoff wegen …`).
     func pairs(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
         var out: [Gate.Candidate] = []
         let tokens = read.tokens
@@ -256,7 +256,7 @@ public struct RuleFinder: NameFinding {
             if Ordinary.isCommon(second.text), !Ordinary.isCalendar(second.text) { continue }
             // A code, not a surname: `M-RW`, `KFZ`.
             if !second.text.contains(where: \.isLowercase), second.text.count <= 4 { continue }
-            // A first name that is an ordinary word too (`Miete`, `Kai`), or a word of a file's name, needs
+            // A first name that is an ordinary word too (`Miete`, `Kay`), or a word of a file's name, needs
             // a second word that is no ordinary one: on the list of surnames, unknown to the dictionary,
             // or read by the tagger with it.
             let taggedBoth = read.people.contains { $0.contains(first.range.lowerBound) && $0.upperBound >= second.range.upperBound }
@@ -264,7 +264,7 @@ public struct RuleFinder: NameFinding {
             let secondOrdinary = Ordinary.isCalendar(second.text) || Ordinary.knowsLower(second.text, words: words, language: language) == true && !opinion.holdsSurname(second.text)
             if read.fileLine || Ordinary.knowsLower(first.text, words: words, language: language) == true, secondOrdinary, !taggedBoth { continue }
             // At the start of a line, the list alone needs a second word no dictionary knows, or the
-            // tagger's reading of both as one name (`Erwin Stiefelhagen`, read as a place).
+            // tagger's reading of both as one name (`Alfons Rosenhagen`, read as a place).
             if read.opens(i), !read.taggedPerson(i), Ordinary.knows(second.text, words: words) == true,
                !read.tagged.contains(where: { $0.range.contains(first.range.lowerBound) && $0.range.upperBound >= second.range.upperBound }) { continue }
             let range = first.range.lowerBound..<second.range.upperBound
@@ -311,21 +311,21 @@ public struct RuleFinder: NameFinding {
     }
 
     /// N5: the tagger's people, cut by the span rule, with the words before the first name taken
-    /// off that the dictionary knows as written (`Vater Reinhold Ackermann`, `Patientin Gerlinde
-    /// Hasenkamp`) — what someone is, not who.
+    /// off that the dictionary knows as written (`Vater Arnulf Hufnagel`, `Patientin Rosemarie
+    /// Ossenkamp`) — what someone is, not who.
     func taggedPeople(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
         var out: [Gate.Candidate] = []
         for tag in read.tagged where tag.kind == .person {
             let inside = read.tokens.indices.filter { tag.range.overlaps(read.tokens[$0].range) }
             for var piece in Self.pieces(of: inside, { read.tokens[$0].text }) {
-                // What someone is, before or after the name: `Oma Liesel Vortkamp`, `Aunt Rosalind`.
+                // What someone is, before or after the name: `Oma Gretl Furtkamp`, `Aunt Winifred`.
                 while let first = piece.first, piece.count > 1, Ordinary.isKin(read.tokens[first].text) { piece.removeFirst() }
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).
                 if piece.count == 1, !typed, read.afterArticle(piece[0]) { continue }
                 // L1 with N5 (the lead's reading of 6b): a lone word the tagger read as a person and
                 // the first-name list holds is kept, though the dictionary knows it in lowercase
-                // (`Gernot`, `Ida`). Never a small word, a title, a calendar or a kinship word; never
+                // (`Gernot`, `Ada`). Never a small word, a title, a calendar or a kinship word; never
                 // by the surname list.
                 // Greetings and common words at either end are no part of a name: `Liebe Frau Stein`.
                 while let first = piece.first, piece.count > 1, Ordinary.isGreeting(read.tokens[first].text) || Ordinary.isCommon(read.tokens[first].text) && !Ordinary.isCalendar(read.tokens[first].text) { piece.removeFirst() }
@@ -386,7 +386,7 @@ public struct RuleFinder: NameFinding {
     }
 
     /// `Badewannensitz`, `Anhörungsbogen`: two words the dictionary knows, with `s`, `n`, `es` or `en`
-    /// between. Not when the end is a name the list holds (`Brinkmeier` is no `Brink` and `Meier`):
+    /// between. Not when the end is a name the list holds (`Kottmeier` is no `Brink` and `Meier`):
     /// the list raises, it never lowers.
     func isCompound(_ word: String) -> Bool {
         let letters = Array(word)
@@ -409,7 +409,7 @@ public struct RuleFinder: NameFinding {
     static let fileName = try! NSRegularExpression(
         pattern: #"(?<![\p{L}\p{N}])[\p{L}\p{N}][\p{L}\p{N}_\-.]*\.(?i:pdf|jpe?g|png|heic|tiff?|gif|docx?|xlsx?|txt|eml|emlx|pages|numbers|odt|rtf)(?![\p{L}\p{N}])"#)
 
-    /// `Arztbrief_Sabine_Hollerbach_2026` → Arztbrief, Sabine, Hollerbach, 2026; `ScanGretaWegner` too.
+    /// `Arztbrief_Simone_Hollenbach_2026` → Arztbrief, Simone, Hollenbach, 2026; `ScanLottaLemke` too.
     static func pieces(ofStem stem: String) -> [String] {
         var out: [String] = []
         for part in stem.split(whereSeparator: { "_-. ".contains($0) }) {
@@ -424,7 +424,7 @@ public struct RuleFinder: NameFinding {
     }
 
     /// A file's name is cut where its words meet, and its words read as a line by the same rules:
-    /// `Kuendigung_Jasper_Oltmanns.pdf` teaches Jasper Oltmanns, `scan-greta-wegner.jpg` greta wegner,
+    /// `Kuendigung_Casper_Hermanns.pdf` teaches Casper Hermanns, `scan-lotta-lemke.jpg` lotta lemke,
     /// learned as written in the name.
     func fileNames(in text: String, field: Entity.Field) -> [Gate.Candidate] {
         var out: [Gate.Candidate] = []
@@ -472,7 +472,7 @@ public struct RuleFinder: NameFinding {
 
     /// What the owner types in a chat or a note is often all in lowercase (`frag tobias …`, `anruf bei
     /// ulrike`). A lowercase word the list holds as a first name is a person where the word before
-    /// it stands before a person, or where it owns something (`nina's idea`): the list raises a
+    /// it stands before a person, or where it owns something (`sina's idea`): the list raises a
     /// word another rule's anchor doubts (L1), whatever this device's dictionary knows of it. Never
     /// a small word, a title, a calendar or kinship word, or a word of the common list.
     func lowercaseFirstNames(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
@@ -482,7 +482,7 @@ public struct RuleFinder: NameFinding {
             let token = tokens[i]
             guard token.text.count >= 3, token.text == token.text.lowercased(), !token.text.contains("-"), !Ordinary.neverAlone(token.text) else { continue }
             var word = token.text, range = token.range
-            // `nina's`: the name, without its ending.
+            // `sina's`: the name, without its ending.
             let owns = word.hasSuffix("'s") || word.hasSuffix("’s")
             if owns { word = String(word.dropLast(2)); range = range.lowerBound..<read.text.index(range.upperBound, offsetBy: -2) }
             let anchored = owns || (read.joined(i) && Self.beforePerson.contains(tokens[i - 1].text.lowercased()))
@@ -538,7 +538,7 @@ public struct RuleFinder: NameFinding {
         func near(_ i: Int) -> Bool { read.joined(i) || tokens[i].gap.trimmingCharacters(in: .whitespaces) == "&" }
         func add(_ from: Int, _ to: Int, _ evidence: Gate.Evidence) {
             // N6 (the lead, 17 November, at Build): the whole company is hidden, its kind word too —
-            // `[Company A]` for `Sanitätshaus Kroll KG` — as the old rules do. The kind word alone is
+            // `[Company A]` for `Sanitätshaus Krull KG` — as the old rules do. The kind word alone is
             // still no one, and is never learned as a part (`Pseudonymizer.organization`).
             guard (from...to).contains(where: { !Ordinary.isKindWord(tokens[$0].text) }) else { return }
             // `e. V.`, `Ltd.`, `Inc.`: the legal form's own full stop belongs to it.
@@ -556,7 +556,7 @@ public struct RuleFinder: NameFinding {
                 var start = i - (k == "v" ? 1 : 0)
                 var from = start
                 while from > 0, from - 1 >= 0, near(from), isName(from - 1), start - from < 4 { from -= 1 }
-                // What stands before the kind word and the dictionary knows is no part of the name: `Rückruf Sanitätshaus Kroll KG`.
+                // What stands before the kind word and the dictionary knows is no part of the name: `Rückruf Sanitätshaus Krull KG`.
                 if let kind = (from..<start).first(where: { Ordinary.isKindWord(tokens[$0].text) }) {
                     while from < kind, Ordinary.knows(tokens[from].text, words: words) == true { from += 1 }
                 }
@@ -565,7 +565,7 @@ public struct RuleFinder: NameFinding {
                 continue
             }
             guard Ordinary.isKindWord(tokens[i].text), tokens[i].capital || Self.kindsAfter.contains(k) else { continue }
-            // The kind word, then its name: `Werkstatt Dombrowski`, `Kanzlei Eisenreich & Partner`, `BKK Hafenwerk`.
+            // The kind word, then its name: `Werkstatt Sadowski`, `Kanzlei Eisenhut & Partner`, `BKK Hafenwerk`.
             var end = i
             while end + 1 < tokens.count, near(end + 1), isName(end + 1), end - i < 3, !Self.legalForms.contains(key(end + 1)) { end += 1 }
             if end > i { add(i, end, .kindWord) }
@@ -646,7 +646,7 @@ public struct RuleFinder: NameFinding {
                 return true
             }
             // German read once more by the English tagger, for people only, and only one word right
-            // after the words that stand before a person: `bei Kerstin`, `dann zu Liesel`.
+            // after the words that stand before a person: `bei Manuela`, `dann zu Gretl`.
             guard language == .german else { continue }
             let english = NLTagger(tagSchemes: [.nameType])
             english.string = part

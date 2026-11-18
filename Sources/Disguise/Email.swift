@@ -86,7 +86,7 @@ public struct Email: Equatable, Sendable {
     public func allHeaders(_ name: String) -> [String] { headers[name.lowercased()] ?? [] }
     public func hasHeader(_ name: String) -> Bool { headers[name.lowercased()] != nil }
 
-    /// Just the address out of `Hausverwaltung Berger <post@berger-hv.example>`.
+    /// Just the address out of `Hausverwaltung Seeger <post@seeger-hv.example>`.
     public var fromAddress: String { Email.address(in: from) }
     public var fromDomain: String { String(fromAddress.split(separator: "@").last ?? "") }
 
@@ -97,7 +97,7 @@ public struct Email: Equatable, Sendable {
         return field.trimmed.lowercased()
     }
 
-    /// The display name, when the sender gave one. `Hausverwaltung Berger` — a party's name
+    /// The display name, when the sender gave one. `Hausverwaltung Seeger` — a party's name
     /// arrives in the envelope as often as in the prose.
     public static func displayName(in field: String) -> String? {
         guard let open = field.lastIndex(of: "<") else { return nil }

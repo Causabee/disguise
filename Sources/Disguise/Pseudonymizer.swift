@@ -18,10 +18,10 @@ import Foundation
 /// misses it in the next; a disguise that only covers what was found in *this* mail leaks the
 /// rest. So a folder is learned first, and every mail is then disguised with the whole mapping.
 ///
-/// **A name is learned in parts.** `Sebastian Süß` also teaches `Süß` and `Sebastian`;
+/// **A name is learned in parts.** `Patrick Schüßler` also teaches `Schüßler` and `Patrick`;
 /// `Honigtauer Str. 14` teaches `Honigtauer`; `10437 Berlin` teaches `Berlin`. That is how
 /// a bare surname in a greeting, or the street written without its dot, is still covered — and
-/// in `standin` mode it keeps relationships readable: `Frau Berger` and `Hausverwaltung Berger
+/// in `standin` mode it keeps relationships readable: `Frau Seeger` and `Hausverwaltung Seeger
 /// GmbH` become the same new surname, because they were the same surname.
 public struct Pseudonymizer: Sendable {
     public enum Mode: String, Codable, Sendable, CaseIterable {
@@ -142,7 +142,7 @@ public struct Pseudonymizer: Sendable {
         }
 
         /// 2: in placeholder mode, people who share only a first or a last name no longer share a tag.
-        /// 3: a role in front of a name — `Hausmeister Brenner` — is a title, not a first name.
+        /// 3: a role in front of a name — `Hausmeister Bittner` — is a title, not a first name.
         /// 4: an ordinary word the tagger took for a name, or for the start of one, is no entry.
         public static let current = 6
 
@@ -168,7 +168,7 @@ public struct Pseudonymizer: Sendable {
                 changed += before.filter { !after.contains($0.original + "\u{0}" + $0.standIn) }.count
             }
             if version < 4 {
-                // What the owner typed to the assistant taught words that are no names: "Schreibe Georg"
+                // What the owner typed to the assistant taught words that are no names: "Schreibe Bertram"
                 // as one person, "Alle" as another. They are forgotten; the name beside them has its own entry.
                 let before = placeholder.count
                 placeholder = Pseudonymizer.withoutMisreadWords(placeholder)
@@ -207,8 +207,8 @@ public struct Pseudonymizer: Sendable {
     public let mode: Mode
     public private(set) var entries: [Entry] = []
     private var index: [String: Int] = [:]
-    /// Placeholder mode: each full name's tag, by first and last name, so `Albers, Sebastian`
-    /// finds `Sebastian Albers`.
+    /// Placeholder mode: each full name's tag, by first and last name, so `Ahlers, Patrick`
+    /// finds `Patrick Ahlers`.
     private var fullNames: [String: String] = [:]
     /// The tags `fullNames` hands out, and every tag in use, by what comes before its letters
     /// (`[Person `): kept as entries come in, so a new tag is not counted out of all of them again —
@@ -332,7 +332,7 @@ public struct Pseudonymizer: Sendable {
         admitted = true
         defer { admitted = false }
         for (_, entity) in ordered {
-            // A word the gate admitted as a name of its own (`Eisenreich` of `Kanzlei Eisenreich &
+            // A word the gate admitted as a name of its own (`Eisenhut` of `Kanzlei Eisenhut &
             // Partner`) is no longer only a part of another (P2 then leaves it alone).
             if [.person, .organization].contains(entity.kind), Self.words(entity.text).count == 1,
                let at = index[Self.key(entity.text)], let whole = entries[at].partOf, entries[at].kind == .person,
@@ -405,7 +405,7 @@ public struct Pseudonymizer: Sendable {
     /// A part of a name is learned unless it is on the word lists — `Liebe Frau` never teaches
     /// `Frau`, `info Hummelhaus` never teaches `info`. The folder-frequency test is not asked
     /// here: a surname the tagger rarely finds on its own is still a surname when it arrives
-    /// attached to a first name, and leaving it out is exactly how a bare `Brenner` leaks.
+    /// attached to a first name, and leaving it out is exactly how a bare `Bittner` leaks.
     mutating func recordPart(_ kind: Entity.Kind, _ part: String, _ standIn: String, of original: String) {
         guard part.count >= 3, part != original else { return }
         // F021 P1: what the gate admitted keeps every part of a person but a title or a small word,
@@ -422,8 +422,8 @@ public struct Pseudonymizer: Sendable {
             record(kind, part, standIn, partOf: original)
             return
         }
-        // F019 AC-5: a month or a day in a full name a rule or a header found — `Jan Kramer`, `Mai
-        // Thi Nguyen` — is that person's name. It is disguised where it is no date (`Replacer`).
+        // F019 AC-5: a month or a day in a full name a rule or a header found — `Jan Spengler`, `Mai
+        // Thi Pham` — is that person's name. It is disguised where it is no date (`Replacer`).
         let name = Self.nameParts(original)
         let calendarName = trusted && kind == .person && name.given != nil && name.family != nil
             && Self.calendarWords.contains(Self.key(part)) && !Self.commonWords.contains(Self.key(part))
@@ -434,8 +434,8 @@ public struct Pseudonymizer: Sendable {
         record(kind, part, standIn, partOf: original)
     }
 
-    /// A full name before a name in one part, so that `Sebastian Albers` and `Sebastian Süß` are
-    /// both known as people before a bare `Sebastian` or `Herr Albers` has to be placed.
+    /// A full name before a name in one part, so that `Patrick Ahlers` and `Patrick Schüßler` are
+    /// both known as people before a bare `Patrick` or `Herr Ahlers` has to be placed.
     static func fullness(_ kind: Entity.Kind, _ text: String) -> Int {
         guard kind == .person else { return 0 }
         let name = nameParts(text)
@@ -459,7 +459,7 @@ public struct Pseudonymizer: Sendable {
         guard original.count >= 2 else { return nil }
         if let known = self.standIn(for: original) { return known }
 
-        // `Süß, Sebastian (Radwerk Berlin GmbH)` is a person and a company, and each half is
+        // `Schüßler, Patrick (Radwerk Berlin GmbH)` is a person and a company, and each half is
         // learned as what it is.
         if let open = original.firstIndex(of: "("), let close = original.lastIndex(of: ")"), open < close {
             let outer = (String(original[..<open]) + String(original[original.index(after: close)...])).trimmed
@@ -470,7 +470,7 @@ public struct Pseudonymizer: Sendable {
         }
         if original.contains("@"), kind != .email { return learn(.email, original, partOf: partOf) }
 
-        // `Jan Kramer via TestFlight` is a person and the service that sent on their behalf.
+        // `Jan Spengler via TestFlight` is a person and the service that sent on their behalf.
         if kind == .person, let via = original.range(of: " via ", options: .caseInsensitive) {
             let person = String(original[..<via.lowerBound]).trimmed
             let service = String(original[via.upperBound...]).trimmed
@@ -511,7 +511,7 @@ public struct Pseudonymizer: Sendable {
         if mode == .placeholder {
             // One tag for the person however they are written; a `Frau` stays readable. A full
             // name is one person, and only the same first and last name are the same person:
-            // `Sebastian Süß` is not `Sebastian Albers`, and `Greta Kramer` is not `Jan Kramer`.
+            // `Patrick Schüßler` is not `Patrick Ahlers`, and `Lotta Spengler` is not `Jan Spengler`.
             // Sharing a tag through one shared word made the way back give the wrong name.
             let tag: String
             if let given = name.given, let family = name.family {
@@ -545,8 +545,8 @@ public struct Pseudonymizer: Sendable {
     }
 
     /// A part of a full name, in placeholder mode. The first person to have it lends it their
-    /// tag, so a bare `Brenner` is known to be Herr Brenner. When a second person has the same
-    /// word — two Sebastians, a mother and a son both called Kramer — the word alone can no
+    /// tag, so a bare `Bittner` is known to be Herr Bittner. When a second person has the same
+    /// word — two Patricks, a mother and a son both called Spengler — the word alone can no
     /// longer say which of them is meant, and it gets a tag of its own. It is still disguised;
     /// it just no longer comes back as the wrong person.
     mutating func recordSharedPart(_ part: String, _ tag: String, of original: String) {
@@ -601,7 +601,7 @@ public struct Pseudonymizer: Sendable {
         var commaFirst = false
     }
 
-    /// `Annegret Berger`, `Garcia, Mariana`, `Frau Berger`, `Martin`. A single word is read as a
+    /// `Sibylle Seeger`, `Moreno, Valentina`, `Frau Seeger`, `Martin`. A single word is read as a
     /// first name, because that is how a bare name turns up in mail — `Hallo Martin` — and a
     /// surname on its own almost always has `Frau` or `Herr` in front of it.
     static func nameParts(_ text: String) -> NameParts {
@@ -613,9 +613,9 @@ public struct Pseudonymizer: Sendable {
             parts.commaFirst = true
             return parts
         }
-        // `'Jan Kramer'`, as some mail clients write the display name, is Jan Kramer.
+        // `'Jan Spengler'`, as some mail clients write the display name, is Jan Spengler.
         var tokens = words(text).map { $0.trimmingCharacters(in: CharacterSet(charactersIn: "'\"‘’‚“”„")) }.filter { !$0.isEmpty }
-        // `Jan Kramer via TestFlight` is Jan Kramer.
+        // `Jan Spengler via TestFlight` is Jan Spengler.
         if let via = tokens.firstIndex(where: { $0.lowercased() == "via" }), via > 0 { tokens = Array(tokens[..<via]) }
         var titles: [String] = []
         while let first = tokens.first {
@@ -644,7 +644,7 @@ public struct Pseudonymizer: Sendable {
         guard isGeneric.contains(false) else { return nil }  // `Hausverwaltung` alone names nobody
 
         if mode == .placeholder {
-            // The name without its legal form is learned too — `Thermotec Nowak` turns up in the
+            // The name without its legal form is learned too — `Thermotec Kubiak` turns up in the
             // prose without the `GmbH`, and it names the company just as well.
             let tag = placeholder(.organization)
             record(.organization, original, tag, partOf: partOf)
@@ -682,7 +682,7 @@ public struct Pseudonymizer: Sendable {
         let isFreeMail = Self.freeMail.contains(Self.key(domain))
 
         if mode == .placeholder {
-            // The domain is learned too: `www.berger-hv.example` in a signature names the company
+            // The domain is learned too: `www.seeger-hv.example` in a signature names the company
             // as surely as the address does.
             if !isFreeMail, self.standIn(for: domain) == nil { record(.email, domain, placeholder("Domain"), partOf: original) }
             return record(.email, original, placeholder(.email), partOf: partOf)
@@ -942,7 +942,7 @@ public struct Pseudonymizer: Sendable {
     }
 
     /// A role learned as a name is taken out, and a name with a role in front keeps the role in
-    /// the clear: `Hausmeister` alone is no longer a person, and `Hausmeister Brenner` goes out as
+    /// the clear: `Hausmeister` alone is no longer a person, and `Hausmeister Bittner` goes out as
     /// `Hausmeister [Person AS]`. Tags keep their letters.
     static func rolesAsTitles(_ entries: [Entry]) -> [Entry] {
         entries.compactMap { entry in
@@ -963,7 +963,7 @@ public struct Pseudonymizer: Sendable {
 
     /// Everything the mapping knows, replaced in one pass, longest first, whole words only — and
     /// in every way it is spelled. German is typed without its umlauts as often as with them:
-    /// the mapping knew `Süß` and `Mühlberger`, and `Herrn Süss` and `Herr Muehlberger` went out in
+    /// the mapping knew `Schüßler` and `Hüttenberger`, and `Herrn Schüssler` and `Herr Huettenberger` went out in
     /// the clear.
     public var disguiser: Replacer {
         // Made once for a list, not again for every send and its check: the last one is kept.
@@ -1010,10 +1010,10 @@ public struct Pseudonymizer: Sendable {
         replacer.numbers = NumberRuns(entries)
         replacer.skipsStandIns = true
         // F021 P2, behind the switch: a part of a person that is an ordinary word (`Sonntag` of
-        // `Anja Sonntag`) is hidden where its first name or a title stands beside it, and not alone.
+        // `Sonja Sonntag`) is hidden where its first name or a title stands beside it, and not alone.
         if Detection.active == .new {
             for entry in entries where entry.kind == .person {
-                // The surname only: a first name alone is still that person (`Hallo Greta,`).
+                // The surname only: a first name alone is still that person (`Hallo Lotta,`).
                 guard let whole = entry.partOf, Self.words(entry.original).count == 1, SecondOpinion.isOrdinarySurname(entry.original),
                       let family = Self.nameParts(whole).family, Self.key(family) == Self.key(entry.original) else { continue }
                 let given = Self.nameParts(whole).given.map(Self.key)
@@ -1041,7 +1041,7 @@ public struct Pseudonymizer: Sendable {
             .replacingOccurrences(of: "ä", with: "ae").replacingOccurrences(of: "ö", with: "oe").replacingOccurrences(of: "ü", with: "ue")
             .replacingOccurrences(of: "Ä", with: "Ae").replacingOccurrences(of: "Ö", with: "Oe").replacingOccurrences(of: "Ü", with: "Ue")
         out.insert(spelledOut)
-        // F019: the other accents typed without — `Çelik` as `Celik`, `José` as `Jose`. Never `ä` as `a`:
+        // F019: the other accents typed without — `Çetin` as `Cetin`, `José` as `Jose`. Never `ä` as `a`:
         // `Fälle` is not `Falle`, `schön` not `schon`.
         if let plain = spelledOut.applyingTransform(.stripDiacritics, reverse: false) { out.insert(plain) }
         out.insert(original.replacingOccurrences(of: "ß", with: "ss"))
@@ -1049,7 +1049,7 @@ public struct Pseudonymizer: Sendable {
             .replacingOccurrences(of: "ue", with: "ü").replacingOccurrences(of: "Ae", with: "Ä")
             .replacingOccurrences(of: "Oe", with: "Ö").replacingOccurrences(of: "Ue", with: "Ü")
         out.insert(withUmlauts)
-        // `'Kurz, Anna'` was learned with its quote marks, and a bare Kurz never matched it.
+        // `'Kurz, Hella'` was learned with its quote marks, and a bare Kurz never matched it.
         let quotes = CharacterSet(charactersIn: "'\"‘’‚“”„")
         for form in Array(out) + [original] { out.insert(form.trimmingCharacters(in: quotes)) }
         out.remove(original)
@@ -1057,10 +1057,10 @@ public struct Pseudonymizer: Sendable {
     }
 
     /// The way back, for step 6. Where several originals share a tag — `[Person A]` for
-    /// `Annegret Berger`, `Berger`, `Frau Berger` and `Annegret Berger via Doodle` — the way back
+    /// `Sibylle Seeger`, `Seeger`, `Frau Seeger` and `Sibylle Seeger via Doodle` — the way back
     /// cannot know which was written, and brings the plainest full name: two words or as few as
     /// possible above one, no title in front, and the one learned first when that still ties.
-    /// Longest-wins brought back `Jan Kramer via TestFlight` as a neighbour.
+    /// Longest-wins brought back `Jan Spengler via TestFlight` as a neighbour.
     public var restorer: Replacer {
         // A name without a title before one with, and a name in full before a part of one — but a
         // word with a tag of its own, `Maria`, comes back as that word, not as `Dr. Maria`.
@@ -1079,7 +1079,7 @@ public struct Pseudonymizer: Sendable {
             if let current = best[key], plain[current] <= plain[index] { continue }
             best[key] = index
         }
-        // "Lindner, Petra", as an insurer's mail writes it, comes back as "Petra Lindner": beside
+        // "Lechner, Martina", as an insurer's mail writes it, comes back as "Martina Lechner": beside
         // her surname's own tag it is then one name, written once.
         func natural(_ entry: Entry) -> String {
             guard entry.kind == .person, entry.original.contains(",") else { return entry.original }
@@ -1133,10 +1133,10 @@ public struct Pseudonymizer: Sendable {
             .replacingOccurrences(of: " ", with: "-") ?? text
     }
 
-    /// What a signature writes right after a name — "Frau Berger Tel.: 0331 …" — and is no part of it.
+    /// What a signature writes right after a name — "Frau Seeger Tel.: 0331 …" — and is no part of it.
     static let contactWords: Set<String> = ["tel", "tel.", "telefon", "fax", "mobil", "handy", "mail", "email", "e-mail", "durchwahl", "zimmer"]
 
-    /// A name that ends on one of those: the detector once took "Frau Berger Tel" for a name.
+    /// A name that ends on one of those: the detector once took "Frau Seeger Tel" for a name.
     static func endsOnContactWord(_ text: String) -> Bool {
         words(text).last.map { contactWords.contains($0.lowercased()) } ?? false
     }
@@ -1145,7 +1145,7 @@ public struct Pseudonymizer: Sendable {
         .union(roles).union(academic)
 
     /// A title as a word, written spaced or glued: `Dr.`, `med.`, and `Dr.med.`, `Dr.med.dent.`, `Prof.Dr.`, `Dipl.-Ing.` —
-    /// German writes them both ways (found at Proof, 17 November: „Dr.med. Hollerbach“ went out in the clear).
+    /// German writes them both ways (found at Proof, 17 November: „Dr.med. Hollenbach“ went out in the clear).
     public static func isTitle(_ word: String) -> Bool {
         let word = key(word)
         if honorifics.contains(word) { return true }
@@ -1161,7 +1161,7 @@ public struct Pseudonymizer: Sendable {
         return reachable[pieces.count]
     }
 
-    /// A title glued to the name after it: `Dr.med.Hollerbach` is `Dr.med.` and `Hollerbach`.
+    /// A title glued to the name after it: `Dr.med.Hollenbach` is `Dr.med.` and `Hollenbach`.
     static func gluedTitle(_ word: String) -> (title: String, rest: String)? {
         var best: String.Index?
         for index in word.indices where word[index] == "." {
@@ -1179,7 +1179,7 @@ public struct Pseudonymizer: Sendable {
         "dipl.-psych.", "ing.", "mag.", "freiherr", "freifrau", "freiin", "graf", "gräfin", "baron", "baronin", "miss", "sir", "dame",
     ]
 
-    /// What someone is, written in front of their name like a title: `Hausmeister Brenner`.
+    /// What someone is, written in front of their name like a title: `Hausmeister Bittner`.
     /// Kept in the text like `Herr`, because it says who a party is and names nobody — and never
     /// learned as a first name, or every caretaker in every mail would be disguised as a person.
     static let roles: Set<String> = [
@@ -1210,7 +1210,7 @@ public struct Pseudonymizer: Sendable {
         "aug", "sep", "sept", "okt", "oct", "nov", "dez", "dec",
     ]
 
-    /// Lowercase words that do belong inside a name: `Ludwig van Beethoven`, `Ursula von der Leyen`.
+    /// Lowercase words that do belong inside a name: `Ludwig van Beethoven`, `Gudula von der Leyen`.
     static let particles: Set<String> = ["von", "van", "de", "der", "den", "zu", "da", "di", "del", "la", "le", "du", "ten", "ter"]
 
     public static let freeMail: Set<String> = [
@@ -1221,7 +1221,7 @@ public struct Pseudonymizer: Sendable {
 
     /// Words the tagger has been seen calling a name. Kept short and specific: every word here is
     /// one that will never be disguised, so a real surname that happens to be a German word —
-    /// `Koch`, `Weber` — must not end up on it.
+    /// `Fleischer`, `Weber` — must not end up on it.
     static let commonWords: Set<String> = [
         "sie", "ihr", "ihre", "ich", "wir", "mit", "und", "oder", "aber", "viele", "liebe", "lieber",
         "hallo", "danke", "gruß", "grüße", "beste", "tel", "fax", "mail", "email", "iban", "bic", "weg",
@@ -1290,16 +1290,16 @@ public struct Disguise: Codable, Equatable, Sendable {
     }
 }
 
-/// Replaces a set of strings with others in one pass: longest first, so `Annegret Berger` is
-/// never half-replaced as `Annegret` and `Berger`; whole words only, so `Berger` does not bite a
-/// piece out of `Bergerstraße`'s neighbour; and without regard to case or to how an umlaut was
+/// Replaces a set of strings with others in one pass: longest first, so `Sibylle Seeger` is
+/// never half-replaced as `Sibylle` and `Seeger`; whole words only, so `Seeger` does not bite a
+/// piece out of `Seegerstraße`'s neighbour; and without regard to case or to how an umlaut was
 /// encoded, because mail arrives both ways.
 public struct Replacer: Sendable {
     private let table: [String: String]
     private let expression: NSRegularExpression?
     /// For the way back only: two replacements side by side that are one name are written once.
-    /// A first name two people share has a tag of its own, so `Dr. Petra Lindner` can go out as
-    /// `Dr. [Person BT] [Person B]` — and must not come back as `Dr. Maria Petra Lindner`.
+    /// A first name two people share has a tag of its own, so `Dr. Martina Lechner` can go out as
+    /// `Dr. [Person BT] [Person B]` — and must not come back as `Dr. Maria Martina Lechner`.
     var joinsNames = false
     /// Keys matched only where the text has a capital: `Kurz` the name, not "kurz" the word.
     var capitalOnly: Set<String> = []
@@ -1311,7 +1311,7 @@ public struct Replacer: Sendable {
     /// surname first, the word after it, behind a comma, is one of `given`.
     static func standsBeside(_ range: Range<String.Index>, in text: String, given: Set<String>) -> Bool {
         let before = text[..<range.lowerBound]
-        // A space or a tab between, or, in a file's name, `-` or `_` (`scan-greta-wegner.jpg`).
+        // A space or a tab between, or, in a file's name, `-` or `_` (`scan-lotta-lemke.jpg`).
         let joins: (Character) -> Bool = { $0 == " " || $0 == "\t" || $0 == "-" || $0 == "_" }
         if let separator = before.last, joins(separator), let last = before.split(whereSeparator: { joins($0) || $0.isNewline }).last,
            !before.dropLast().hasSuffix("\n") {
@@ -1344,7 +1344,7 @@ public struct Replacer: Sendable {
     }
 
     /// A person's stand-in with the title the disguise writes in front of it (`name.title`): `Dr. med. [Person B]`
-    /// for `Dr. med. Hollerbach`. The title's words are the disguise's own output, not words of the owner's
+    /// for `Dr. med. Hollenbach`. The title's words are the disguise's own output, not words of the owner's
     /// that went past it — TestFlight 264 held „med“ (junk in the list) in exactly that `Dr. med.`.
     static func titledStandIns(in text: String) -> [Range<String.Index>] {
         standIns(in: text).map { tag in
@@ -1377,10 +1377,10 @@ public struct Replacer: Sendable {
             expression = nil
         } else {
             do {
-                // F019 AC-8: an ending does not let a name out — `Bergers`, `Priya's` — and comes back
-                // with it. Only after the whole original: `Berg` is never found in `Berger`.
-                // F019, the reviewer of 4c45bff: a name written in a file's name, `Detlev_Marwitz.pdf`, is the
-                // name — its words joined by `_`; and a name glued to an address, `Mildehttps://…`, ends
+                // F019 AC-8: an ending does not let a name out — `Seegers`, `Divya's` — and comes back
+                // with it. Only after the whole original: `Berg` is never found in `Seeger`.
+                // F019, the reviewer of 4c45bff: a name written in a file's name, `Hartmuth_Mielitz.pdf`, is the
+                // name — its words joined by `_`; and a name glued to an address, `Selighttps://…`, ends
                 // where the address starts (the address becomes `[link]` after the disguise).
                 expression = try NSRegularExpression(
                     pattern: #"(?<![\p{L}\p{N}])(?:"# + alternatives.map { $0.replacingOccurrences(of: " ", with: "[ _]") }.joined(separator: "|")
@@ -1436,7 +1436,7 @@ public struct Replacer: Sendable {
                     if inTag(range) { continue }
                     // Glued to a stand-in, a word is what is left of a longer one the disguise cut —
                     // `Juli[Nummer A]` of `Juli2026` — not a word of the text: the check finds what the disguise found.
-                    // Only a real stand-in: `Marwitz[1]` and `x]Milde` are the owner's words, and go under theirs (the reviewer, 17 November).
+                    // Only a real stand-in: `Mielitz[1]` and `x]Selig` are the owner's words, and go under theirs (the reviewer, 17 November).
                     if tags.contains(where: { $0.upperBound == range.lowerBound || $0.lowerBound == range.upperBound }) { continue }
                 }
                 if !joinsNames {
@@ -1475,11 +1475,11 @@ public struct Replacer: Sendable {
         return (item.range.lowerBound..<end, item.with)
     }
 
-    /// Where a surname alone was disguised right after another first name — "Helga Voss", whose
-    /// "Voss" is known as part of "Mara Voss" and goes out under her tag: "Helga [Person B]" is
-    /// then Helga Voss, not "Helga Mara Voss" (9 November). Read from the text before it is
+    /// Where a surname alone was disguised right after another first name — "Herta Kloss", whose
+    /// "Kloss" is known as part of "Ella Kloss" and goes out under her tag: "Herta [Person B]" is
+    /// then Herta Kloss, not "Herta Ella Kloss" (9 November). Read from the text before it is
     /// disguised, so the way back knows exactly what stood there. German nouns are capitalised
-    /// too — "Meine Mutter Greta Kramer" — so a capital alone could not tell.
+    /// too — "Meine Mutter Lotta Spengler" — so a capital alone could not tell.
     public func surnameNotes(in text: String) -> [String: String] {
         let text = text.precomposedStringWithCanonicalMapping
         guard let expression else { return [:] }
@@ -1489,7 +1489,7 @@ public struct Replacer: Sendable {
         var notes: [String: String] = [:]
         for match in expression.matches(in: text, range: NSRange(text.startIndex..., in: text)) {
             guard let whole = Range(match.range, in: text) else { continue }
-            // Without an ending: `Voss` of `Voss's`.
+            // Without an ending: `Kloss` of `Kloss's`.
             let range = Range(match.range(at: 1), in: text).map { whole.lowerBound..<$0.lowerBound } ?? whole
             let written = String(text[range])
             guard let tag = table[Pseudonymizer.key(written)], let name = full[tag], !written.contains(" "),
@@ -1507,7 +1507,7 @@ public struct Replacer: Sendable {
         return notes
     }
 
-    /// F019 AC-7: one person's parts side by side in a file's name — `Arztbrief_Sabine_Hollerbach` —
+    /// F019 AC-7: one person's parts side by side in a file's name — `Arztbrief_Simone_Hollenbach` —
     /// are one tag, so the name stays recognisable: `Arztbrief_[Person A]_2026.pdf`.
     static func oneTagAcross(_ found: [(range: Range<String.Index>, with: String)], in text: String) -> [(range: Range<String.Index>, with: String)] {
         var out: [(range: Range<String.Index>, with: String)] = []
@@ -1529,7 +1529,7 @@ public struct Replacer: Sendable {
         return (titles.joined(separator: " ") + " ", words.dropFirst(titles.count).joined(separator: " "))
     }
 
-    /// `Maria` then `Petra Lindner`, or `Petra Lindner` then `Lindner`, with one space between:
+    /// `Maria` then `Martina Lechner`, or `Martina Lechner` then `Lechner`, with one space between:
     /// one name, written once.
     static func joined(_ found: [(range: Range<String.Index>, with: String)], in text: String) -> [(range: Range<String.Index>, with: String)] {
         var out: [(range: Range<String.Index>, with: String)] = []

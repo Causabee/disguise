@@ -100,7 +100,7 @@ public final class SystemWords: WordKnowledge, @unchecked Sendable {
 
 /// F019 AC-4, AC-9: the second pass. A word the rules, the tagger and the list did not take, and
 /// that neither the German nor the English dictionary knows as written, looks like a name: it is
-/// disguised for this one send. Lowercase too (the owner's answer 1a): `jonas` in a chat goes,
+/// disguised for this one send. Lowercase too (the owner's answer 1a): `julian` in a chat goes,
 /// even though a lowercase German noun goes with it. Without a dictionary for the text's language
 /// the pass is left out for that text (answer 2a); the rules, the owner's words and the check still run.
 public enum LookAlikeNames {
