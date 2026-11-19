@@ -1,0 +1,442 @@
+{
+  "cleaned" : {
+    "at" : 812692800,
+    "dropped" : [
+      "c3a0dd280479b396997d598ab26a018b8970aa74f61d1a6a53a1048138dfddcc"
+    ],
+    "id" : "0F027000-0000-4000-8000-000000000001"
+  },
+  "fresh" : 811692800,
+  "level" : 1,
+  "placeholder" : [
+    {
+      "kind" : "person",
+      "original" : "Patrick Schüßler",
+      "stand_in" : "[Person A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Patrick",
+      "part_of" : "Patrick Schüßler",
+      "stand_in" : "[Person C]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Schüßler",
+      "part_of" : "Patrick Schüßler",
+      "stand_in" : "[Person H]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Radwerk Berlin GmbH",
+      "stand_in" : "[Company A]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Radwerk Berlin",
+      "part_of" : "Radwerk Berlin GmbH",
+      "stand_in" : "[Company A]"
+    },
+    {
+      "kind" : "email",
+      "original" : "radwerk-berlin.example",
+      "part_of" : "p.schuessler@radwerk-berlin.example",
+      "stand_in" : "[Domain A]"
+    },
+    {
+      "kind" : "email",
+      "original" : "p.schuessler@radwerk-berlin.example",
+      "stand_in" : "[Email A]"
+    },
+    {
+      "kind" : "street",
+      "original" : "Lindenstraße",
+      "part_of" : "Lindenstraße 4",
+      "stand_in" : "[Street A]"
+    },
+    {
+      "kind" : "street",
+      "original" : "Lindenstraße 4",
+      "stand_in" : "[Street A]"
+    },
+    {
+      "kind" : "place",
+      "original" : "Göttingen",
+      "part_of" : "37073 Göttingen",
+      "stand_in" : "[Place A]"
+    },
+    {
+      "kind" : "postalCity",
+      "original" : "37073",
+      "part_of" : "37073 Göttingen",
+      "stand_in" : "[Postcode A]"
+    },
+    {
+      "kind" : "postalCity",
+      "original" : "37073 Göttingen",
+      "stand_in" : "[Postcode A] [Place A]"
+    },
+    {
+      "kind" : "iban",
+      "original" : "DE00 1111 2222 3333 4444 55",
+      "stand_in" : "[IBAN A]"
+    },
+    {
+      "kind" : "phone",
+      "original" : "030 5550 1234",
+      "stand_in" : "[Phone A]"
+    },
+    {
+      "kind" : "reference",
+      "original" : "AZ 4471-26",
+      "stand_in" : "[Nummer A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Herrn Patrick Schüßler",
+      "stand_in" : "Herrn [Person A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Patrick Ahlers",
+      "stand_in" : "[Person B]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Ahlers",
+      "part_of" : "Patrick Ahlers",
+      "stand_in" : "[Person B]"
+    },
+    {
+      "kind" : "person",
+      "original" : "SCHÜSSLER Patrick",
+      "stand_in" : "[Person D]"
+    },
+    {
+      "kind" : "person",
+      "original" : "SCHÜSSLER",
+      "part_of" : "SCHÜSSLER Patrick",
+      "stand_in" : "[Person D]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "'Radwerk Berlin GmbH'",
+      "stand_in" : "[Company B]"
+    },
+    {
+      "kind" : "place",
+      "original" : "Goettingen",
+      "stand_in" : "[Place B]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Patrick Schuessler",
+      "stand_in" : "[Person E]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Schuessler",
+      "part_of" : "Patrick Schuessler",
+      "stand_in" : "[Person E]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Dr. Patrick Schüßler",
+      "stand_in" : "Dr. [Person A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Schüßler, Patrick",
+      "stand_in" : "[Person A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "'Patrick Schüßler'",
+      "stand_in" : "[Person A]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Schüßler, Patrick (Radwerk Berlin GmbH)",
+      "stand_in" : "[Person A] ([Company A])"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Doodle",
+      "stand_in" : "[Company C]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Patrick Schüßler via Doodle",
+      "stand_in" : "[Person A] via [Company C]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mirela Ottilie Brankovan",
+      "stand_in" : "[Person F]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mirela",
+      "part_of" : "Mirela Ottilie Brankovan",
+      "stand_in" : "[Person J]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Brankovan",
+      "part_of" : "Mirela Ottilie Brankovan",
+      "stand_in" : "[Person F]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Ostwind Reiseschutz AG",
+      "stand_in" : "[Company D]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Ostwind Reiseschutz",
+      "part_of" : "Ostwind Reiseschutz AG",
+      "stand_in" : "[Company D]"
+    },
+    {
+      "kind" : "person",
+      "original" : "#3 Patrick Schüßler",
+      "stand_in" : "[Person G]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mirela Ottilie",
+      "stand_in" : "[Person I]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Ottilie",
+      "part_of" : "Mirela Ottilie",
+      "stand_in" : "[Person I]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "P7 Ostwind Reiseschutz AG",
+      "stand_in" : "[Company E]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "P7 Ostwind Reiseschutz",
+      "part_of" : "P7 Ostwind Reiseschutz AG",
+      "stand_in" : "[Company E]"
+    },
+    {
+      "kind" : "person",
+      "original" : "P. Schüßler",
+      "stand_in" : "[Person K]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Herr Schüßler",
+      "stand_in" : "Herr [Person H]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Lotta Schüßler",
+      "stand_in" : "[Person L]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Lotta",
+      "part_of" : "Lotta Schüßler",
+      "stand_in" : "[Person W]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin Liv Kolbeck",
+      "stand_in" : "[Person M]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin",
+      "part_of" : "Tamsin Liv Kolbeck",
+      "stand_in" : "[Person O]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Kolbeck",
+      "part_of" : "Tamsin Liv Kolbeck",
+      "stand_in" : "[Person M]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin Liv Vosshardt",
+      "stand_in" : "[Person N]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Vosshardt",
+      "part_of" : "Tamsin Liv Vosshardt",
+      "stand_in" : "[Person N]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin Liv",
+      "stand_in" : "[Person P]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Liv",
+      "part_of" : "Tamsin Liv",
+      "stand_in" : "[Person P]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Monsieur Garrigou",
+      "stand_in" : "[Person Q]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Monsieur",
+      "part_of" : "Monsieur Garrigou",
+      "stand_in" : "[Person Q]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Garrigou",
+      "part_of" : "Monsieur Garrigou",
+      "stand_in" : "[Person Q]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mme Lestrade",
+      "stand_in" : "[Person R]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mme",
+      "part_of" : "Mme Lestrade",
+      "stand_in" : "[Person R]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Lestrade",
+      "part_of" : "Mme Lestrade",
+      "stand_in" : "[Person R]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin Mittwoch",
+      "stand_in" : "[Person S]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Mittwoch",
+      "part_of" : "Tamsin Mittwoch",
+      "stand_in" : "[Person S]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Tamsin Harlander",
+      "stand_in" : "[Person T]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Harlander",
+      "part_of" : "Tamsin Harlander",
+      "stand_in" : "[Person T]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Herta Kloss",
+      "stand_in" : "[Person U]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Herta",
+      "part_of" : "Herta Kloss",
+      "stand_in" : "[Person U]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Kloss",
+      "part_of" : "Herta Kloss",
+      "stand_in" : "[Person X]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Kontoauszug Seite",
+      "stand_in" : "[Person Y]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Kontoauszug",
+      "part_of" : "Kontoauszug Seite",
+      "stand_in" : "[Person Y]"
+    },
+    {
+      "kind" : "person",
+      "original" : "Seite",
+      "part_of" : "Kontoauszug Seite",
+      "stand_in" : "[Person Y]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Radwerk GmbH",
+      "stand_in" : "[Company F]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Radwerk",
+      "part_of" : "Radwerk GmbH",
+      "stand_in" : "[Company F]"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Anlage Drei",
+      "stand_in" : "[Company G]"
+    },
+    {
+      "kind" : "street",
+      "original" : "LINDENSTRASSE",
+      "part_of" : "LINDENSTRASSE 4",
+      "stand_in" : "[Street B]"
+    },
+    {
+      "kind" : "street",
+      "original" : "LINDENSTRASSE 4",
+      "stand_in" : "[Street B]"
+    }
+  ],
+  "standin" : [
+    {
+      "kind" : "person",
+      "original" : "Patrick Schüßler",
+      "stand_in" : "Tamsin Vosshardt"
+    },
+    {
+      "kind" : "person",
+      "original" : "Schüßler",
+      "part_of" : "Patrick Schüßler",
+      "stand_in" : "Vosshardt"
+    },
+    {
+      "kind" : "organization",
+      "original" : "Radwerk Berlin GmbH",
+      "stand_in" : "Kolbeck Berlin GmbH"
+    }
+  ],
+  "switches" : {
+    "284dc04d6cf0ee5f4995e5246933642f82fd030f93ad99e632323e4181bd4974" : {
+      "at" : 816692920,
+      "state" : "on"
+    },
+    "331e0325828ce7551f73b31e250b0eebd4201688a3aeb4ca6c9f52d6a20bc078" : {
+      "at" : 816692980,
+      "state" : "gone"
+    },
+    "39d8ad000d01406153cb62c79d4bd9a238391267d666ef47bba44618b5be8967" : {
+      "at" : 816692800,
+      "state" : "off"
+    },
+    "71a6cbc0edcd38cfe2ffc480369931375eb91843013fd6f9505806e5203f6b5d" : {
+      "at" : 816692860,
+      "state" : "off"
+    }
+  },
+  "version" : 6
+}

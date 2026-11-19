@@ -82,7 +82,8 @@ public struct Pseudonymizer: Sendable {
         /// were joined under their rows. A list without it was last written by an earlier build, or
         /// copied and written again by one, and is joined when read. An older build ignores it and
         /// drops it when it writes its own file.
-        public var joined: Int?
+        public var joined: Int? = Self.joinedLevel
+        public static let joinedLevel = 1
 
         public struct Switch: Codable, Equatable, Sendable {
             public enum State: String, Codable, Sendable { case on, off, gone }
@@ -167,7 +168,8 @@ public struct Pseudonymizer: Sendable {
         /// 2: in placeholder mode, people who share only a first or a last name no longer share a tag.
         /// 3: a role in front of a name — `Hausmeister Bittner` — is a title, not a first name.
         /// 4: an ordinary word the tagger took for a name, or for the start of one, is no entry.
-        public static let current = 6
+        /// 7: one row and one stand-in for each name, however it is written: ways of writing name their row (F027).
+        public static let current = 7
 
         public init() {}
 
@@ -175,7 +177,7 @@ public struct Pseudonymizer: Sendable {
         /// had to tell apart. The people are learned again, full names first; nothing else changes.
         @discardableResult
         public mutating func upgrade() -> Int {
-            guard version < Self.current else { return 0 }
+            guard version < Self.current || joined == nil else { return 0 }
             var changed = 0
             if version < 2 {
                 let before = Set(placeholder.filter { $0.kind == .person }.compactMap { Pseudonymizer.personTag($0.standIn) }).count
@@ -217,7 +219,13 @@ public struct Pseudonymizer: Sendable {
                 standin.removeAll(where: common)
                 changed += before - placeholder.count
             }
+            if version < 7 || joined == nil {
+                // F027: the ways of writing one name joined under one row with one stand-in, once; then
+                // checked word by word, and every word that would go out is put back. Counted for the log.
+                changed += joinWays()
+            }
             version = Self.current
+            joined = Self.joinedLevel
             return changed
         }
 
@@ -250,13 +258,16 @@ public struct Pseudonymizer: Sendable {
     /// F027, placeholder mode: the first entry of each kind and folded spelling (`foldKey`), so
     /// `Schüßler`, `Schuessler` and `SCHÜSSLER` are found as one name while learning, not as three.
     private var foldIndex: [String: Int] = [:]
+    /// F027: the same, for the wholes only (rows and ways of writing): a person is joined to a whole.
+    private var foldWhole: [String: Int] = [:]
+    /// F027: the tags a word two people share was given (`recordSharedPart`): no single person's.
+    private var sharedTags: Set<String> = []
     /// F027, placeholder mode: each full name's tag and the row it was first given to — the row its
     /// other ways of writing (`Herrn Patrick Schüßler`, `Schüßler, Patrick`) go under.
     private var rowOfTag: [String: String] = [:]
     /// F027 rule 8: an initial and a surname (`P. Schüßler`) is no full name: its tag, by initial and
-    /// surname, kept apart from `fullNames`, and every tag given to one.
+    /// surname, kept apart from `fullNames`.
     private var initialNames: [String: String] = [:]
-    private var initialTags: Set<String> = []
     /// F027 rule 5: the words of every full name, folded and without titles, by its first two words,
     /// with its tag — for `Mirela Ottilie` out of `Mirela Ottilie Brankovan`.
     private var fullNameWords: [String: [(tag: String, words: [String])]] = [:]
@@ -589,10 +600,9 @@ public struct Pseudonymizer: Sendable {
         if mode == .placeholder {
             // F027 rule 1: the same person written another way — `Patrick Schuessler`, `'Patrick
             // Schüßler'`, `Schuessler` — is the one already known: a way of its row, or a part of it.
-            if let at = Self.foldKey(.person, original).flatMap({ foldIndex[$0] }) {
+            if let at = Self.foldKey(.person, original).flatMap({ foldWhole[$0] }) {
                 let match = entries[at]
                 let standIn = Self.titled(name.title, match.standIn)
-                if let row = match.partOf { return record(.person, original, standIn, partOf: partOf ?? row) }
                 record(.person, original, standIn, partOf: partOf, formOf: match.original)
                 if let given = name.given, let family = name.family, let tag = Self.personTag(match.standIn) {
                     for part in [given, family] { recordSharedPart(part, tag, of: original) }
@@ -671,9 +681,10 @@ public struct Pseudonymizer: Sendable {
         let at = exact ?? (mode == .placeholder ? Self.foldKey(.person, part).flatMap { foldIndex[$0] } : nil)
         guard let at else { return recordPart(.person, part, tag, of: original) }
         guard entries[at].kind == .person, let old = Self.personTag(entries[at].standIn) else { return }
-        if old != tag, initialTags.contains(old), !fullNameTags.contains(old) {
+        if old != tag, !fullNameTags.contains(old), !sharedTags.contains(old) {
             // F027 rule 8: a surname an initial held alone goes to the full name when it comes, and the
-            // names made of it alone — `Herr Schüßler` — with it, as ways of that row.
+            // names made of it alone — `Herr Schüßler` — with it, as ways of that row. So does a word a name
+            // of one word held alone (rule 7, whichever came first), as the upgrade reads it.
             let row = root(of: original)
             let folded = Self.fold(part)
             for i in entries.indices where entries[i].kind == .person && Self.personTag(entries[i].standIn) == old {
@@ -693,6 +704,7 @@ public struct Pseudonymizer: Sendable {
         }
         let own = placeholder(.person)
         use(own)
+        sharedTags.insert(own)
         let folded = Self.fold(part)
         for i in entries.indices where entries[i].kind == .person && Self.personTag(entries[i].standIn) == old {
             let name = Self.nameParts(entries[i].original)
@@ -1045,7 +1057,12 @@ public struct Pseudonymizer: Sendable {
     }
 
     public func placeholder(_ kind: Entity.Kind) -> String {
-        let label = switch kind {
+        placeholder(Self.label(kind))
+    }
+
+    /// What a tag of this kind is called: `Person`, `Company`, `Nummer`.
+    static func label(_ kind: Entity.Kind) -> String {
+        switch kind {
         case .person: "Person"
         case .organization: "Company"
         case .place: "Place"
@@ -1056,7 +1073,6 @@ public struct Pseudonymizer: Sendable {
         case .street: "Street"
         case .postalCity: "Postcode"
         }
-        return placeholder(label)
     }
 
     /// `[Person A]` … `[Person Z]`, `[Person AA]`. Counted from the tags already handed out, so a
@@ -1105,7 +1121,7 @@ public struct Pseudonymizer: Sendable {
     /// or, when the known name is a part, a part of the same row. Never an email, a phone, a bank
     /// account or a reference: they are matched as written (`foldKey`).
     mutating func spelling(_ kind: Entity.Kind, _ original: String) -> String? {
-        guard let at = Self.foldKey(kind, original).flatMap({ foldIndex[$0] }) else { return nil }
+        guard let at = Self.foldKey(kind, original).flatMap({ foldWhole[$0] ?? foldIndex[$0] }) else { return nil }
         let match = entries[at]
         if let row = match.partOf { return record(kind, original, match.standIn, partOf: row) }
         return record(kind, original, match.standIn, partOf: nil, formOf: match.original)
@@ -1128,7 +1144,14 @@ public struct Pseudonymizer: Sendable {
         let key = Self.key(entry.original)
         guard index[key] == nil else { return }
         index[key] = entries.count
-        if mode == .placeholder, let fold = Self.foldKey(entry.kind, entry.original), foldIndex[fold] == nil { foldIndex[fold] = entries.count }
+        if mode == .placeholder, let fold = Self.foldKey(entry.kind, entry.original) {
+            if foldIndex[fold] == nil { foldIndex[fold] = entries.count }
+            if entry.partOf == nil, foldWhole[fold] == nil { foldWhole[fold] = entries.count }
+        }
+        if mode == .placeholder, entry.kind == .person, let whole = entry.partOf, let at = index[Self.key(whole)],
+           let tag = Self.personTag(entry.standIn), Self.personTag(entries[at].standIn) != tag {
+            sharedTags.insert(tag)
+        }
         entries.append(entry)
         forbidden.insert(key)
         for tag in Self.tags(in: entry.standIn) { use(tag) }
@@ -1138,7 +1161,6 @@ public struct Pseudonymizer: Sendable {
             let person = Self.personKey(given, family)
             if Self.isInitial(given) {
                 initialNames[person] = initialNames[person] ?? tag
-                initialTags.insert(tag)
             } else {
                 fullNames[person] = fullNames[person] ?? tag
                 fullNameTags.insert(fullNames[person]!)
@@ -1177,16 +1199,37 @@ public struct Pseudonymizer: Sendable {
 
     /// F027 rule 8: `P.`, `P`, `H.-J.`: an initial, not a first name.
     static func isInitial(_ word: String) -> Bool {
-        word.wholeMatch(of: /\p{Lu}\.?(?:-\p{Lu}\.?)?/) != nil
+        // `\p{Lu}\.?(-\p{Lu}\.?)?`, read by hand: asked for every name of a list of thousands.
+        var rest = Substring(word)
+        func capital() -> Bool {
+            guard let first = rest.first, first.isLetter, first.isUppercase else { return false }
+            rest = rest.dropFirst()
+            if rest.first == "." { rest = rest.dropFirst() }
+            return true
+        }
+        guard capital() else { return false }
+        if rest.first == "-" { rest = rest.dropFirst(); guard capital() else { return false } }
+        return rest.isEmpty
     }
 
     /// F027 rule 6: the name after a row's label — `Ostwind Reiseschutz AG` of `P7 Ostwind Reiseschutz
     /// AG`, `Patrick Schüßler` of `#3 Patrick Schüßler`: a capital and one to three digits, or `#` and
     /// digits, then perhaps `.`, `)` or `:`, before a capital. Nil when there is none.
     static func withoutRowLabel(_ text: String) -> String? {
-        guard let match = text.prefixMatch(of: /(?:\p{Lu}\d{1,3}|#\d{1,4})[.):]?\s+(?=\p{Lu})/) else { return nil }
-        let rest = String(text[match.range.upperBound...]).trimmed
-        return rest.count >= 2 ? rest : nil
+        // `(\p{Lu}\d{1,3}|#\d{1,4})[.):]?\s+(?=\p{Lu})`, read by hand: asked for every name of a list of thousands.
+        var rest = Substring(text)
+        guard let first = rest.first, first == "#" || first.isLetter && first.isUppercase else { return nil }
+        rest = rest.dropFirst()
+        let digits = rest.prefix { $0.isASCII && $0.isNumber }
+        guard (1...(first == "#" ? 4 : 3)).contains(digits.count) else { return nil }
+        rest = rest.dropFirst(digits.count)
+        if let mark = rest.first, ".):".contains(mark) { rest = rest.dropFirst() }
+        let space = rest.prefix { $0.isWhitespace }
+        guard !space.isEmpty else { return nil }
+        rest = rest.dropFirst(space.count)
+        guard let next = rest.first, next.isLetter, next.isUppercase else { return nil }
+        let name = String(rest).trimmed
+        return name.count >= 2 ? name : nil
     }
 
     /// F027: the row a whole joins through the name inside it — the person of a via name, the person
@@ -1449,7 +1492,8 @@ public struct Pseudonymizer: Sendable {
         let quotes = CharacterSet(charactersIn: "'\"‘’‚“”„`´")
         let spelled = key(text).replacingOccurrences(of: "ß", with: "ss").replacingOccurrences(of: "ä", with: "ae")
             .replacingOccurrences(of: "ö", with: "oe").replacingOccurrences(of: "ü", with: "ue")
-        let plain = spelled.applyingTransform(.stripDiacritics, reverse: false) ?? spelled
+        // The other accents off — asked only where there is one left: the transform is slow, and names are many.
+        let plain = spelled.unicodeScalars.allSatisfy(\.isASCII) ? spelled : spelled.applyingTransform(.stripDiacritics, reverse: false) ?? spelled
         return words(plain).map { $0.trimmingCharacters(in: quotes) }.filter { !$0.isEmpty }.joined(separator: " ")
     }
 
@@ -2127,6 +2171,384 @@ extension Pseudonymizer.Mapping {
     /// fewest words, then the first in the list.
     static func plainness(_ original: String, _ at: Int) -> [Int] {
         [Pseudonymizer.words(original).count < 2 ? 1 : 0, Pseudonymizer.decoration(original), Pseudonymizer.words(original).count, at]
+    }
+}
+
+// MARK: F027 · The upgrade: a list from before brought up once
+
+extension Pseudonymizer.Mapping {
+    /// F027, version 7 (AC-12): the ways of writing one name joined under one row with one stand-in, by
+    /// the rules of `Pseudonymizer.learn`. Nothing is learned anew: each entry is kept and pointed at its
+    /// row, so no part the list hides can be lost to a rule that would read it differently today.
+    /// 1. Each name whose own switch is off or gone is kept as it is, with its parts.
+    /// 2. An entry that is only Monsieur, Madame, Mademoiselle, Mme or Mlle goes; a name that starts with one
+    ///    keeps it in front of its stand-in (the owner's one exception to "never less hidden").
+    /// 3. A company, a place, a street or a postcode that folds like an earlier one is its way of writing.
+    /// 4. The people, full names first, then as they were learned, the plainest way of one person first:
+    ///    each keeps its stand-in and is a row, unless a rule joins it to a row before it.
+    /// 5. Each part points at its row: a first name or a surname takes the stand-in of the one full name
+    ///    that holds it; held by two or more, a stand-in of its own.
+    /// 6. Checked word by word (`putBack`). Rows keep their stand-ins; a joined way and a part that changed
+    ///    hands change their letter once. The words put back are returned, for the device's log.
+    mutating func joinWays() -> Int {
+        let before = self
+        var join = Join(placeholder, switches: switches ?? [:])
+        join.titles()
+        join.others()
+        join.people()
+        join.parts()
+        placeholder = join.result()
+        self = settled()
+        return putBack(before: before)
+    }
+
+    /// F027 (AC-13): the check, word by word: every original of `before`, disguised with the list before
+    /// and with this one. A word hidden before that this one lets out as written — Monsieur, Madame,
+    /// Mademoiselle, Mme and Mlle aside — is a loss: its entry is put back as a row of its own, with a
+    /// stand-in no one else has. Returns how many were put back.
+    @discardableResult
+    public mutating func putBack(before: Self) -> Int {
+        let lost = Self.losses(before, self)
+        guard !lost.isEmpty else { return 0 }
+        var used = Set(placeholder.flatMap { Pseudonymizer.tags(in: $0.standIn) })
+        for entry in lost {
+            let tag = Self.freshTag(entry.kind, used: &used)
+            if let at = placeholder.firstIndex(where: { Pseudonymizer.key($0.original) == Pseudonymizer.key(entry.original) }) {
+                placeholder[at].partOf = nil
+                placeholder[at].formOf = nil
+                placeholder[at].standIn = tag
+            } else {
+                placeholder.append(.init(kind: entry.kind, original: entry.original, standIn: tag))
+            }
+        }
+        return lost.count
+    }
+
+    /// The entries of `before` with a word hidden there that `after` lets out as written, the French titles aside.
+    static func losses(_ before: Self, _ after: Self) -> [Entry] {
+        func hiding(_ m: Self) -> Replacer {
+            Pseudonymizer(mode: .placeholder, entries: Pseudonymizer.shed(m.placeholder, dropped: m.gone), off: m.outAsWritten()).disguiser
+        }
+        func written(_ text: Substring) -> Set<String> {
+            var plain = String(text)
+            for range in Replacer.standIns(in: plain).reversed() { plain.replaceSubrange(range, with: " ") }
+            return Set(plain.split { !$0.isLetter && !$0.isNumber }.map { Pseudonymizer.key(String($0)) })
+        }
+        var seen: Set<String> = []
+        let originals = before.placeholder.filter { seen.insert(Pseudonymizer.key($0.original)).inserted && !$0.original.contains("\n") }
+        guard !originals.isEmpty else { return [] }
+        // One pass over all of them, each on a line of its own, a line between that no rule reads across.
+        let gap = "\n¶\n"
+        let text = originals.map(\.original).joined(separator: gap)
+        let (was, now) = (hiding(before).apply(text).text, hiding(after).apply(text).text)
+        let wasLines = was.components(separatedBy: gap), nowLines = now.components(separatedBy: gap)
+        guard wasLines.count == originals.count, nowLines.count == originals.count else {
+            // Never guessed: each one alone.
+            let (b, a) = (hiding(before), hiding(after))
+            return originals.filter { entry in
+                let words = written(Substring(entry.original))
+                return !words.subtracting(written(Substring(b.apply(entry.original).text))).intersection(written(Substring(a.apply(entry.original).text)))
+                    .subtracting(Pseudonymizer.frenchTitles).isEmpty
+            }
+        }
+        return originals.indices.filter { i in
+            let words = written(Substring(originals[i].original))
+            let lost = words.subtracting(written(Substring(wasLines[i]))).intersection(written(Substring(nowLines[i])))
+            return !lost.subtracting(Pseudonymizer.frenchTitles).isEmpty
+        }.map { originals[$0] }
+    }
+
+    /// A tag of this kind that is no one's: `[Person AB]`, counted as `placeholder` counts.
+    static func freshTag(_ kind: Entity.Kind, used: inout Set<String>) -> String {
+        let prefix = "[" + Pseudonymizer.label(kind) + " "
+        var number = used.filter { $0.hasPrefix(prefix) }.count
+        while true {
+            var letters = "", n = number
+            repeat { letters = String(UnicodeScalar(UInt8(65 + n % 26))) + letters; n = n / 26 - 1 } while n >= 0
+            let tag = prefix + letters + "]"
+            if used.insert(tag).inserted { return tag }
+            number += 1
+        }
+    }
+
+    /// The join of `joinWays`, over one list's entries, in place: their order is kept.
+    struct Join {
+        var entries: [Entry]
+        let switches: [String: Switch]
+        /// Kept as they are: each whole the owner turned off or deleted, and its parts.
+        var kept: [Bool]
+        var used: Set<String>
+        /// The rows made for a labelled name, each before the whole it was made for.
+        var made: [(before: Int, entry: Entry)] = []
+        var row: [Int?]
+        /// By `foldKey`, the row of each row and way of writing so far.
+        var byFold: [String: Int] = [:]
+        /// By `personKey`, the row of each full name so far; the same for an initial and a surname.
+        var fullRow: [String: Int] = [:], initialRow: [String: Int] = [:]
+        /// Rule 5: the words of each full name so far, by its first two, with its row.
+        var starts: [String: [(row: Int, words: [String])]] = [:]
+        /// Rule 7: the rows of the full names that hold each word (folded), and the words the kept full names hold.
+        var holders: [String: Set<Int>] = [:], keptHolders: [String: Set<String>] = [:]
+        /// The tags of every row that is a full name: no word's own.
+        var fullTags: Set<String> = []
+        /// Each entry by its `key`, the first of it.
+        var at: [String: Int] = [:]
+
+        init(_ entries: [Entry], switches: [String: Switch]) {
+            self.entries = entries
+            self.switches = switches
+            let off = Set(entries.filter { $0.partOf == nil && (switches[hashed($0.original)].map { $0.state != .on } ?? false) }
+                .map { Pseudonymizer.key($0.original) })
+            kept = entries.map { off.contains(Pseudonymizer.key($0.original)) || ($0.partOf.map { off.contains(Pseudonymizer.key($0)) } ?? false) }
+            used = Set(entries.flatMap { Pseudonymizer.tags(in: $0.standIn) })
+            row = Array(repeating: nil, count: entries.count)
+            for (i, entry) in entries.enumerated() { at[Pseudonymizer.key(entry.original)] = at[Pseudonymizer.key(entry.original)] ?? i }
+            for i in entries.indices where !kept[i] { self.entries[i].formOf = nil }
+            for (i, entry) in entries.enumerated() where kept[i] && entry.kind == .person && entry.partOf == nil {
+                let name = Pseudonymizer.nameParts(entry.original)
+                guard let given = name.given, let family = name.family, !Pseudonymizer.isInitial(given) else { continue }
+                for word in [given, family] { keptHolders[Pseudonymizer.fold(word), default: []].insert(Pseudonymizer.key(entry.original)) }
+            }
+        }
+
+        /// Step 2: the French titles.
+        mutating func titles() {
+            for i in entries.indices where !kept[i] && entries[i].kind == .person {
+                let words = Pseudonymizer.words(entries[i].original)
+                let leading = words.prefix { Pseudonymizer.frenchTitles.contains(Pseudonymizer.key($0)) }
+                guard !leading.isEmpty else { continue }
+                if leading.count == words.count {  // only a title: it goes
+                    at[Pseudonymizer.key(entries[i].original)] = nil
+                    kept[i] = true
+                    entries[i].original = ""
+                    continue
+                }
+                guard entries[i].partOf == nil, let tag = Pseudonymizer.personTag(entries[i].standIn) else { continue }
+                let title = leading.joined(separator: " ")
+                if !entries[i].standIn.hasPrefix(title + " ") {
+                    entries[i].standIn = entries[i].standIn.replacingOccurrences(of: tag, with: title + " " + tag)
+                }
+            }
+        }
+
+        func isWhole(_ i: Int) -> Bool { !kept[i] && entries[i].partOf == nil && !entries[i].original.isEmpty }
+
+        /// Joins whole `i` to row `r`: a way of writing it, with its stand-in's tags.
+        mutating func joinTo(_ i: Int, _ r: Int) -> [String: String] {
+            entries[i].formOf = entries[r].original
+            row[i] = r
+            let mine = Pseudonymizer.tags(in: entries[i].standIn), theirs = Pseudonymizer.tags(in: entries[r].standIn)
+            var moved: [String: String] = [:]
+            for (k, tag) in mine.enumerated() where k < theirs.count && tag != theirs[k] && Self.label(tag) == Self.label(theirs[k]) {
+                moved[tag] = theirs[k]
+            }
+            for (old, new) in moved { entries[i].standIn = entries[i].standIn.replacingOccurrences(of: old, with: new) }
+            return moved
+        }
+
+        static func label(_ tag: String) -> Substring { tag.prefix { $0 != " " } }
+
+        /// Step 3: companies, places, streets and postcodes.
+        mutating func others() {
+            let kinds: Set<Entity.Kind> = [.organization, .place, .street, .postalCity]
+            let wholes = entries.indices.filter { isWhole($0) && kinds.contains(entries[$0].kind) }
+            var moved: [Int: [String: String]] = [:]
+            // A part of this kind, by its fold: `Göttingen` of `37073 Göttingen`.
+            var parts: [String: Int] = [:]
+            for i in entries.indices where !kept[i] && entries[i].partOf != nil && kinds.contains(entries[i].kind) {
+                if let fold = Pseudonymizer.foldKey(entries[i].kind, entries[i].original), parts[fold] == nil { parts[fold] = i }
+            }
+            // The unlabelled first, so a labelled name finds its row wherever it stands.
+            for i in wholes where Pseudonymizer.withoutRowLabel(entries[i].original) == nil {
+                guard let fold = Pseudonymizer.foldKey(entries[i].kind, entries[i].original) else { continue }
+                if let r = byFold[fold] { moved[i] = joinTo(i, r); continue }
+                if let p = parts[fold], let whole = entries[p].partOf, let w = index(of: whole), !kept[w] {
+                    // Written another way than a part of a row: a part of that row, with its stand-in, as learning makes it.
+                    var map: [String: String] = [:]
+                    for (old, new) in zip(Pseudonymizer.tags(in: entries[i].standIn), Pseudonymizer.tags(in: entries[p].standIn))
+                    where old != new && Self.label(old) == Self.label(new) { map[old] = new }
+                    for (old, new) in map { entries[i].standIn = entries[i].standIn.replacingOccurrences(of: old, with: new) }
+                    entries[i].partOf = whole
+                    row[i] = w
+                    moved[i] = map
+                    continue
+                }
+                byFold[fold] = i
+                row[i] = i
+            }
+            for i in wholes {
+                guard let name = Pseudonymizer.withoutRowLabel(entries[i].original),
+                      entries[i].kind != .organization || Pseudonymizer.companyName(name, admitted: true) != nil,
+                      let fold = Pseudonymizer.foldKey(entries[i].kind, name) else {
+                    if row[i] == nil { row[i] = i }
+                    continue
+                }
+                if let r = byFold[fold] { moved[i] = joinTo(i, r); continue }
+                made.append((i, .init(kind: entries[i].kind, original: name, standIn: entries[i].standIn)))
+                entries[i].formOf = name
+                row[i] = i
+            }
+            // Their parts follow them.
+            for i in entries.indices where !kept[i] && kinds.contains(entries[i].kind) {
+                guard let whole = entries[i].partOf, let w = index(of: whole), let map = moved[w] else { continue }
+                for (old, new) in map { entries[i].standIn = entries[i].standIn.replacingOccurrences(of: old, with: new) }
+                entries[i].partOf = entries[row[w] ?? w].original
+            }
+        }
+
+        func index(of original: String) -> Int? { at[Pseudonymizer.key(original)] }
+
+        /// The person a whole names, without its label, its brackets and its service.
+        static func core(_ text: String) -> String {
+            var text = Pseudonymizer.withoutRowLabel(text) ?? text
+            if let open = text.firstIndex(of: "("), let close = text.lastIndex(of: ")"), open < close {
+                text = (String(text[..<open]) + String(text[text.index(after: close)...])).trimmed
+            }
+            if let via = text.range(of: " via ", options: .caseInsensitive) { text = String(text[..<via.lowerBound]).trimmed }
+            return text
+        }
+
+        /// Step 4: the people.
+        mutating func people() {
+            let wholes = entries.indices.filter { isWhole($0) && entries[$0].kind == .person }
+            var cores: [Int: String] = [:], fullness: [Int: Int] = [:]
+            for i in wholes {
+                cores[i] = Self.core(entries[i].original)
+                fullness[i] = Pseudonymizer.fullness(.person, cores[i]!)
+            }
+            // Full names first, then as they were learned; of the ways of one person, the plainest first.
+            let sorted = wholes.enumerated().sorted { a, b in
+                let (x, y) = (fullness[a.element]!, fullness[b.element]!)
+                return x != y ? x > y : a.offset < b.offset
+            }.map(\.element)
+            var groups: [String: [Int]] = [:]
+            for (n, i) in sorted.enumerated() {
+                let name = Pseudonymizer.nameParts(cores[i]!)
+                if let given = name.given, let family = name.family { groups[Pseudonymizer.personKey(given, family), default: []].append(n) }
+            }
+            var order = sorted
+            for positions in groups.values where positions.count > 1 {
+                let plain = positions.map { n in
+                    (sorted[n], Pseudonymizer.decoration(entries[sorted[n]].original), Pseudonymizer.words(entries[sorted[n]].original).count)
+                }
+                let members = plain.enumerated().sorted { a, b in
+                    if a.element.1 != b.element.1 { return a.element.1 < b.element.1 }
+                    return a.element.2 != b.element.2 ? a.element.2 > b.element.2 : a.offset < b.offset
+                }.map(\.element.0)
+                for (position, member) in zip(positions, members) { order[position] = member }
+            }
+            for i in order {
+                let core = cores[i]!
+                if let r = resolve(core) {
+                    _ = joinTo(i, r)
+                    register(i, as: r)
+                } else if Pseudonymizer.withoutRowLabel(entries[i].original) != nil, core != entries[i].original,
+                          Pseudonymizer.nameParts(core).given != nil || Pseudonymizer.nameParts(core).family != nil, index(of: core) == nil {
+                    // A labelled name whose name is no row yet: a row is made for it, with the labelled whole's stand-in.
+                    made.append((i, .init(kind: .person, original: core, standIn: entries[i].standIn)))
+                    entries[i].formOf = core
+                    row[i] = i
+                    register(i, as: i)
+                } else {
+                    row[i] = i
+                    register(i, as: i)
+                }
+            }
+        }
+
+        /// The row a person's name joins, by the rules of `learn`: one row, or none.
+        func resolve(_ text: String) -> Int? {
+            if let r = Pseudonymizer.foldKey(.person, text).flatMap({ byFold[$0] }) { return r }
+            let name = Pseudonymizer.nameParts(text)
+            if let given = name.given, let family = name.family {
+                let key = Pseudonymizer.personKey(given, family)
+                if Pseudonymizer.isInitial(given) { return initialRow[key] }
+                if let r = fullRow[key] { return r }
+                guard let words = Pseudonymizer.nameWords(text), words.count >= 2 else { return nil }
+                let rows = Set((starts[words[0] + " " + words[1]] ?? []).filter { $0.words.count > words.count && Array($0.words.prefix(words.count)) == words }.map(\.row))
+                return rows.count == 1 ? rows.first : nil
+            }
+            guard let word = name.given ?? name.family else { return nil }
+            let fold = Pseudonymizer.fold(word), rows = holders[fold] ?? []
+            return rows.count == 1 && (keptHolders[fold] ?? []).isEmpty ? rows.first : nil
+        }
+
+        /// What a row or a way of writing tells the rules that come after it.
+        mutating func register(_ i: Int, as r: Int) {
+            if let fold = Pseudonymizer.foldKey(.person, entries[i].original), byFold[fold] == nil { byFold[fold] = r }
+            let core = Self.core(entries[i].original)
+            if core != entries[i].original, let fold = Pseudonymizer.foldKey(.person, core), byFold[fold] == nil, entries[i].original.contains("(") == false,
+               entries[i].original.range(of: " via ", options: .caseInsensitive) == nil { byFold[fold] = r }
+            let name = Pseudonymizer.nameParts(core)
+            guard let given = name.given, let family = name.family else { return }
+            let key = Pseudonymizer.personKey(given, family)
+            if Pseudonymizer.isInitial(given) {
+                if initialRow[key] == nil { initialRow[key] = r }
+                return
+            }
+            if fullRow[key] == nil { fullRow[key] = r }
+            if let tag = Pseudonymizer.personTag(entries[r].standIn) { fullTags.insert(tag) }
+            for word in [given, family] { holders[Pseudonymizer.fold(word), default: []].insert(r) }
+            if let words = Pseudonymizer.nameWords(core), words.count >= 2 { starts[words[0] + " " + words[1], default: []].append((r, words)) }
+        }
+
+        /// Step 5: each part points at its row; a first name or a surname alone takes the stand-in of the one
+        /// full name that holds it, and a word two or more hold a stand-in of its own.
+        mutating func parts() {
+            var own: [String: String] = [:]
+            // A word's own stand-in: the first one a part or a name of that word alone already has that is no full name's.
+            func single(_ i: Int) -> String? {
+                let name = Pseudonymizer.nameParts(entries[i].original)
+                return name.given == nil ? name.family : (name.family == nil ? name.given : nil)
+            }
+            for i in entries.indices where !kept[i] && !entries[i].original.isEmpty && entries[i].kind == .person && (entries[i].partOf != nil || row[i] == i) {
+                guard let word = single(i), let tag = Pseudonymizer.personTag(entries[i].standIn) else { continue }
+                let fold = Pseudonymizer.fold(word)
+                if own[fold] == nil, !fullTags.contains(tag), (holders[fold] ?? []).count + (keptHolders[fold] ?? []).count >= 2 { own[fold] = tag }
+            }
+            for i in entries.indices where !kept[i] && !entries[i].original.isEmpty && entries[i].kind == .person {
+                let isPart = entries[i].partOf != nil
+                guard isPart || row[i] == i, let word = single(i), let tag = Pseudonymizer.personTag(entries[i].standIn) else {
+                    if isPart { repoint(i) }
+                    continue
+                }
+                let fold = Pseudonymizer.fold(word), rows = holders[fold] ?? [], all = rows.count + (keptHolders[fold] ?? []).count
+                if all >= 2 {
+                    let shared = own[fold] ?? Self.fresh(&used)
+                    own[fold] = shared
+                    entries[i].standIn = entries[i].standIn.replacingOccurrences(of: tag, with: shared)
+                    if isPart { repoint(i) }
+                } else if rows.count == 1, let r = rows.first, let theirs = Pseudonymizer.personTag(entries[r].standIn), isPart {
+                    entries[i].standIn = entries[i].standIn.replacingOccurrences(of: tag, with: theirs)
+                    entries[i].partOf = entries[r].original
+                } else if isPart {
+                    repoint(i)
+                }
+            }
+            for i in entries.indices where !kept[i] && !entries[i].original.isEmpty && entries[i].kind != .person && entries[i].partOf != nil { repoint(i) }
+        }
+
+        static func fresh(_ used: inout Set<String>) -> String { Pseudonymizer.Mapping.freshTag(.person, used: &used) }
+
+        /// A part points at the row its whole belongs to.
+        mutating func repoint(_ i: Int) {
+            guard let whole = entries[i].partOf, let w = index(of: whole) else { return }
+            var r = w, seen: Set<Int> = [w]
+            while let up = row[r], up != r, seen.insert(up).inserted { r = up }
+            if let up = entries[r].formOf, let u = index(of: up), u != r, entries[u].formOf == nil, entries[u].partOf == nil { r = u }
+            entries[i].partOf = entries[r].original
+        }
+
+        /// The entries, the rows made for labelled names each before its labelled whole, a title alone left out.
+        func result() -> [Entry] {
+            var out: [Entry] = []
+            let made = Dictionary(grouping: self.made, by: \.before)
+            for (i, entry) in entries.enumerated() {
+                for row in made[i] ?? [] { out.append(row.entry) }
+                if !entry.original.isEmpty { out.append(entry) }
+            }
+            return out
+        }
     }
 }
 
