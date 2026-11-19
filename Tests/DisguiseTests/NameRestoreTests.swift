@@ -103,4 +103,37 @@ struct NameRestoreTests {
         let back = pseudonymizer.restorer.apply("\(tag)s Anwalt meldet sich.").text
         #expect(back == "Ferbers Anwalt meldet sich.", "\(back)")
     }
+
+    /// Backlog, 17 November (principle 11): a first name at the start of a sentence, with a day as its
+    /// surname, went out as „[Person A] <day> …“ — `[Person A]` being a stranger who shares the first
+    /// name — and came back as the stranger's whole name with the day after it. N3 and F021 AC-11 say a
+    /// first name and the word beside it are one person, the second word the surname whatever the
+    /// dictionary says of it; at the start of a line the pair rule still asked for a second word no
+    /// dictionary knows, and a day is known. Made-up names.
+    @Test("Fix · a first name and a day at a sentence's start are one person: hidden whole, and back as written")
+    func firstNameAndDayAtTheStart() {
+        Detection.$override.withValue(.new) {
+            for (text, day) in [("Tamsin Mittwoch ist meine Schwester.", "Mittwoch"), ("Tamsin Freitag hat angerufen.", "Freitag")] {
+                var list = Pseudonymizer(mode: .placeholder)
+                // A stranger who shares the first name, learned before.
+                list.learnAdmitted([Entity(kind: .person, text: "Tamsin Kolbeck", field: .from, start: 0, length: 0, source: .rule)])
+                Detection.learn(Detection.finder().entities(in: text, field: .body), into: &list)
+                let sent = list.disguiser.apply(text).text
+                #expect(!sent.contains(day) && !sent.contains("Tamsin"), "sent: \(sent)")
+                let back = list.restore(sent)
+                #expect(back == text, "\(sent) came back as \(back)")
+                #expect(!back.contains("Kolbeck"), "a stranger's surname came back: \(back)")
+            }
+        }
+    }
+
+    @Test("Fix · a day that is a day stays: at the start, after an article, before a comma")
+    func aDayStaysADay() {
+        Detection.$override.withValue(.new) {
+            for text in ["Mittwoch kommt Tamsin vorbei.", "Am Mittwoch kommt Tamsin.", "Tamsin, Mittwoch passt gut."] {
+                let found = Detection.finder().entities(in: text, field: .body).map(\.text)
+                #expect(!found.contains { $0.contains("Mittwoch") }, "\(text): \(found)")
+            }
+        }
+    }
 }
