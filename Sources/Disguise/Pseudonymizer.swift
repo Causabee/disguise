@@ -35,16 +35,21 @@ public struct Pseudonymizer: Sendable {
         /// Set when the entry was made from part of another — the surname out of a full name, the
         /// street out of an address — so the mapping says where every line came from.
         public var partOf: String?
+        /// F027: set when the entry is a way of writing a row (`Herrn Patrick Schüßler` of `Patrick
+        /// Schüßler`): the row's original. It has the row's stand-in, and no `partOf`, so an older build,
+        /// which ignores this key, takes it over as a whole of its own and hides it.
+        public var formOf: String?
 
         // F024: the memberwise init, public now that the type lives in its own package.
-        public init(kind: Entity.Kind, original: String, standIn: String, partOf: String? = nil) {
+        public init(kind: Entity.Kind, original: String, standIn: String, partOf: String? = nil, formOf: String? = nil) {
             self.kind = kind
             self.original = original
             self.standIn = standIn
             self.partOf = partOf
+            self.formOf = formOf
         }
 
-        enum CodingKeys: String, CodingKey { case kind, original, standIn = "stand_in", partOf = "part_of" }
+        enum CodingKeys: String, CodingKey { case kind, original, standIn = "stand_in", partOf = "part_of", formOf = "form_of" }
     }
 
     /// `mapping.json`: both modes, so a comparison run of one does not throw away the other.
@@ -73,15 +78,28 @@ public struct Pseudonymizer: Sendable {
         /// store: an older build ignores it and drops it when it writes. Every write of this build sets
         /// it, `{}` at least, so a list with the key was written by this build. Nil: everything on.
         public var switches: [String: Switch]?
+        /// F027: written by every write of this build (`MappingFile.write`): this list's ways of writing
+        /// were joined under their rows. A list without it was last written by an earlier build, or
+        /// copied and written again by one, and is joined when read. An older build ignores it and
+        /// drops it when it writes its own file.
+        public var joined: Int?
 
         public struct Switch: Codable, Equatable, Sendable {
             public enum State: String, Codable, Sendable { case on, off, gone }
             public var state: State
             public var at: Date
-            public init(_ state: State, at: Date) {
+            /// F027: `true` when this switch speaks for a row and every way of writing it; absent when it
+            /// speaks for the one name whose hash it is (an older build's, one set before this build, or
+            /// a way's own `on`). An older build ignores it: there the switch is for that one name.
+            public var ways: Bool?
+            public init(_ state: State, at: Date, ways: Bool? = nil) {
                 self.state = state
                 self.at = at
+                self.ways = ways == true ? true : nil
             }
+
+            /// It speaks for the row and every way of writing it.
+            public var coversWays: Bool { ways == true }
 
             /// Of two set at the same instant: hidden more, never less — `on`, then `gone`, then `off`.
             var rank: Int { switch state { case .on: 2; case .gone: 1; case .off: 0 } }
