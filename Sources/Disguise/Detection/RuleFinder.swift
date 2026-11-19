@@ -624,9 +624,31 @@ public struct RuleFinder: NameFinding {
 
     struct Tagged { var kind: Entity.Kind; var range: Range<String.Index> }
 
+    /// On iPhone, Apple's name tagger stays empty for the whole process when it is used before its
+    /// language models are asked for. No error, just no names (probes on an iPhone 15 Pro, iOS 27.0.1,
+    /// 19 November 2026). So the models of the languages it reads (N8: German and English) are asked
+    /// for once, before the first tagging, and waited for, at most three seconds. If they don't answer
+    /// in time, tagging goes on as before.
+    static let modelsAsked: Bool = {
+        let languages: [NLLanguage] = [.german, .english]
+        askedLock.lock(); askedLanguages = languages; askedLock.unlock()
+        let group = DispatchGroup()
+        for language in languages {
+            group.enter()
+            NLTagger.requestAssets(for: language, tagScheme: .nameType) { _, _ in group.leave() }
+        }
+        return group.wait(timeout: .now() + 3) == .success
+    }()
+
+    /// The languages whose models were asked for, in the one-time setup above.
+    static var asked: [NLLanguage] { askedLock.lock(); defer { askedLock.unlock() }; return askedLanguages }
+    private static let askedLock = NSLock()
+    nonisolated(unsafe) private static var askedLanguages: [NLLanguage] = []
+
     /// N8: each paragraph in its own language when German or English is clear, German when it is
     /// not; paragraphs of one language read together, as the tagger reads that run alone.
     func tagged(_ text: String) -> [Tagged] {
+        _ = Self.modelsAsked
         var out: [Tagged] = []
         for (range, language) in Self.runs(of: text, main: language ?? Self.language(of: text), forced: language != nil) {
             let part = String(text[range])
