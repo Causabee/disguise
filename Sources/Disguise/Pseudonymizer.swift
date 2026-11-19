@@ -103,8 +103,13 @@ public struct Pseudonymizer: Sendable {
 
             /// Of two set at the same instant: hidden more, never less — `on`, then `gone`, then `off`.
             var rank: Int { switch state { case .on: 2; case .gone: 1; case .off: 0 } }
-            /// The newer of two; on a tie, the one that hides more.
-            func beats(_ other: Switch) -> Bool { at != other.at ? at > other.at : rank > other.rank }
+            /// The newer of two; on a tie, the one that hides more. F027: on a tie of time and state, the one
+            /// with `ways` — an older build's copy of the same switch lost the word when it wrote its own file.
+            func beats(_ other: Switch) -> Bool {
+                if at != other.at { return at > other.at }
+                if rank != other.rank { return rank > other.rank }
+                return coversWays && !other.coversWays
+            }
         }
 
         /// A `gone` lasts this long: then it is dropped at the next write, and in every merge.
@@ -268,8 +273,9 @@ public struct Pseudonymizer: Sendable {
     }
 
     /// F022: a list's own entries, with the owner's switches. Every send builds from this.
+    /// F027: what goes out as written is read over ways of writing (`Mapping.outAsWritten`).
     public init(_ mapping: Mapping, mode: Mode = .placeholder) {
-        self.init(mode: mode, entries: mapping[mode], off: mapping.off)
+        self.init(mode: mode, entries: mapping[mode], off: mapping.outAsWritten(mode))
     }
 
     /// The entries the disguise uses: all but the wholes switched off and their parts — a part a whole
@@ -1979,3 +1985,148 @@ enum Pool {
         }
     }
 }
+
+// MARK: F027 · One switch for every way of writing
+
+extension Pseudonymizer.Mapping {
+    public typealias Entry = Pseudonymizer.Entry
+
+    /// The rows of a list, each with the names it speaks for: its own first, then its ways of writing,
+    /// as indices into `entries`, in the list's order. A way whose row is not in the list, or is no row,
+    /// is read as a row of its own.
+    static func rows(_ entries: [Entry]) -> [[Int]] {
+        var rowAt: [String: Int] = [:]
+        for (i, entry) in entries.enumerated() where entry.partOf == nil && entry.formOf == nil {
+            rowAt[Pseudonymizer.key(entry.original)] = rowAt[Pseudonymizer.key(entry.original)] ?? i
+        }
+        var order: [Int] = [], names: [Int: [Int]] = [:]
+        for (i, entry) in entries.enumerated() where entry.partOf == nil {
+            let row = entry.formOf.flatMap { rowAt[Pseudonymizer.key($0)] } ?? i
+            if names[row] == nil { order.append(row); names[row] = [row] }
+            if row != i { names[row]!.append(i) }
+        }
+        return order.map { names[$0]! }
+    }
+
+    /// The names a row speaks for: its own and its ways of writing.
+    func names(of row: String) -> [String] {
+        let entries = placeholder
+        return Self.rows(entries).first { entries[$0[0]].original == row || Pseudonymizer.key(entries[$0[0]].original) == Pseudonymizer.key(row) }?
+            .map { entries[$0].original } ?? []
+    }
+
+    /// F027: a row's own state: the newest switch with `ways` on its own name or any of its ways (one
+    /// device's row may be another's way of writing). Nil when none was turned with `ways`.
+    static func rowSwitch(_ names: [String], in switches: [String: Switch]) -> Switch? {
+        names.compactMap { switches[hashed($0)] }.filter(\.coversWays).reduce(nil) { best, next in
+            best.map { next.beats($0) ? next : $0 } ?? next
+        }
+    }
+
+    /// F027: the switch of one name only — without `ways` — or nil.
+    static func own(_ name: String, in switches: [String: Switch]) -> Switch? {
+        switches[hashed(name)].flatMap { $0.coversWays ? nil : $0 }
+    }
+
+    /// F027: the hashes of what goes out as written, for `Pseudonymizer.init(_ mapping:)`: each name turned
+    /// off on its own (a switch without `ways`: an older build's, one from before this build, as F022
+    /// read it), and every name of a row turned off with `ways` — but a way whose own `on` is newer than
+    /// that off (AC-8). A `gone` is not here: the name leaves the list (`settled`, `shed`), hidden till then.
+    public func outAsWritten(_ mode: Pseudonymizer.Mode = .placeholder) -> Set<String> {
+        guard let switches, !switches.isEmpty else { return [] }
+        var out = Set(switches.filter { !$0.value.coversWays && $0.value.state == .off }.keys)
+        guard switches.values.contains(where: \.coversWays) else { return out }
+        let entries = self[mode]
+        for row in Self.rows(entries) {
+            let originals = row.map { entries[$0].original }
+            guard let state = Self.rowSwitch(originals, in: switches), state.state == .off else { continue }
+            for name in originals {
+                if let own = Self.own(name, in: switches), own.state == .on, own.at > state.at { continue }
+                out.insert(Self.hashed(name))
+            }
+        }
+        return out
+    }
+
+    /// F027 (AC-8): the ways of writing a row the owner turned off that are still hidden — each came in
+    /// after the off, with an `on` of its own, until the owner turns it off too.
+    public func hiddenWays(of row: String) -> [String] {
+        guard let switches else { return [] }
+        let names = names(of: row)
+        guard let state = Self.rowSwitch(names, in: switches), state.state == .off else { return [] }
+        return names.filter { name in Self.own(name, in: switches).map { $0.state == .on && $0.at > state.at } ?? false }
+    }
+
+    /// F027 (AC-8, Q2): a way of writing learned since `base` under a row the owner turned off comes in
+    /// on: an `on` of its own, without `ways`, at `now`, so it stays hidden until the owner turns it off too.
+    /// A name with a switch of its own that is off, or newer than the row's, keeps it.
+    public mutating func settleNewWays(base: Self, now: Date = Date()) {
+        guard var switches, switches.values.contains(where: \.coversWays) else { return }
+        let had = Set(base.placeholder.map { Pseudonymizer.key($0.original) })
+        let entries = placeholder
+        for row in Self.rows(entries) {
+            let originals = row.map { entries[$0].original }
+            guard let state = Self.rowSwitch(originals, in: switches), state.state == .off else { continue }
+            for name in originals where !had.contains(Pseudonymizer.key(name)) {
+                let hash = Self.hashed(name)
+                if let mine = switches[hash], mine.coversWays || mine.state == .off || mine.at > state.at { continue }
+                switches[hash] = .init(.on, at: now)
+            }
+        }
+        self.switches = switches
+    }
+
+    /// F027: the list as its switches say, after every merge and in the upgrade (`adopt`, `current`,
+    /// `upgrade`), so the list and the page say what the switches say:
+    /// - a row deleted with `ways`: it, its ways and its parts leave the list — but a via name's service,
+    ///   which becomes a company row of its own, and a name learned again since, with its own newer `on`;
+    /// - a way turned off on its own (no `ways`) leaves its row: a row of its own, off, with its stand-in;
+    ///   a way deleted on its own leaves the list;
+    /// - the row's own name turned off or deleted on its own: the plainest other way becomes the row, and
+    ///   only the old name is off, or gone.
+    public func settled() -> Self {
+        guard let switches, !switches.isEmpty else { return self }
+        var entries = placeholder
+        var removed: Set<String> = []
+        func rehome(_ names: [Int], from old: Int) {
+            guard let next = names.min(by: { Self.plainness(entries[$0].original, $0).lexicographicallyPrecedes(Self.plainness(entries[$1].original, $1)) })
+            else { return }
+            let oldKey = Pseudonymizer.key(entries[old].original), new = entries[next].original
+            entries[next].formOf = nil
+            for i in names where i != next { entries[i].formOf = new }
+            for i in entries.indices where entries[i].partOf.map(Pseudonymizer.key) == oldKey { entries[i].partOf = new }
+        }
+        for row in Self.rows(entries) {
+            let originals = row.map { entries[$0].original }
+            if let state = Self.rowSwitch(originals, in: switches), state.state == .gone {
+                let again = row.filter { Self.own(entries[$0].original, in: switches).map { $0.state == .on && $0.at > state.at } ?? false }
+                for i in row where !again.contains(i) { removed.insert(Self.hashed(entries[i].original)) }
+                if !again.isEmpty { rehome(again, from: row[0]) }
+                continue
+            }
+            var staying: [Int] = []
+            for i in row.dropFirst() {
+                switch Self.own(entries[i].original, in: switches)?.state {
+                case .off?: entries[i].formOf = nil
+                case .gone?: removed.insert(Self.hashed(entries[i].original))
+                default: staying.append(i)
+                }
+            }
+            if let mine = Self.own(originals[0], in: switches), mine.state != .on {
+                rehome(staying, from: row[0])
+                if mine.state == .gone { removed.insert(Self.hashed(originals[0])) }
+            }
+        }
+        var mapping = self
+        mapping.placeholder = removed.isEmpty ? entries : Pseudonymizer.shed(entries, dropped: removed)
+        return mapping
+    }
+
+    /// F027: how plain a way of writing is, to name a row: a name of two words or more before one word, then
+    /// the fewest marks on it (a title, comma order, capitals, quote marks, a label, via, brackets), then the
+    /// fewest words, then the first in the list.
+    static func plainness(_ original: String, _ at: Int) -> [Int] {
+        [Pseudonymizer.words(original).count < 2 ? 1 : 0, Pseudonymizer.decoration(original), Pseudonymizer.words(original).count, at]
+    }
+}
+
