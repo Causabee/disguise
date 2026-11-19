@@ -2166,6 +2166,47 @@ extension Pseudonymizer.Mapping {
         return mapping
     }
 
+    /// F027: one row of the list as a page shows it — a person, a company, a place, an address or a
+    /// number — with the ways it was written. Read the list `settled()` first.
+    public struct Identity: Sendable, Equatable {
+        /// The row's own entry: what its switch and a delete act on.
+        public var row: Entry
+        /// The row's own name and its ways of writing, as written, in the list's order. Parts are no ways.
+        public var ways: [String]
+        /// The plainest way, with what is no part of the name taken off: a title in front, a row's label,
+        /// quote marks; comma order read first name first (`Schüßler, Patrick` → `Patrick Schüßler`).
+        public var name: String
+        /// The owner's word on the row: its newest switch with `ways`, else its own name's.
+        public var state: Switch.State
+        /// The ways still hidden while the row is off: each came in after the off (AC-8).
+        public var hidden: [String]
+    }
+
+    /// F027: the rows of the list, each with its ways, in the list's order.
+    public func identities(_ mode: Pseudonymizer.Mode = .placeholder) -> [Identity] {
+        let entries = self[mode], switches = switches ?? [:]
+        return Self.rows(entries).map { row in
+            let names = row.map { entries[$0].original }
+            let plainest = row.min { Self.plainness(entries[$0].original, $0).lexicographicallyPrecedes(Self.plainness(entries[$1].original, $1)) } ?? row[0]
+            let state = Self.rowSwitch(names, in: switches)?.state ?? Self.own(names[0], in: switches)?.state ?? .on
+            return Identity(row: entries[row[0]], ways: names, name: Self.plainName(entries[plainest].original, kind: entries[row[0]].kind),
+                            state: state, hidden: state == .off ? hiddenWays(of: names[0]) : [])
+        }
+    }
+
+    /// F027: a way of writing as a row is named by it: label, quote marks and a title in front taken
+    /// off, comma order read first name first. The words themselves are never changed.
+    public static func plainName(_ original: String, kind: Entity.Kind) -> String {
+        var name = original.trimmingCharacters(in: .whitespaces)
+        name = Pseudonymizer.withoutRowLabel(name) ?? name
+        name = name.trimmingCharacters(in: CharacterSet(charactersIn: "'\"‘’‚“”„ "))
+        guard kind == .person else { return name }
+        let words = name.split(separator: " ", omittingEmptySubsequences: true)
+        let titles = words.prefix { Pseudonymizer.isListTitle(String($0)) }.count
+        if titles > 0, titles < words.count { name = words.dropFirst(titles).joined(separator: " ") }
+        return SendRecord.natural(name)
+    }
+
     /// F027: how plain a way of writing is, to name a row: a name of two words or more before one word, then
     /// the fewest marks on it (a title, comma order, capitals, quote marks, a label, via, brackets), then the
     /// fewest words, then the first in the list.
