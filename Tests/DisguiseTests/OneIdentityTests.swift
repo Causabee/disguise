@@ -149,12 +149,65 @@ struct OneIdentityTests {
         }
     }
 
-    enum FurtherWay: String, CaseIterable { case frenchTitles }
+    enum FurtherWay: String, CaseIterable { case firstWords, label, via, brackets, frenchTitles, initialApart }
+
+    /// The entry of a name, and whether it is a way of writing that row.
+    static func isWay(_ p: Pseudonymizer, _ written: String, of row: String) -> Bool {
+        p.entries.first { $0.original == written }.map { $0.formOf == row && $0.partOf == nil } ?? false
+    }
+
+    static func isRow(_ p: Pseudonymizer, _ written: String) -> Bool {
+        p.entries.first { $0.original == written }.map { $0.formOf == nil && $0.partOf == nil } ?? false
+    }
 
     @Test("F027 AC-3 · the further ways, as the owner picked them", arguments: FurtherWay.allCases, Path.allCases)
     func furtherWays(way: FurtherWay, path: Path) {
         var p = Pseudonymizer(mode: .placeholder)
+        learn([(.person, "Patrick Schüßler"), (.person, "Mirela Ottilie Brankovan"), (.organization, "Ostwind Reiseschutz AG")], into: &p, by: path)
+        let patrick = p.standIn(for: "Patrick Schüßler") ?? "?", mirela = p.standIn(for: "Mirela Ottilie Brankovan") ?? "?"
+        let ostwind = p.standIn(for: "Ostwind Reiseschutz AG") ?? "?"
         switch way {
+        case .firstWords:
+            // The first words of exactly one known full name are that person; the word the row lacks stays hidden alone.
+            learn(people(["Mirela Ottilie"]), into: &p, by: path)
+            #expect(p.standIn(for: "Mirela Ottilie") == mirela)
+            #expect(Self.isWay(p, "Mirela Ottilie", of: "Mirela Ottilie Brankovan"))
+            #expect(p.disguiser.apply("Ottilie").text == mirela)
+            #expect(p.entries.first { $0.original == "Ottilie" }?.partOf == "Mirela Ottilie Brankovan")
+        case .label:
+            // A row's label is no part of a name: a way of the row, the label hidden inside the stand-in.
+            learn([(.organization, "P7 Ostwind Reiseschutz AG"), (.person, "#3 Patrick Schüßler")], into: &p, by: path)
+            #expect(p.disguiser.apply("P7 Ostwind Reiseschutz AG").text == ostwind)
+            #expect(p.disguiser.apply("#3 Patrick Schüßler").text == patrick)
+            #expect(Self.isWay(p, "P7 Ostwind Reiseschutz AG", of: "Ostwind Reiseschutz AG"))
+            #expect(Self.isWay(p, "#3 Patrick Schüßler", of: "Patrick Schüßler"))
+            // Unknown before: the name after the label becomes the row, the labelled whole a way of it.
+            var fresh = Pseudonymizer(mode: .placeholder)
+            learn([(.organization, "B12 Radwerk Berlin GmbH")], into: &fresh, by: path)
+            #expect(Self.isRow(fresh, "Radwerk Berlin GmbH") && Self.isWay(fresh, "B12 Radwerk Berlin GmbH", of: "Radwerk Berlin GmbH"))
+            #expect(fresh.disguiser.apply("B12 Radwerk Berlin GmbH und Radwerk Berlin GmbH").text == "[Company A] und [Company A]")
+            // What follows is no name on its own: the whole is learned as written, as today.
+            learn([(.organization, "P8 GmbH")], into: &fresh, by: path)
+            #expect(Self.isRow(fresh, "P8 GmbH") && fresh.standIn(for: "GmbH") == nil)
+        case .via:
+            // A person sent via a service is a way of the person; the service is hidden, and no row of its own.
+            learn(people(["Patrick Schüßler via Doodle"]), into: &p, by: path)
+            let doodle = p.standIn(for: "Doodle") ?? "?"
+            #expect(p.disguiser.apply("Patrick Schüßler via Doodle").text == "\(patrick) via \(doodle)")
+            #expect(doodle.hasPrefix("[Company "))
+            #expect(Self.isWay(p, "Patrick Schüßler via Doodle", of: "Patrick Schüßler"))
+            #expect(p.entries.first { $0.original == "Doodle" }.map { $0.partOf == "Patrick Schüßler" && $0.kind == .organization } == true)
+            #expect(p.disguiser.apply("Doodle schreibt").text == "\(doodle) schreibt")
+            // Unless it also came in on its own: then it is a row of its own, as today.
+            learn([(.organization, "Doodle")], into: &p, by: .admitted)
+            #expect(Self.isRow(p, "Doodle") && p.standIn(for: "Doodle") == doodle)
+        case .brackets:
+            // A person with their company in brackets is a way of the person; the company keeps a row of its own.
+            learn(people(["Schüßler, Patrick (Radwerk Berlin GmbH)"]), into: &p, by: path)
+            let radwerk = p.standIn(for: "Radwerk Berlin GmbH") ?? "?"
+            #expect(p.disguiser.apply("Schüßler, Patrick (Radwerk Berlin GmbH)").text == "\(patrick) (\(radwerk))")
+            #expect(Self.isWay(p, "Schüßler, Patrick (Radwerk Berlin GmbH)", of: "Patrick Schüßler"))
+            #expect(Self.isRow(p, "Radwerk Berlin GmbH"))
         case .frenchTitles:
             // Monsieur, Madame, Mademoiselle, Mme and Mlle are titles, like Herr and Frau: kept in front, never learned.
             learn(people(["Monsieur Garrigou", "Mme Lestrade", "Madame Brankovan", "Mlle. Kolbeck", "Mademoiselle"]), into: &p, by: path)
@@ -167,6 +220,32 @@ struct OneIdentityTests {
             for title in ["Monsieur", "Madame", "Mademoiselle", "Mme", "Mme.", "Mlle", "Mlle."] {
                 #expect(p.standIn(for: title) == nil, "\(path): \(title) was learned")
             }
+        case .initialApart:
+            // An initial stays apart: its own row and stand-in, the initial hidden in it; it never takes the surname.
+            for order in [["P. Schüßler", "Herr Schüßler"], ["Herr Schüßler", "P. Schüßler"]] {
+                var after = p
+                learn(people(order), into: &after, by: path)
+                let initial = after.disguiser.apply("P. Schüßler").text
+                #expect(Pseudonymizer.tags(in: initial).count == 1 && !initial.contains("P.") && initial != patrick, "\(order): \(initial)")
+                #expect(Self.isRow(after, "P. Schüßler"))
+                #expect(after.disguiser.apply("Herr Schüßler").text == "Herr \(patrick)")
+                #expect(after.disguiser.apply("Schüßler").text == patrick)
+                #expect(Self.isWay(after, "Herr Schüßler", of: "Patrick Schüßler"))
+            }
+            // Whichever came first: the initial before the full name, the surname still goes to the full name.
+            var first = Pseudonymizer(mode: .placeholder)
+            learn(people(["P. Schüßler"]), into: &first, by: path)
+            learn(people(["Herr Schüßler"]), into: &first, by: path)
+            let alone = first.disguiser.apply("Herr Schüßler").text
+            #expect(alone == "Herr " + (first.standIn(for: "P. Schüßler") ?? "?"), "with no full name, the surname is the initial's: \(alone)")
+            learn(people(["Patrick Schüßler"]), into: &first, by: path)
+            let full = first.standIn(for: "Patrick Schüßler") ?? "?"
+            #expect(first.standIn(for: "P. Schüßler") != full)
+            #expect(first.disguiser.apply("Herr Schüßler").text == "Herr \(full)")
+            #expect(first.disguiser.apply("Schüßler").text == full)
+            #expect(Self.isWay(first, "Herr Schüßler", of: "Patrick Schüßler"))
+            // The initial itself is never an entry, and never a first name for sharing.
+            #expect(first.standIn(for: "P.") == nil)
         }
     }
 
@@ -188,5 +267,76 @@ struct OneIdentityTests {
         let honorifics = try #require(pseudonymizer.components(separatedBy: "public static let honorifics").dropFirst().first?
             .components(separatedBy: ".union(roles)").first)
         for title in ["monsieur", "madame", "mademoiselle", "mme", "mlle"] { #expect(!honorifics.contains(title)) }
+    }
+
+    /// No row holds a way of writing another person: every way carries its row's tag.
+    static func expectNoForeignWay(_ p: Pseudonymizer, _ comment: String) {
+        for entry in p.entries where entry.formOf != nil {
+            let row = p.entries.first { $0.original == entry.formOf }
+            #expect(row != nil && row?.formOf == nil && row?.partOf == nil, "\(comment): \(entry.original) names no row")
+            #expect(Pseudonymizer.tags(in: entry.standIn).first == row.flatMap { Pseudonymizer.tags(in: $0.standIn).first },
+                    "\(comment): \(entry.original) (\(entry.standIn)) is under \(row?.original ?? "?") (\(row?.standIn ?? "?"))")
+        }
+    }
+
+    @Test("F027 AC-4 · apart before wrongly together: Patrick Ahlers, Lotta Schüßler, Tamsin Liv", arguments: Path.allCases)
+    func apart(path: Path) {
+        for herrFirst in [true, false] {
+            var p = Pseudonymizer(mode: .placeholder)
+            learn(people(["Patrick Schüßler"]), into: &p, by: path)
+            if herrFirst {
+                learn(people(["Herr Schüßler"]), into: &p, by: path)
+                #expect(Self.isWay(p, "Herr Schüßler", of: "Patrick Schüßler"))
+            }
+            learn(people(["Patrick Ahlers"]), into: &p, by: path)
+            learn(people(["Lotta Schüßler"]), into: &p, by: path)
+            if !herrFirst { learn(people(["Herr Schüßler"]), into: &p, by: path) }
+            let schuessler = p.standIn(for: "Patrick Schüßler") ?? "?", ahlers = p.standIn(for: "Patrick Ahlers") ?? "?"
+            let lotta = p.standIn(for: "Lotta Schüßler") ?? "?"
+            #expect(Set([schuessler, ahlers, lotta]).count == 3)
+            #expect(Self.isRow(p, "Patrick Ahlers") && Self.isRow(p, "Lotta Schüßler"))
+            // „Patrick“ alone, which two share, has a stand-in of its own; so have „Schüßler“ and „Herr Schüßler“.
+            let alone = p.disguiser.apply("Patrick").text, surname = p.disguiser.apply("Schüßler").text
+            #expect(![schuessler, ahlers, lotta].contains(alone) && ![schuessler, ahlers, lotta].contains(surname), "\(alone), \(surname)")
+            #expect(p.disguiser.apply("Herr Schüßler").text == "Herr \(surname)")
+            #expect(Self.isRow(p, "Herr Schüßler"), "Herr Schüßler is still under a row")
+            // Neither full name comes back with the other's surname.
+            for name in ["Patrick Schüßler", "Patrick Ahlers", "Lotta Schüßler"] {
+                #expect(p.restore(p.disguiser.apply(name).text) == name)
+            }
+            Self.expectNoForeignWay(p, "\(path), Herr first: \(herrFirst)")
+        }
+        // „Tamsin Liv“, the first words of two full names, stays apart from both.
+        var p = Pseudonymizer(mode: .placeholder)
+        learn(people(["Tamsin Liv Kolbeck", "Tamsin Liv Vosshardt"]), into: &p, by: path)
+        learn(people(["Tamsin Liv"]), into: &p, by: path)
+        let liv = p.standIn(for: "Tamsin Liv")
+        #expect(liv != nil && liv != p.standIn(for: "Tamsin Liv Kolbeck") && liv != p.standIn(for: "Tamsin Liv Vosshardt"))
+        #expect(Self.isRow(p, "Tamsin Liv"))
+        Self.expectNoForeignWay(p, "\(path), Tamsin Liv")
+    }
+
+    @Test("F027 AC-4 · never across kinds, never by sound, never to two rows; no row holds another person's way", arguments: Path.allCases)
+    func never(path: Path) {
+        var p = Pseudonymizer(mode: .placeholder)
+        learn([(.person, "Tamsin Harlander"), (.organization, "Harlander GmbH")], into: &p, by: path)
+        // A person and a company of the same word stay two.
+        #expect(p.standIn(for: "Tamsin Harlander") != p.standIn(for: "Harlander GmbH"))
+        #expect(Self.isRow(p, "Tamsin Harlander") && Self.isRow(p, "Harlander GmbH"))
+        // Never by sound: a letter more or less is another name.
+        learn(people(["Patrick Schüßler", "Patrik Schüßler", "Patrick Schüsler"]), into: &p, by: path)
+        let tags = ["Patrick Schüßler", "Patrik Schüßler", "Patrick Schüsler"].map { p.standIn(for: $0) }
+        #expect(Set(tags).count == 3, "\(tags)")
+        for name in ["Patrik Schüßler", "Patrick Schüsler"] { #expect(Self.isRow(p, name)) }
+        // Never to two rows: a first word two full names have is no way of either.
+        learn(people(["Mirela Ottilie Brankovan", "Mirela Ottilie Kloss", "Mirela Ottilie"]), into: &p, by: path)
+        #expect(Self.isRow(p, "Mirela Ottilie"))
+        // Never because one name is part of a longer one.
+        learn([(.organization, "Radwerk Berlin GmbH"), (.organization, "Radwerk GmbH")], into: &p, by: path)
+        #expect(Self.isRow(p, "Radwerk GmbH") && p.standIn(for: "Radwerk GmbH") != p.standIn(for: "Radwerk Berlin GmbH"))
+        // Mixed, in one batch and one at a time: no row holds a way of writing another person.
+        learn(people(["Herr Schüßler", "Lotta Schüßler", "SCHÜSSLER Lotta", "Patrick", "Patrick Ahlers", "Dr. Patrick Schüßler",
+                      "Patrick Schüßler via Doodle", "P. Schüßler", "Herrn Schuessler"]), into: &p, by: path)
+        Self.expectNoForeignWay(p, "\(path)")
     }
 }
