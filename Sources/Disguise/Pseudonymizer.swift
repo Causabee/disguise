@@ -242,6 +242,12 @@ public struct Pseudonymizer: Sendable {
     /// F021: while learning what the new rules' gate admitted (`learnAdmitted`). Read by `recordPart` (P1).
     private var admitted = false
     private var skippedParts: [Skip] = []
+    /// F027, placeholder mode: the first entry of each kind and folded spelling (`foldKey`), so
+    /// `Schüßler`, `Schuessler` and `SCHÜSSLER` are found as one name while learning, not as three.
+    private var foldIndex: [String: Int] = [:]
+    /// F027, placeholder mode: each full name's tag and the row it was first given to — the row its
+    /// other ways of writing (`Herrn Patrick Schüßler`, `Schüßler, Patrick`) go under.
+    private var rowOfTag: [String: String] = [:]
 
     /// F022: the hashes of the wholes the owner switched off (`Mapping.switches`). They stay in the
     /// list, so they are not learned again and a send already out is still put back; the disguise —
@@ -340,16 +346,18 @@ public struct Pseudonymizer: Sendable {
             forbidden.insert(Self.key(entity.text))
             for word in Self.words(entity.text) { forbidden.insert(Self.key(word)) }
         }
-        let ordered = usable.enumerated().sorted { a, b in
+        let sorted = usable.enumerated().sorted { a, b in
             let (x, y) = (a.element, b.element)
             if Self.priority(x.kind) != Self.priority(y.kind) { return Self.priority(x.kind) < Self.priority(y.kind) }
             if Self.fullness(x.kind, x.text) != Self.fullness(y.kind, y.text) { return Self.fullness(x.kind, x.text) > Self.fullness(y.kind, y.text) }
             if Self.words(x.text).count != Self.words(y.text).count { return Self.words(x.text).count > Self.words(y.text).count }
             return a.offset < b.offset
-        }
+        }.map(\.element)
+        // F027: of the ways one person is written in this batch, the plainest is learned first, so it is the row.
+        let ordered = mode == .placeholder ? Self.plainestFirst(sorted) : sorted
         admitted = true
         defer { admitted = false }
-        for (_, entity) in ordered {
+        for entity in ordered {
             // A word the gate admitted as a name of its own (`Eisenhut` of `Kanzlei Eisenhut &
             // Partner`) is no longer only a part of another (P2 then leaves it alone).
             if [.person, .organization].contains(entity.kind), Self.words(entity.text).count == 1,
@@ -357,6 +365,13 @@ public struct Pseudonymizer: Sendable {
                // F022 AC-5: a part of a whole the owner switched off goes with it; it is not made a whole.
                !off.contains(Mapping.hashed(whole)) {
                 entries[at].partOf = nil
+                // F027: a word of one person, admitted on its own, is a way of writing that person's row;
+                // a word two people share keeps a stand-in of its own and is a row of its own (AC-4).
+                if mode == .placeholder, let tag = Self.personTag(entries[at].standIn), entries[at].standIn == tag,
+                   fullNameTags.contains(tag), let row = rowOfTag[tag], index[Self.key(row)] != nil,
+                   Self.key(row) != Self.key(entries[at].original) {
+                    entries[at].formOf = root(of: row)
+                }
             }
             learn(entity.kind, entity.text)
         }
@@ -476,6 +491,10 @@ public struct Pseudonymizer: Sendable {
         let original = text.trimmed
         guard original.count >= 2 else { return nil }
         if let known = self.standIn(for: original) { return known }
+        // F027 rule 1: a company, a place, a street or a postcode written another way — `Goettingen`,
+        // `'Radwerk Berlin GmbH'` — is the name already known: its stand-in, and a way of its row.
+        // A person is joined in `person`, after the via and the brackets are read.
+        if mode == .placeholder, kind != .person, let known = spelling(kind, original) { return known }
 
         // `Schüßler, Patrick (Radwerk Berlin GmbH)` is a person and a company, and each half is
         // learned as what it is.
@@ -527,21 +546,41 @@ public struct Pseudonymizer: Sendable {
 
         let standIn: String
         if mode == .placeholder {
+            // F027 rule 1: the same person written another way — `Patrick Schuessler`, `'Patrick
+            // Schüßler'`, `Schuessler` — is the one already known: a way of its row, or a part of it.
+            if let at = Self.foldKey(.person, original).flatMap({ foldIndex[$0] }) {
+                let match = entries[at]
+                let standIn = Self.titled(name.title, match.standIn)
+                if let row = match.partOf { return record(.person, original, standIn, partOf: partOf ?? row) }
+                record(.person, original, standIn, partOf: partOf, formOf: match.original)
+                if let given = name.given, let family = name.family, let tag = Self.personTag(match.standIn) {
+                    for part in [given, family] { recordSharedPart(part, tag, of: original) }
+                }
+                return standIn
+            }
             // One tag for the person however they are written; a `Frau` stays readable. A full
             // name is one person, and only the same first and last name are the same person:
             // `Patrick Schüßler` is not `Patrick Ahlers`, and `Lotta Spengler` is not `Jan Spengler`.
             // Sharing a tag through one shared word made the way back give the wrong name.
             let tag: String
             if let given = name.given, let family = name.family {
-                tag = fullNames[Self.personKey(given, family)] ?? placeholder(.person)
+                // F027 rule 2: the same first name and surname (`fold`), however ordered, titled or quoted: a way of that row.
+                let known = fullNames[Self.personKey(given, family)]
+                tag = known ?? placeholder(.person)
                 standIn = [name.title, tag].compactMap { $0 }.joined(separator: " ")
-                record(.person, original, standIn, partOf: partOf)
+                record(.person, original, standIn, partOf: partOf, formOf: known.flatMap { rowOfTag[$0] })
                 for part in [given, family] { recordSharedPart(part, tag, of: original) }
             } else {
                 let part = name.given ?? name.family ?? original
-                tag = self.standIn(for: part).flatMap(Self.personTag) ?? placeholder(.person)
+                let known = self.standIn(for: part).flatMap(Self.personTag)
+                    ?? Self.foldKey(.person, part).flatMap { foldIndex[$0] }.flatMap { Self.personTag(entries[$0].standIn) }
+                tag = known ?? placeholder(.person)
                 standIn = [name.title, tag].compactMap { $0 }.joined(separator: " ")
-                record(.person, original, standIn, partOf: partOf)
+                // F027 rule 7: a word of the one full name that has it, with a title or none — `Herr
+                // Schüßler` — is a way of that row. A word two full names share has a tag of its own,
+                // and a name with it is a row of its own.
+                let row = known.flatMap { fullNameTags.contains($0) ? rowOfTag[$0] : nil }
+                record(.person, original, standIn, partOf: partOf, formOf: row)
                 recordPart(.person, part, tag, of: original)
             }
             return standIn
@@ -550,7 +589,9 @@ public struct Pseudonymizer: Sendable {
         let given = name.given.map { self.standIn(for: $0) ?? pickName(.givenName) }
         let family = name.family.map { self.standIn(for: $0) ?? pickName(.person) }
         switch (given, family) {
-        case let (given?, family?): standIn = name.commaFirst ? "\(family), \(given)" : "\(given) \(family)"
+        case let (given?, family?):
+            // F027: a surname in capitals written first stays first, in capitals.
+            standIn = name.commaFirst ? "\(family), \(given)" : name.familyFirst ? "\(family.uppercased()) \(given)" : "\(given) \(family)"
         case let (given?, nil): standIn = given
         case let (nil, family?): standIn = family
         default: return nil
@@ -568,17 +609,28 @@ public struct Pseudonymizer: Sendable {
     /// longer say which of them is meant, and it gets a tag of its own. It is still disguised;
     /// it just no longer comes back as the wrong person.
     mutating func recordSharedPart(_ part: String, _ tag: String, of original: String) {
-        guard let at = index[Self.key(part)] else { return recordPart(.person, part, tag, of: original) }
-        guard entries[at].kind == .person, let old = Self.personTag(entries[at].standIn), old != tag,
-              fullNameTags.contains(old) else { return }
+        // F027: the word as written, or another spelling of it (`fold`): a spelling never counts as a second person.
+        let exact = index[Self.key(part)]
+        let at = exact ?? (mode == .placeholder ? Self.foldKey(.person, part).flatMap { foldIndex[$0] } : nil)
+        guard let at else { return recordPart(.person, part, tag, of: original) }
+        guard entries[at].kind == .person, let old = Self.personTag(entries[at].standIn) else { return }
+        guard old != tag, fullNameTags.contains(old) else {
+            // The same person, or a word no full name lent its tag: this spelling of it goes with it, hidden.
+            if exact == nil { recordPart(.person, part, old, of: original) }
+            return
+        }
         let own = placeholder(.person)
         use(own)
+        let folded = Self.fold(part)
         for i in entries.indices where entries[i].kind == .person && Self.personTag(entries[i].standIn) == old {
             let name = Self.nameParts(entries[i].original)
             let single = name.given == nil ? name.family : (name.family == nil ? name.given : nil)
-            guard i == at || single.map(Self.key) == Self.key(part) else { continue }
+            guard i == at || single.map(Self.fold) == folded else { continue }
             entries[i].standIn = entries[i].standIn.replacingOccurrences(of: old, with: own)
+            // F027 (AC-4): no row holds a way of writing another person: a way that held the word leaves its row.
+            entries[i].formOf = nil
         }
+        if exact == nil { recordPart(.person, part, own, of: original) }
     }
 
     /// `[Person F]` out of `Frau [Person F]`.
@@ -610,19 +662,26 @@ public struct Pseudonymizer: Sendable {
         return out
     }
 
-    static func personKey(_ given: String, _ family: String) -> String { key(given) + "|" + key(family) }
+    /// F027: by `fold`, so `Patrick Schuessler` is the same first name and surname as `Patrick Schüßler`.
+    static func personKey(_ given: String, _ family: String) -> String { fold(given) + "|" + fold(family) }
 
     struct NameParts {
         var title: String?
         var given: String?
         var family: String?
         var commaFirst = false
+        /// F027: `SCHÜSSLER Patrick` — the surname in capitals, written first.
+        var familyFirst = false
     }
 
     /// `Sibylle Seeger`, `Moreno, Valentina`, `Frau Seeger`, `Martin`. A single word is read as a
-    /// first name, because that is how a bare name turns up in mail — `Hallo Martin` — and a
-    /// surname on its own almost always has `Frau` or `Herr` in front of it.
-    static func nameParts(_ text: String) -> NameParts {
+    /// first name, because that is how a bare name turns up in what comes in — `Hallo Martin` — and
+    /// a surname on its own almost always has `Frau` or `Herr` in front of it.
+    ///
+    /// F027, for the list: the French titles are titles too (`isListTitle`), and one word in capitals
+    /// among words that are not, written first, is the surname (`SCHÜSSLER Patrick`). `legacy` reads
+    /// as 1.0.1 did, for the disguise's own rule P2, which must find exactly what it found.
+    static func nameParts(_ text: String, legacy: Bool = false) -> NameParts {
         let text = text.trimmingCharacters(in: CharacterSet(charactersIn: "'\"‘’‚“”„ "))
         var parts = NameParts()
         if let comma = text.firstIndex(of: ",") {
@@ -637,17 +696,37 @@ public struct Pseudonymizer: Sendable {
         if let via = tokens.firstIndex(where: { $0.lowercased() == "via" }), via > 0 { tokens = Array(tokens[..<via]) }
         var titles: [String] = []
         while let first = tokens.first {
-            if Pseudonymizer.isTitle(first) { titles.append(first); tokens.removeFirst() }
+            if legacy ? Pseudonymizer.isTitle(first) : Pseudonymizer.isListTitle(first) { titles.append(first); tokens.removeFirst() }
             else if let glued = gluedTitle(first) { titles.append(glued.title); tokens[0] = glued.rest }
             else { break }
         }
         parts.title = titles.isEmpty ? nil : titles.joined(separator: " ")
+        if !legacy, tokens.count >= 2, isShouted(tokens[0]), tokens.dropFirst().allSatisfy({ !isShouted($0) }) {
+            parts.family = tokens[0]
+            parts.given = tokens[1]
+            parts.familyFirst = true
+            return parts
+        }
         switch tokens.count {
         case 0: break
         case 1: if parts.title == nil { parts.given = tokens[0] } else { parts.family = tokens[0] }
         default: parts.given = tokens.first; parts.family = tokens.last
         }
         return parts
+    }
+
+    /// F027: a word written all in capitals, two letters at least: `SCHÜSSLER`, `MÜLLER-LÜDENSCHEID`.
+    static func isShouted(_ word: String) -> Bool {
+        let letters = word.filter(\.isLetter)
+        return letters.count >= 2 && word.allSatisfy { $0.isLetter || $0 == "-" || $0 == "'" || $0 == "’" }
+            && letters == letters.uppercased() && letters != letters.lowercased()
+    }
+
+    /// F027: a person's tag with this name's own title in front, where the known stand-in is that tag
+    /// with or without a title (`Herr [Person A]`); any other stand-in (`[Person A] via [Company B]`) as it is.
+    static func titled(_ title: String?, _ standIn: String) -> String {
+        guard let tag = personTag(standIn), tags(in: standIn) == [tag], standIn.hasSuffix(tag) else { return standIn }
+        return [title, tag].compactMap { $0 }.joined(separator: " ")
     }
 
     // MARK: Companies
@@ -918,10 +997,44 @@ public struct Pseudonymizer: Sendable {
     }
 
     @discardableResult
-    public mutating func record(_ kind: Entity.Kind, _ original: String, _ standIn: String, partOf: String?) -> String {
+    public mutating func record(_ kind: Entity.Kind, _ original: String, _ standIn: String, partOf: String?, formOf: String? = nil) -> String {
         if let known = self.standIn(for: original) { return known }
-        add(Entry(kind: kind, original: original, standIn: standIn, partOf: partOf))
+        // F027: a part and a way of writing point at the row, never at another part or way, so a
+        // switch on the row reaches each of them in one step (`shed`).
+        let key = Self.key(original)
+        func row(_ name: String?) -> String? { name.map { root(of: $0) }.flatMap { Self.key($0) == key ? nil : $0 } }
+        let part = row(partOf)
+        add(Entry(kind: kind, original: original, standIn: standIn, partOf: part, formOf: part == nil ? row(formOf) : nil))
         return standIn
+    }
+
+    /// F027: the row an entry belongs to: itself, or the row its `formOf` or `partOf` names. A name not
+    /// in the list is its own row.
+    public func root(of original: String) -> String {
+        var current = original
+        var seen: Set<String> = [Self.key(original)]
+        while let at = index[Self.key(current)], let up = entries[at].formOf ?? entries[at].partOf,
+              index[Self.key(up)] != nil, seen.insert(Self.key(up)).inserted {
+            current = up
+        }
+        return current
+    }
+
+    /// F027 rule 1: the same kind and the same `fold` as a known name: its stand-in; a way of its row,
+    /// or, when the known name is a part, a part of the same row. Never an email, a phone, a bank
+    /// account or a reference: they are matched as written (`foldKey`).
+    mutating func spelling(_ kind: Entity.Kind, _ original: String) -> String? {
+        guard let at = Self.foldKey(kind, original).flatMap({ foldIndex[$0] }) else { return nil }
+        let match = entries[at]
+        if let row = match.partOf { return record(kind, original, match.standIn, partOf: row) }
+        return record(kind, original, match.standIn, partOf: nil, formOf: match.original)
+    }
+
+    /// F027: the kinds whose ways of writing are joined by their `fold`; a number or an address is matched as written.
+    static func foldKey(_ kind: Entity.Kind, _ text: String) -> String? {
+        guard [.person, .organization, .place, .street, .postalCity].contains(kind) else { return nil }
+        let folded = fold(text)
+        return folded.isEmpty ? nil : kind.rawValue + "|" + folded
     }
 
     /// `[Person AB]` is taken.
@@ -934,6 +1047,7 @@ public struct Pseudonymizer: Sendable {
         let key = Self.key(entry.original)
         guard index[key] == nil else { return }
         index[key] = entries.count
+        if mode == .placeholder, let fold = Self.foldKey(entry.kind, entry.original), foldIndex[fold] == nil { foldIndex[fold] = entries.count }
         entries.append(entry)
         forbidden.insert(key)
         for tag in Self.tags(in: entry.standIn) { use(tag) }
@@ -942,7 +1056,49 @@ public struct Pseudonymizer: Sendable {
            let tag = Self.personTag(entry.standIn) {
             fullNames[Self.personKey(given, family)] = fullNames[Self.personKey(given, family)] ?? tag
             fullNameTags.insert(fullNames[Self.personKey(given, family)]!)
+            fullNameTags.insert(tag)
+            if entry.formOf == nil, rowOfTag[tag] == nil { rowOfTag[tag] = entry.original }
         }
+    }
+
+    /// F027: of the ways one person is written in one batch, the plainest first — `Patrick Schüßler`
+    /// before `Dr. Patrick Schüßler`, `Schüßler, Patrick` and `SCHÜSSLER Patrick` — so it is the row the
+    /// others go under. Each person keeps the places their ways had, so no other tag's letter moves.
+    static func plainestFirst(_ entities: [Entity]) -> [Entity] {
+        func person(_ entity: Entity) -> String? {
+            guard entity.kind == .person else { return nil }
+            let name = nameParts(entity.text.trimmed)
+            guard let given = name.given, let family = name.family else { return nil }
+            return personKey(given, family)
+        }
+        var groups: [String: [Int]] = [:]
+        for (i, entity) in entities.enumerated() { if let key = person(entity) { groups[key, default: []].append(i) } }
+        var out = entities
+        for positions in groups.values where positions.count > 1 {
+            // Plainest first; among the plain, the longest (`Mirela Ottilie Brankovan`); then as they came.
+            let members = positions.map { entities[$0] }.enumerated().sorted { a, b in
+                let (x, y) = (decoration(a.element.text), decoration(b.element.text))
+                if x != y { return x < y }
+                let (m, n) = (words(a.element.text).count, words(b.element.text).count)
+                return m != n ? m > n : a.offset < b.offset
+            }.map(\.element)
+            for (position, member) in zip(positions, members) { out[position] = member }
+        }
+        return out
+    }
+
+    /// F027: how far a way of writing is from the plainest — each of a title, comma order, a surname in
+    /// capitals, all in capitals, quote marks, a "via", brackets, a word written twice counts one.
+    static func decoration(_ text: String) -> Int {
+        let text = text.trimmed
+        let name = nameParts(text)
+        let folded = words(fold(text))
+        let letters = text.filter(\.isLetter)
+        return (name.title != nil ? 1 : 0) + (name.commaFirst ? 1 : 0) + (name.familyFirst ? 1 : 0)
+            + (letters == letters.uppercased() && letters != letters.lowercased() ? 1 : 0)
+            + (text.first.map { "'\"‘’‚“”„".contains($0) } == true ? 1 : 0)
+            + (text.range(of: " via ", options: .caseInsensitive) != nil ? 1 : 0) + (text.contains("(") ? 1 : 0)
+            + (Set(folded).count < folded.count ? 1 : 0)
     }
 
     /// Every person in `entries` learned again, as if for the first time: full names before names
@@ -986,7 +1142,7 @@ public struct Pseudonymizer: Sendable {
     public var disguiser: Replacer {
         // Made once for a list, not again for every send and its check: the last one is kept.
         var hasher = Hasher()
-        for entry in entries { hasher.combine(entry.original); hasher.combine(entry.standIn); hasher.combine(entry.kind.rawValue); hasher.combine(entry.partOf) }
+        for entry in entries { hasher.combine(entry.original); hasher.combine(entry.standIn); hasher.combine(entry.kind.rawValue); hasher.combine(entry.partOf); hasher.combine(entry.formOf) }
         hasher.combine(off.sorted())
         hasher.combine(PublicNames.current.sorted())
         hasher.combine(Detection.active.rawValue)
@@ -1033,8 +1189,8 @@ public struct Pseudonymizer: Sendable {
             for entry in entries where entry.kind == .person {
                 // The surname only: a first name alone is still that person (`Hallo Lotta,`).
                 guard let whole = entry.partOf, Self.words(entry.original).count == 1, SecondOpinion.isOrdinarySurname(entry.original),
-                      let family = Self.nameParts(whole).family, Self.key(family) == Self.key(entry.original) else { continue }
-                let given = Self.nameParts(whole).given.map(Self.key)
+                      let family = Self.nameParts(whole, legacy: true).family, Self.key(family) == Self.key(entry.original) else { continue }
+                let given = Self.nameParts(whole, legacy: true).given.map(Self.key)
                 replacer.needsName[Self.key(entry.original), default: []].formUnion([given].compactMap { $0 })
             }
         }
@@ -1145,6 +1301,19 @@ public struct Pseudonymizer: Sendable {
         text.split(whereSeparator: \.isWhitespace).map(String.init)
     }
 
+    /// F027: how two ways of writing a name are compared while learning, to find the row it belongs
+    /// to: as `key`, each word's quote marks off, `ß` as `ss`, `ä`, `ö`, `ü` as `ae`, `oe`, `ue`, other
+    /// accents off, single spaces. `Schüßler`, `Schuessler`, `SCHÜSSLER` and `'Schüßler'` are one.
+    /// Only to join: never stored (the list keeps each way as written, and a switch's hash is by `key`),
+    /// and never used to find a word in a text, so `Fälle` is not `Falle`.
+    public static func fold(_ text: String) -> String {
+        let quotes = CharacterSet(charactersIn: "'\"‘’‚“”„`´")
+        let spelled = key(text).replacingOccurrences(of: "ß", with: "ss").replacingOccurrences(of: "ä", with: "ae")
+            .replacingOccurrences(of: "ö", with: "oe").replacingOccurrences(of: "ü", with: "ue")
+        let plain = spelled.applyingTransform(.stripDiacritics, reverse: false) ?? spelled
+        return words(plain).map { $0.trimmingCharacters(in: quotes) }.filter { !$0.isEmpty }.joined(separator: " ")
+    }
+
     static func ascii(_ text: String) -> String {
         text.replacingOccurrences(of: "ß", with: "ss")
             .applyingTransform(.stripDiacritics, reverse: false)?
@@ -1178,6 +1347,16 @@ public struct Pseudonymizer: Sendable {
         }
         return reachable[pieces.count]
     }
+
+    /// F027: the titles the list reads in front of a name — today's (`isTitle`) and the French ones
+    /// (the owner's yes at F027's question 4). A title here is never learned as a first name or a part,
+    /// and stays in front of the stand-in, as Herr does. For the list only: the rules that find names
+    /// (`Ordinary.isTitle`, read by every rule of `Detection`) keep 1.0.1's titles.
+    public static func isListTitle(_ word: String) -> Bool {
+        isTitle(word) || frenchTitles.contains(key(word))
+    }
+
+    static let frenchTitles: Set<String> = ["monsieur", "madame", "mademoiselle", "mme", "mme.", "mlle", "mlle."]
 
     /// A title glued to the name after it: `Dr.med.Hollenbach` is `Dr.med.` and `Hollenbach`.
     static func gluedTitle(_ word: String) -> (title: String, rest: String)? {
