@@ -2187,7 +2187,14 @@ extension Pseudonymizer.Mapping {
         let entries = self[mode], switches = switches ?? [:]
         return Self.rows(entries).map { row in
             let names = row.map { entries[$0].original }
-            let plainest = row.min { Self.plainness(entries[$0].original, $0).lexicographicallyPrecedes(Self.plainness(entries[$1].original, $1)) } ?? row[0]
+            // The first words of a longer way of the row (`Mirela Ottilie` of `Mirela Ottilie Brankovan`) are no
+            // full name: never the row's name while a fuller way is there.
+            let words = row.map { Pseudonymizer.words(Pseudonymizer.fold(entries[$0].original)) }
+            func partial(_ n: Int) -> Int {
+                words.indices.contains { m in m != n && words[m].count > words[n].count && Array(words[m].prefix(words[n].count)) == words[n] } ? 1 : 0
+            }
+            let order = row.indices.map { n in [partial(n)] + Self.plainness(entries[row[n]].original, row[n]) }
+            let plainest = row[order.indices.min { order[$0].lexicographicallyPrecedes(order[$1]) } ?? 0]
             let state = Self.rowSwitch(names, in: switches)?.state ?? Self.own(names[0], in: switches)?.state ?? .on
             return Identity(row: entries[row[0]], ways: names, name: Self.plainName(entries[plainest].original, kind: entries[row[0]].kind),
                             state: state, hidden: state == .off ? hiddenWays(of: names[0]) : [])

@@ -30,6 +30,10 @@ struct IdentityRowsTests {
         // Written in capitals, it is the same row: the matcher finds it as it is, so it is no way of its own.
         #expect(rows.filter { $0.row.kind == .organization && $0.name == "Radwerk Berlin GmbH" }.count == 1)
         #expect(rows.contains { $0.name == "Ostwind Reiseschutz AG" }, "a row's label is no part of its name")
+        // The first words of a full name are a way of it, never its name.
+        let mirela = Self.list([(.person, "Mirela Ottilie Brankovan"), (.person, "Mirela Ottilie")]).settled().identities()
+        #expect(mirela.count == 1 && mirela.first?.ways.count == 2)
+        #expect(mirela.first?.name == "Mirela Ottilie Brankovan")
         #expect(Pseudonymizer.Mapping.plainName("Herrn Patrick Schüßler", kind: .person) == "Patrick Schüßler")
         #expect(Pseudonymizer.Mapping.plainName("'Schüßler, Patrick'", kind: .person) == "Patrick Schüßler")
         #expect(Pseudonymizer.Mapping.plainName("Monsieur Garrigou", kind: .person) == "Garrigou")
