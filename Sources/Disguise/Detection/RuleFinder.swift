@@ -264,8 +264,10 @@ public struct RuleFinder: NameFinding {
             let secondOrdinary = Ordinary.isCalendar(second.text) || Ordinary.knowsLower(second.text, words: words, language: language) == true && !opinion.holdsSurname(second.text)
             if read.fileLine || Ordinary.knowsLower(first.text, words: words, language: language) == true, secondOrdinary, !taggedBoth { continue }
             // At the start of a line, the list alone needs a second word no dictionary knows, or the
-            // tagger's reading of both as one name (`Alfons Rosenhagen`, read as a place).
-            if read.opens(i), !read.taggedPerson(i), Ordinary.knows(second.text, words: words) == true,
+            // tagger's reading of both as one name (`Alfons Rosenhagen`, read as a place). A day or a
+            // month beside a first name is that person's surname there too (N3, F021 AC-11): „<First>
+            // Mittwoch ist meine Schwester“ went out with the day and came back with a stranger's surname.
+            if read.opens(i), !read.taggedPerson(i), !Ordinary.isCalendar(second.text), Ordinary.knows(second.text, words: words) == true,
                !read.tagged.contains(where: { $0.range.contains(first.range.lowerBound) && $0.range.upperBound >= second.range.upperBound }) { continue }
             let range = first.range.lowerBound..<second.range.upperBound
             let at = read.offset(range)
