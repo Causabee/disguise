@@ -12,7 +12,7 @@ It finds what to hide in everything that comes in, the same way for every source
 - `Tests/DisguiseTests` — the tests, on made-up text only. Every name, address and number in them is invented.
 - `NameBench` — a separate package that compares two on-device name models on the same made-up cases. It decides nothing in Causabee.
 
-It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Compression, AppKit or UIKit) and needs macOS 15 or iOS 18. Nothing is fetched and nothing is sent.
+It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Compression, AppKit or UIKit) and needs macOS 15 or iOS 18. It fetches nothing and sends nothing itself. Before it looks for names, it asks the system for Apple's own name model; if the model is missing, the system may download it from Apple once. No text goes with that request.
 
 ## Run the tests
 
