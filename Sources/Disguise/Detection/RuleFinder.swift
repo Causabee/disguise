@@ -170,10 +170,11 @@ public struct RuleFinder: NameFinding {
     ]
     static let greetingLabels: Set<String> = ["hallo", "hi", "hey", "liebe", "lieber", "moin", "servus", "dear"]
 
-    /// What a title never stands before as a name: a pronoun, a group of people.
+    /// What a title never stands before as a name: a pronoun, a group of people. Not `Damen` or
+    /// `Herren`: right after a title they are a surname (`Herr Herren`, 24 Nov 2026).
     static let notAfterTitle: Set<String> = [
         "sie", "ihr", "ihre", "ihnen", "du", "dich", "dir", "euch", "wir", "uns", "ich", "mich", "mir", "the", "and", "und",
-        "grüße", "gruß", "leute", "alle", "zusammen", "team", "kollegen", "kolleginnen", "damen", "herren", "angehörige",
+        "grüße", "gruß", "leute", "alle", "zusammen", "team", "kollegen", "kolleginnen", "angehörige",
         "angehörigen", "mitglieder", "beiratsmitglieder", "nachbarn", "eigentümer", "eigentümerinnen", "freunde", "freundinnen",
         "eltern", "kinder", "familie", "beirat", "beiräte", "doktor",
     ]
@@ -188,7 +189,8 @@ public struct RuleFinder: NameFinding {
             let between: Set<String> = ["med", "dent", "vet", "rer", "nat", "phil", "jur", "habil", "ing", "mag"]
             // `Inh.`, `Inhaber`: a title as the old rules read it, kept in the name: `Inh. Martina Baume`.
             let owner = ["inh", "inhaber", "inhaberin"].contains(key)
-            let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner) && !between.contains(key)
+            // `Herren`, `Damen` before a name work as a title: `die Herren Weber und Kurz` (24 Nov 2026).
+            let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner || Ordinary.isEveryone(word.text)) && !between.contains(key)
             let isLabel = Self.labels.contains(key) || (Self.greetingLabels.contains(key) && word.capital)
             guard isTitle || isLabel else { continue }
             // Further titles and particles: `Dr. med.`, `Freiherr von`.
@@ -204,7 +206,8 @@ public struct RuleFinder: NameFinding {
             let allowed = isLabel && !isTitle ? ["", ":", ",", "."] : ["", "."]
             guard !first.gap.contains(where: \.isNewline) || (isLabel && gap == ":"), allowed.contains(gap) || gap.isEmpty else { continue }
             let firstKey = first.text.lowercased()
-            if Ordinary.isSmall(first.text) || Ordinary.isTitle(first.withDot) || Ordinary.isGreeting(first.text) || Self.notAfterTitle.contains(firstKey) { continue }
+            // After a title a greeting word is a name: `Herr Sehr` (24 Nov 2026); after a label it is not.
+            if Ordinary.isSmall(first.text) || Ordinary.isTitle(first.withDot) || Ordinary.isGreeting(first.text) && !isTitle || Self.notAfterTitle.contains(firstKey) { continue }
             if first.capital {
                 // A label is weaker than a title: the word after it is a name, not a common word.
                 if !isTitle, Ordinary.neverAlone(first.text) { continue }
@@ -323,7 +326,9 @@ public struct RuleFinder: NameFinding {
                 // What someone is, before or after the name: `Oma Gretl Furtkamp`, `Aunt Winifred`.
                 // An id before a word (`X1 Büro`) and everyone greeted at once (`Damen`, `Herren`) are no part of a name.
                 while let first = piece.first, piece.count > 1, Ordinary.isID(read.tokens[first].text) || Ordinary.isEveryone(read.tokens[first].text) { piece.removeFirst() }
-                while let last = piece.last, piece.count > 1, Ordinary.isEveryone(read.tokens[last].text) { piece.removeLast() }
+                // `Damen und Herren` at the end, never after a title: `Herr Herren` is a name.
+                while let last = piece.last, piece.count > 1, Ordinary.isEveryone(read.tokens[last].text),
+                      !Ordinary.isTitle(read.tokens[piece[piece.count - 2]].withDot) { piece.removeLast() }
                 while let first = piece.first, piece.count > 1, Ordinary.isKin(read.tokens[first].text) { piece.removeFirst() }
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).

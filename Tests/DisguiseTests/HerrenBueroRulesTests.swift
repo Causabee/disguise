@@ -36,4 +36,20 @@ struct HerrenBueroRulesTests {
         }
         #expect(people("Bitte ruf im Büro von Frau Quellbrunn an.").contains { $0.contains("Quellbrunn") })
     }
+
+    /// The reviewer, 24 Nov: what 1.1.0 hid must stay hidden. A title in front keeps a word a name,
+    /// even one that is a greeting or a word for everyone; "Herren" before a name works as a title.
+    @Test("Herr Sehr, Herr Herren, Frau Damen and die Herren Weber stay hidden, in any language")
+    func titleKeepsTheName() {
+        for typed in [false, true] {
+            for language in [nil, NLLanguage.german, .english] as [NLLanguage?] {
+                #expect(people("Herr Sehr rief an.", typed: typed, language: language).contains { $0.contains("Sehr") }, "\(String(describing: language))")
+                #expect(people("Herr Herren rief an.", typed: typed, language: language).contains { $0.contains("Herren") }, "\(String(describing: language))")
+                #expect(people("Frau Damen rief an.", typed: typed, language: language).contains { $0.contains("Damen") }, "\(String(describing: language))")
+                #expect(people("Die Herren Weber und Kurz kommen morgen.", typed: typed, language: language).contains { $0.contains("Weber") }, "\(String(describing: language))")
+                // And the greeting to all still has no one in it.
+                #expect(people("Sehr geehrte Damen und Herren,\n\nanbei die Unterlagen.", typed: typed, language: language).isEmpty)
+            }
+        }
+    }
 }

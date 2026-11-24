@@ -14,6 +14,12 @@ It finds what to hide in everything that comes in, the same way for every source
 
 It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Compression, AppKit or UIKit) and needs macOS 15 or iOS 18. It fetches nothing and sends nothing itself. Before it looks for names, it asks the system for Apple's own name model; if the model is missing, the system may download it from Apple once. No text goes with that request.
 
+## What 1.1.2 fixes
+
+- **A title keeps the name.** 1.1.1 let a few rare surnames out that 1.1.0 hid: after a title the word is a name, even one that is a greeting or a word for everyone — „Herr Sehr“, „Herr Herren“, „Frau Damen“ are hidden again; „Herren“ and „Damen“ in front of names work as a title („die Herren Weber und Kurz“). „Sehr geehrte Damen und Herren“ still has no one in it.
+- Still open: a surname written first, „Herren, Thomas“, reads like the end of the greeting, and „Herren“ goes as written there.
+- Nothing else changes: the golden test gives the same bytes as 1.1.0.
+
 ## What 1.1.1 fixes
 
 - **A greeting to everyone is no one.** „Sehr geehrte Damen und Herren“ and „Ladies and Gentlemen“ have no person in them: „Damen“, „Herren“, „Ladies“ and „Gentlemen“ are never a name alone, nor part of one, and „Sehr geehrte“ read in an English text is a greeting too. A name after them is still found („Herr Quellbrunn“).

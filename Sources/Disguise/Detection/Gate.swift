@@ -59,17 +59,21 @@ enum Gate {
         case .person:
             let names = nameWords(text)
             guard !names.isEmpty else { return nil }
+            // Read with a title in front (`Herr Herren`, `Herr Sehr`): the word after it is a name,
+            // whatever it is alone (24 Nov 2026: 1.1.1 must hide what 1.1.0 hid).
+            let titledWord = Pseudonymizer.words(text).first.map(Ordinary.isTitle) ?? false
             // A small word is never a name, nor part of one.
             if names.contains(where: Ordinary.isSmall) { return nil }
             if names.count == 1 {
                 let word = names[0]
-                if Ordinary.isGreeting(word) { return nil }
+                // A greeting word alone is no one; with a title in front it is a name (`Herr Sehr`, 24 Nov 2026).
+                if Ordinary.isGreeting(word), !evidence.contains(.title), !titledWord { return nil }
                 // A sender's shown name was judged by N7 already (a recipient's is learned as before).
                 if evidence.contains(.sender), !Ordinary.isSmall(word), !Ordinary.isTitle(word) { return admitted() }
                 if Ordinary.isKindWord(word) { return nil }
                 // A title, a label, a first name, a sender: an anchor. The word is the name
                 // whatever it is otherwise (`Frau Sonntag`, `Herr Post`).
-                if !evidence.isDisjoint(with: [.title, .label, .firstName, .sender]) { return admitted() }
+                if !evidence.isDisjoint(with: [.title, .label, .firstName, .sender]) || titledWord { return admitted() }
                 // Alone: never a calendar word or a word of the common list.
                 if Ordinary.neverAlone(word) { return nil }
                 if evidence.contains(.unknownWord) { return admitted() }
