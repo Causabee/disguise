@@ -321,6 +321,9 @@ public struct RuleFinder: NameFinding {
             let inside = read.tokens.indices.filter { tag.range.overlaps(read.tokens[$0].range) }
             for var piece in Self.pieces(of: inside, { read.tokens[$0].text }) {
                 // What someone is, before or after the name: `Oma Gretl Furtkamp`, `Aunt Winifred`.
+                // An id before a word (`X1 Büro`) and everyone greeted at once (`Damen`, `Herren`) are no part of a name.
+                while let first = piece.first, piece.count > 1, Ordinary.isID(read.tokens[first].text) || Ordinary.isEveryone(read.tokens[first].text) { piece.removeFirst() }
+                while let last = piece.last, piece.count > 1, Ordinary.isEveryone(read.tokens[last].text) { piece.removeLast() }
                 while let first = piece.first, piece.count > 1, Ordinary.isKin(read.tokens[first].text) { piece.removeFirst() }
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).

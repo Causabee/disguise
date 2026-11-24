@@ -34,6 +34,8 @@ enum Ordinary {
         "pharmacy", "surgery", "clinic", "hospital", "lettings", "insurance", "council", "school", "partner", "partners",
         "service", "support", "team",
         "bkk", "aok", "ikk", "hkk", "reisebüro", "fahrschule", "physiotherapiepraxis", "pflegeheim", "seniorenheim",
+        // Fix, 24 Nov 2026: a matter's detail "Büro" was taken for a person.
+        "büro",
     ])
 
     static func isKindWord(_ word: String) -> Bool { kindWords.contains(key(word)) }
@@ -49,9 +51,19 @@ enum Ordinary {
 
     static func isKin(_ word: String) -> Bool { kin.contains(key(word)) }
 
+    /// Everyone greeted at once: "Sehr geehrte Damen und Herren", "Ladies and Gentlemen". No one
+    /// alone, and no part of a name (fix, 24 Nov 2026: "Herren" was taken for a person).
+    static let everyone: Set<String> = ["damen", "herren", "ladies", "gentlemen"]
+
+    static func isEveryone(_ word: String) -> Bool { everyone.contains(key(word)) }
+
+    /// An id of a letter or two and digits — `X1`, `M2`, `T14` — written before a word: no part of a name.
+    static func isID(_ word: String) -> Bool { word.wholeMatch(of: /[A-Z]{1,2}[0-9]+/) != nil }
+
     /// Never a person or a place alone, on any path, typed or not.
     static func neverAlone(_ word: String) -> Bool {
         isSmall(word) || isTitle(word) || isGreeting(word) || isCalendar(word) || isCommon(word) || isKindWord(word) || isKin(word)
+            || isEveryone(word)
     }
 
     /// The lowercase test: does the dictionary know the word written small? An ordinary German

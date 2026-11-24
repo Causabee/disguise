@@ -1579,6 +1579,8 @@ public struct Pseudonymizer: Sendable {
     public static let greetings: Set<String> = [
         "liebe", "lieber", "liebes", "hallo", "guten", "abend", "morgen", "tag", "moin", "servus",
         "herzliche", "herzlichen", "viele", "beste", "besten", "grüße", "gruß", "danke", "dear", "hello",
+        // "Sehr geehrte …" read in an English text: no one (fix, 24 Nov 2026).
+        "sehr", "geehrte", "geehrter", "geehrtes",
     ]
 
     static let calendarWords: Set<String> = [

@@ -14,6 +14,12 @@ It finds what to hide in everything that comes in, the same way for every source
 
 It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Compression, AppKit or UIKit) and needs macOS 15 or iOS 18. It fetches nothing and sends nothing itself. Before it looks for names, it asks the system for Apple's own name model; if the model is missing, the system may download it from Apple once. No text goes with that request.
 
+## What 1.1.1 fixes
+
+- **A greeting to everyone is no one.** „Sehr geehrte Damen und Herren“ and „Ladies and Gentlemen“ have no person in them: „Damen“, „Herren“, „Ladies“ and „Gentlemen“ are never a name alone, nor part of one, and „Sehr geehrte“ read in an English text is a greeting too. A name after them is still found („Herr Quellbrunn“).
+- **„Büro“ is no one alone.** It says what a place of work is, like „Kanzlei“ or „Praxis“: alone it stays as written, and with a name the name is found. An id of a letter or two and digits written before a word („X1 Büro“) is no part of a name.
+- Nothing else changes: the golden test gives the same bytes as 1.1.0.
+
 ## What 1.1.0 adds
 
 - **One person, one stand-in.** A person, a company or a place written several ways is one row of the list with one stand-in: „Herrn Patrick Schüßler“, „SCHÜSSLER Patrick“, „Patrick Schuessler“ and „Schüßler, Patrick“ all go out as `[Person A]`, with a title kept in front as written (`Herrn [Person A]`). The other ways are kept behind the row, and one switch covers them all.
