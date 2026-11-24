@@ -57,6 +57,10 @@ enum Ordinary {
 
     static func isEveryone(_ word: String) -> Bool { everyone.contains(key(word)) }
 
+    /// `Familie`, `Fräulein`: before a name they anchor it as a title does (`Familie Herren`), though
+    /// they are kept out of the stand-in's title (the reviewer, 24 Nov 2026).
+    static func anchorsLikeTitle(_ word: String) -> Bool { ["familie", "fräulein", "frl", "frl."].contains(key(word)) }
+
     /// An id of a letter or two and digits — `X1`, `M2`, `T14` — written before a word: no part of a name.
     static func isID(_ word: String) -> Bool { word.wholeMatch(of: /[A-Z]{1,2}[0-9]+/) != nil }
 

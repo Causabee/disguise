@@ -52,4 +52,17 @@ struct HerrenBueroRulesTests {
             }
         }
     }
+
+    /// The reviewer, 24 Nov: `Familie` and `Fräulein` are titles too, so a surname after them stays hidden.
+    @Test("Familie Herren, Fräulein Damen and Familie Sehr stay hidden, in any language")
+    func familyAndMiss() {
+        for typed in [false, true] {
+            for language in [nil, NLLanguage.german, .english] as [NLLanguage?] {
+                for (text, name) in [("Von: Familie Herren", "Herren"), ("Kontakt: Familie Damen, Tel. 0301234567", "Damen"),
+                                     ("Fräulein Herren rief an.", "Herren"), ("Fräulein Damen rief an.", "Damen"), ("Familie Sehr kommt.", "Sehr")] {
+                    #expect(people(text, typed: typed, language: language).contains { $0.contains(name) }, "\(text) \(String(describing: language))")
+                }
+            }
+        }
+    }
 }

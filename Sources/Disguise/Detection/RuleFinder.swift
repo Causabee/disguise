@@ -190,7 +190,8 @@ public struct RuleFinder: NameFinding {
             // `Inh.`, `Inhaber`: a title as the old rules read it, kept in the name: `Inh. Martina Baume`.
             let owner = ["inh", "inhaber", "inhaberin"].contains(key)
             // `Herren`, `Damen` before a name work as a title: `die Herren Weber und Kurz` (24 Nov 2026).
-            let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner || Ordinary.isEveryone(word.text)) && !between.contains(key)
+            let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner || Ordinary.isEveryone(word.text)
+                           || Ordinary.anchorsLikeTitle(word.text) || Ordinary.anchorsLikeTitle(word.withDot)) && !between.contains(key)
             let isLabel = Self.labels.contains(key) || (Self.greetingLabels.contains(key) && word.capital)
             guard isTitle || isLabel else { continue }
             // Further titles and particles: `Dr. med.`, `Freiherr von`.
@@ -232,7 +233,9 @@ public struct RuleFinder: NameFinding {
                 }
             }
             // A label is not part of the name; a title is, and stays readable in the disguise.
-            let start = isTitle ? tokens[i].range.lowerBound : first.range.lowerBound
+            // `Familie`, `Herren` anchor the name like a title but stay outside it: `Familie [Person A]`.
+            let keptOutside = Ordinary.anchorsLikeTitle(word.text) || Ordinary.anchorsLikeTitle(word.withDot) || Ordinary.isEveryone(word.text)
+            let start = isTitle && !keptOutside ? tokens[i].range.lowerBound : first.range.lowerBound
             let range = start..<tokens[end].range.upperBound
             let at = read.offset(range)
             out.append(Gate.Candidate(kind: .person, text: String(read.text[range]), field: field, start: at.start, length: at.length,
