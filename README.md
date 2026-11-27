@@ -14,6 +14,12 @@ It finds what to hide in everything that comes in, the same way for every source
 
 It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Compression, AppKit or UIKit) and needs macOS 15 or iOS 18. It fetches nothing and sends nothing itself. Before it looks for names, it asks the system for Apple's own name model; if the model is missing, the system may download it from Apple once. No text goes with that request.
 
+## What 1.1.4 fixes
+
+- **Ordinary words written small are no names.** The last look before a send hid every word the dictionary did not know as written, so a chat or a note typed in a hurry lost its ask: „kanst du morgn die schlüssel abhohlen“ went out as four stand-ins, and „Der umzug ist für dne …“ came back with two people in it. Now a word written small stays as written when the dictionary knows it with a capital („schlüssel“, „umzug“) and nothing in the text reads it as a name or a place, or when it is one letter off a word written small („morgn“, „kanst“, „abhohlen“, „dne“).
+- **Names written small are still hidden**: a word the name lists hold („julian“, „müller“), a place the text shows („in bremen“), a street („lindenstraße 4“), a word right after „frau“, „bei“, „frag“ and the like, and any word no dictionary knows or offers a near word for („hollenbach“).
+- Nothing else changes: the rules that find names are the same.
+
 ## What 1.1.3 fixes
 
 - **Familie and Fräulein anchor a name.** Like a title, they keep the word after them a name: „Familie Herren“, „Fräulein Damen“, „Familie Sehr“ are hidden as 1.1.0 hid them, and „Familie“ stays readable in front of the stand-in. The golden test gives the same bytes as 1.1.0.

@@ -64,6 +64,18 @@ enum Ordinary {
     /// An id of a letter or two and digits — `X1`, `M2`, `T14` — written before a word: no part of a name.
     static func isID(_ word: String) -> Bool { word.wholeMatch(of: /[A-Z]{1,2}[0-9]+/) != nil }
 
+    /// The words that stand before a person: prepositions, and asking, telling, calling (L1, and the
+    /// second pass's words written small, CAU-258).
+    static let beforePerson: Set<String> = [
+        // Not `und`, `and`, `an`, `for`: they stand before ordinary words as often (`and set up`).
+        "bei", "mit", "von", "für", "zu", "frag", "frage", "fragt", "sag", "sage", "sagt", "ruf", "rufe", "schreib",
+        "schreibe", "grüß", "grüße", "hat", "hast", "meint", "ask", "tell", "call", "ring", "text",
+    ]
+
+    /// How a street's name ends (N4, and the second pass's words written small, CAU-258).
+    static let streetEnds = ["straße", "strasse", "str", "weg", "allee", "platz", "gasse", "damm", "ufer", "ring", "chaussee", "steig",
+                             "pfad", "stieg", "wall", "graben", "markt", "promenade", "zeile", "twiete", "kai", "lane", "road", "street"]
+
     /// Never a person or a place alone, on any path, typed or not.
     static func neverAlone(_ word: String) -> Bool {
         isSmall(word) || isTitle(word) || isGreeting(word) || isCalendar(word) || isCommon(word) || isKindWord(word) || isKin(word)

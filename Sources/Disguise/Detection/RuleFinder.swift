@@ -366,8 +366,7 @@ public struct RuleFinder: NameFinding {
 
     // MARK: N4 · a word no dictionary knows
 
-    static let streetEnds = ["straße", "strasse", "str", "weg", "allee", "platz", "gasse", "damm", "ufer", "ring", "chaussee", "steig",
-                             "pfad", "stieg", "wall", "graben", "markt", "promenade", "zeile", "twiete", "kai", "lane", "road", "street"]
+    static var streetEnds: [String] { Ordinary.streetEnds }
 
     /// A capitalised word in running text that neither the German nor the English dictionary knows,
     /// as written or small, that is not on a list of ordinary words and does not look like a
@@ -477,11 +476,7 @@ public struct RuleFinder: NameFinding {
     // MARK: L1 · a first name written small
 
     /// The words that stand before a person: prepositions, and asking, telling, calling.
-    static let beforePerson: Set<String> = [
-        // Not `und`, `and`, `an`, `for`: they stand before ordinary words as often (`and set up`).
-        "bei", "mit", "von", "für", "zu", "frag", "frage", "fragt", "sag", "sage", "sagt", "ruf", "rufe", "schreib",
-        "schreibe", "grüß", "grüße", "hat", "hast", "meint", "ask", "tell", "call", "ring", "text",
-    ]
+    static var beforePerson: Set<String> { Ordinary.beforePerson }
 
     /// What the owner types in a chat or a note is often all in lowercase (`frag tobias …`, `anruf bei
     /// ulrike`). A lowercase word the list holds as a first name is a person where the word before
