@@ -67,13 +67,22 @@ public final class SystemWords: WordKnowledge, @unchecked Sendable {
 
     /// CAU-258: the spell checker's own guesses for a word, in one language; asked on the device.
     public func guesses(_ word: String, language: String) -> [String] {
-        lock.lock(); defer { lock.unlock() }
-        guard let found = language == "en" ? languages.en : languages.de else { return [] }
+        lock.lock()
+        let picked = language == "en" ? languages.en : languages.de
+        lock.unlock() // never held while the main thread is waited for (iOS, below)
+        guard let found = picked else { return [] }
         #if canImport(AppKit)
+        lock.lock(); defer { lock.unlock() }
         return NSSpellChecker.shared.guesses(forWordRange: NSRange(location: 0, length: (word as NSString).length), in: word,
                                              language: found, inSpellDocumentWithTag: tagged) ?? []
         #elseif canImport(UIKit)
-        return UITextChecker().guesses(forWordRange: NSRange(location: 0, length: (word as NSString).length), in: word, language: found) ?? []
+        // UITextChecker is the main actor's on iOS (1.1.5: 1.1.4 did not build for the iPhone).
+        let length = (word as NSString).length
+        let ask: @MainActor @Sendable () -> [String] = {
+            UITextChecker().guesses(forWordRange: NSRange(location: 0, length: length), in: word, language: found) ?? []
+        }
+        if Thread.isMainThread { return MainActor.assumeIsolated(ask) }
+        return DispatchQueue.main.sync(execute: ask)
         #else
         return []
         #endif
