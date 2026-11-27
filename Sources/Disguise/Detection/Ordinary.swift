@@ -36,6 +36,9 @@ enum Ordinary {
         "bkk", "aok", "ikk", "hkk", "reisebüro", "fahrschule", "physiotherapiepraxis", "pflegeheim", "seniorenheim",
         // Fix, 24 Nov 2026: a matter's detail "Büro" was taken for a person.
         "büro",
+        // Fix CAU-269, 27 Nov 2026: a housing company said in the chat ("Kaution von Wohnbau …") went out as said.
+        "wohnbau", "wohnungsbau", "wohnungsbaugesellschaft", "baugesellschaft", "baugenossenschaft",
+        "wohnungsgenossenschaft", "genossenschaft", "immobilien",
     ])
 
     static func isKindWord(_ word: String) -> Bool { kindWords.contains(key(word)) }
