@@ -84,4 +84,56 @@ struct OrdinaryWordsWrittenSmallTests {
             #expect(!LookAlikeNames.oneOff(a, b), "\(a) \(b)")
         }
     }
+
+    /// The price of the rule, chosen openly (the owner's "a", 27 November 2026): a name written small that
+    /// no list holds and that is one letter off an ordinary word goes out as written, unless a guard
+    /// stands right before it. Pinned here so that a change to it is a conscious one. Invented names.
+    static let leaks = Guessing(
+        known: ["sehn", "sein", "marke", "kommst", "treffe", "morgen", "sagt", "frag", "bei", "mit", "für", "herr", "frau", "hallo", "und"],
+        offered: ["sevn": ["sein", "Sven", "sehn"], "marle": ["Marke", "marke"]])
+
+    @Test("CAU-258 · known leaks, by a dictionary in a table: an unlisted name one letter off a word goes out unless a guard stands right before it")
+    func knownLeaks() {
+        let none = StubNames(first: [], last: [])
+        let rows: [(text: String, found: [String])] = [
+            // Out as written: no guard before it. `hallo`, `an`, `und`, a quote, a colon, `@`, a chat line's time are no guards.
+            ("hallo sevn, kommst du?", []),
+            ("ich treffe marle morgen", []),
+            ("gruß an marle", []),
+            ("und sevn kommst", []),
+            ("\"marle\" sagt ja", []),
+            ("marle: kommst du", []),
+            ("@marle kommst du", []),
+            ("[12:01] marle: kommst du", []),
+            // Hidden: a title or a word that stands before a person, right before it.
+            ("frag marle", ["marle"]),
+            ("bei marle", ["marle"]),
+            ("mit marle", ["marle"]),
+            ("frau marle", ["marle"]),
+            ("herr marle", ["marle"]),
+            // After a title, never excused, whatever it is one letter off.
+            ("herr sevn", ["sevn"]),
+            ("frau sevn", ["sevn"]),
+            ("dr. sevn", ["sevn"]),
+            ("prof. sevn", ["sevn"]),
+            ("mrs sevn", ["sevn"]),
+            ("mr sevn", ["sevn"]),
+            // Out after a word that stands before a person: one letter off a small word (`sevn` → `sein`), as `für dne` is `für den`.
+            ("bei sevn", []),
+            ("für sevn", []),
+        ]
+        for row in rows {
+            #expect(LookAlikeNames.find(in: row.text, words: Self.leaks, names: none) == row.found, "\(row.text)")
+        }
+        // On a list, the same names are hidden wherever they stand.
+        let listed = StubNames(first: ["sevn", "marle"], last: [])
+        #expect(LookAlikeNames.find(in: "hallo sevn, ich treffe marle morgen", words: Self.leaks, names: listed) == ["sevn", "marle"])
+    }
+
+    @Test("CAU-258 · the guards are exactly the titles and the words that stand before a person")
+    func guards() {
+        #expect(Ordinary.beforePerson == ["bei", "mit", "von", "für", "zu", "frag", "frage", "fragt", "sag", "sage", "sagt", "ruf", "rufe",
+                                          "schreib", "schreibe", "grüß", "grüße", "hat", "hast", "meint", "ask", "tell", "call", "ring", "text"])
+        for word in ["an", "und", "hallo", "and", "hi"] { #expect(!Ordinary.beforePerson.contains(word) && !Ordinary.isTitle(word), "\(word)") }
+    }
 }

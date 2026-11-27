@@ -185,9 +185,9 @@ public enum LookAlikeNames {
     /// with a capital (`schlüssel`, `umzug`: a noun written small) and the tagger, reading the text
     /// with that capital, sees no name or place in it; or when it is one letter off a word the
     /// dictionary knows written small (`morgn`, `kanst`, `abhohlen`, `dne`). Never when a name list
-    /// holds it, or cannot be read (`julian`, `müller` stay hidden); never a street (`lindenstraße`); never right after a title or a
-    /// word that stands before a person (`bei`, `frag`, `frau`), unless what it is one letter off is
-    /// a small word (`für dne`). Everything else stays as the second pass had it: hidden.
+    /// holds it, or cannot be read (`julian`, `müller` stay hidden); never a street (`lindenstraße`); never right after a title
+    /// (`frau`, `herr`, `dr.`, `mrs`), whatever it is; never right after a word that stands before a
+    /// person (`bei`, `frag`), unless what it is one letter off is a small word (`für dne`). Everything else stays as the second pass had it: hidden.
     static func writtenSmall(_ word: String, at ranges: [Range<String.Index>], in text: String, language: String,
                              words: any WordKnowledge, names: any NameKnowing) -> Bool {
         guard word.count >= 3, word == word.lowercased(), !word.contains("-") else { return false }
@@ -195,12 +195,15 @@ public enum LookAlikeNames {
         guard names.isName(capital) == false else { return false }
         // A street written small is an address, not a noun: `lindenstraße 4`.
         if Ordinary.streetEnds.contains(where: { word.hasSuffix($0) && word != $0 }) { return false }
-        let anchored = ranges.contains { range in
-            guard let before = text[..<range.lowerBound].split(whereSeparator: \.isWhitespace).last,
-                  text[..<range.lowerBound].last?.isWhitespace == true else { return false }
-            let key = before.lowercased().trimmingCharacters(in: .punctuationCharacters)
-            return Ordinary.beforePerson.contains(key) || Ordinary.isTitle(String(before)) || Ordinary.isTitle(key)
+        // The word right before each place it stands, when only a space is between.
+        let before: [(word: String, key: String)] = ranges.compactMap { range in
+            guard let word = text[..<range.lowerBound].split(whereSeparator: \.isWhitespace).last,
+                  text[..<range.lowerBound].last?.isWhitespace == true else { return nil }
+            return (String(word), word.lowercased().trimmingCharacters(in: .punctuationCharacters))
         }
+        // After a title a word is never excused, whatever it is one letter off: `herr sevn` stays hidden.
+        if before.contains(where: { Ordinary.isTitle($0.word) || Ordinary.isTitle($0.key) }) { return false }
+        let anchored = before.contains { Ordinary.beforePerson.contains($0.key) }
         // A noun written small: the dictionary knows it with its capital, and nothing reads it as a name.
         if !anchored, words.knows(capital, language: language) == true, !readAsName(capital, at: ranges, in: text, language: language) {
             return true

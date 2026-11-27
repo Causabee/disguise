@@ -17,8 +17,16 @@ It uses only Apple's own frameworks (Foundation, CryptoKit, NaturalLanguage, Com
 ## What 1.1.4 fixes
 
 - **Ordinary words written small are no names.** The last look before a send hid every word the dictionary did not know as written, so a chat or a note typed in a hurry lost its ask: „kanst du morgn die schlüssel abhohlen“ went out as four stand-ins, and „Der umzug ist für dne …“ came back with two people in it. Now a word written small stays as written when the dictionary knows it with a capital („schlüssel“, „umzug“) and nothing in the text reads it as a name or a place, or when it is one letter off a word written small („morgn“, „kanst“, „abhohlen“, „dne“).
-- **Names written small are still hidden**: a word the name lists hold („julian“, „müller“), a place the text shows („in bremen“), a street („lindenstraße 4“), a word right after „frau“, „bei“, „frag“ and the like, and any word no dictionary knows or offers a near word for („hollenbach“).
-- Nothing else changes: the rules that find names are the same.
+- **The price, chosen openly.** Before, every word written small that the dictionary did not know was hidden, names and ordinary words alike. That was safer for names, and it made hurried asks unreadable. 1.1.4 chooses readable asks: **a name written small that no name list holds, or a misspelt one, now goes out as written when it is one letter off an ordinary word** — „hallo sevn“ („sehn“, „sein“), „ich treffe marle morgen“ („marke“). The same name written with a capital is judged as before.
+- **What still hides a name written small:**
+  - the name lists hold it („julian“, „müller“), or a list cannot be read;
+  - the tagger reads it as a person, a place or a company once it has a capital („in bremen“; only for a word the dictionary knows with a capital);
+  - it looks like a street („lindenstraße 4“);
+  - no dictionary knows it and none offers a word one letter off it („hollenbach“);
+  - it stands right after a title, with only a space between („frau“, „herr“, „dr.“, „prof.“, „mrs“, „mr“ and the other titles): there a word is never excused, whatever it is one letter off („herr sevn“ is hidden);
+  - it stands right after, with only a space between, one of these words: bei, mit, von, für, zu, frag, frage, fragt, sag, sage, sagt, ruf, rufe, schreib, schreibe, grüß, grüße, hat, hast, meint, ask, tell, call, ring, text. Even there, a word one letter off a small word goes out („bei sevn“, off „sein“, as „für dne“ is „für den“).
+- **What is no guard:** „an“, „und“, „hallo“ and other greetings, a quote mark, a colon, „@“, a chat line's „[12:01] name:“, or a stand-in before the word. A name written small in those places, one letter off a word and on no list, goes out.
+- The tests pin these cases (`OrdinaryWordsWrittenSmallTests`), so changing them is a choice, not an accident. The rules that find names are the same.
 
 ## What 1.1.3 fixes
 
