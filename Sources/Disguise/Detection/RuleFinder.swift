@@ -235,7 +235,11 @@ public struct RuleFinder: NameFinding {
             // A label is not part of the name; a title is, and stays readable in the disguise.
             // `Familie`, `Herren` anchor the name like a title but stay outside it: `Familie [Person A]`.
             let keptOutside = Ordinary.anchorsLikeTitle(word.text) || Ordinary.anchorsLikeTitle(word.withDot) || Ordinary.isEveryone(word.text)
-            let start = isTitle && !keptOutside ? tokens[i].range.lowerBound : first.range.lowerBound
+            // CAU-205: a role guards the name like a title but stays outside it, and visible:
+            // `Steuerberater [Person A]`, `Steuerberater Frau [Person A]`. The title after it stays in the name.
+            var titleAt = i
+            while titleAt < j, Ordinary.isRole(tokens[titleAt].text) { titleAt += 1 }
+            let start = isTitle && !keptOutside ? tokens[titleAt].range.lowerBound : first.range.lowerBound
             let range = start..<tokens[end].range.upperBound
             let at = read.offset(range)
             out.append(Gate.Candidate(kind: .person, text: String(read.text[range]), field: field, start: at.start, length: at.length,
@@ -334,6 +338,9 @@ public struct RuleFinder: NameFinding {
                       !Ordinary.isTitle(read.tokens[piece[piece.count - 2]].withDot) { piece.removeLast() }
                 while let first = piece.first, piece.count > 1, Ordinary.isKin(read.tokens[first].text) { piece.removeFirst() }
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
+                // CAU-205: what someone does, before the name, is no part of it: `Ergotherapeutin Dr. Ilka Sternwald`.
+                // Only in front: a surname may be a role word (`Ilka Pfleger`).
+                while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).
                 if piece.count == 1, !typed, read.afterArticle(piece[0]) { continue }
                 // L1 with N5 (the lead's reading of 6b): a lone word the tagger read as a person and
@@ -513,7 +520,13 @@ public struct RuleFinder: NameFinding {
         var out: [Gate.Candidate] = []
         for tag in read.tagged where tag.kind == .place {
             let inside = read.tokens.indices.filter { tag.range.overlaps(read.tokens[$0].range) }
-            for piece in Self.pieces(of: inside, { read.tokens[$0].text }) {
+            for var piece in Self.pieces(of: inside, { read.tokens[$0].text }) {
+                // CAU-205: a role before a name read as a place (`Nachbarin Herr Tannhauf anrufen`): the role
+                // stays visible, and a title after it makes the rest a person's, which N2 finds.
+                if let lead = piece.first, Ordinary.isRole(read.tokens[lead].text) {
+                    while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
+                    if let first = piece.first, Ordinary.isTitle(read.tokens[first].withDot) || Ordinary.isTitle(read.tokens[first].text) { continue }
+                }
                 guard let first = piece.first, let last = piece.last else { continue }
                 if piece.count == 1, read.afterArticle(first) { continue }
                 let range = read.tokens[first].range.lowerBound..<read.tokens[last].range.upperBound
@@ -576,6 +589,10 @@ public struct RuleFinder: NameFinding {
             // The kind word, then its name: `Werkstatt Sadowski`, `Kanzlei Eisenhut & Partner`, `BKK Hafenwerk`.
             var end = i
             while end + 1 < tokens.count, near(end + 1), isName(end + 1), end - i < 3, !Self.legalForms.contains(key(end + 1)) { end += 1 }
+            // CAU-205: a role before a name is a person's (`Steuerberater Frau Quellbach`, `Notar Torvak`): the role
+            // stays visible (N2). Only with a firm's sign after it is it a company: `Steuerberater Torvak & Partner`.
+            let firm = end > i && (i + 1...end).contains { tokens[$0].gap.contains("&") || Ordinary.isKindWord(tokens[$0].text) && !Ordinary.isRole(tokens[$0].text) }
+            if Ordinary.isRole(tokens[i].text), !firm { continue }
             if end > i { add(i, end, .kindWord) }
             // The name, then its kind: `Weserland BKK`.
             if Self.kindsAfter.contains(k), i > 0, near(i), isName(i - 1), !Ordinary.isKindWord(tokens[i - 1].text) { add(i - 1, i, .kindWord) }

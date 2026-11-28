@@ -54,6 +54,26 @@ enum Ordinary {
 
     static func isKin(_ word: String) -> Bool { kin.contains(key(word)) }
 
+    /// CAU-205: what someone does, written before a name — `Ergotherapeutin Frau Quellbach`,
+    /// `Steuerberater Torvak`, `lawyer Ilka Sternwald`. It stays visible and is no part of the name:
+    /// only the name is hidden. The roles that are titles (`Pseudonymizer.roles`) still guard the name
+    /// after them; the others only stay out of it. Not the words that are common surnames too
+    /// (`Richter`, `Gärtner`, `Schneider`, `Lehrer`): a name made of one is still a name.
+    static let roles: Set<String> = Pseudonymizer.roles.union([
+        "ergotherapeut", "ergotherapeutin", "physiotherapeut", "physiotherapeutin", "psychotherapeut", "psychotherapeutin",
+        "therapeut", "therapeutin", "logopäde", "logopädin", "hausarzt", "hausärztin", "arzt", "ärztin", "zahnarzt", "zahnärztin",
+        "kinderarzt", "kinderärztin", "frauenarzt", "frauenärztin", "facharzt", "fachärztin", "augenarzt", "augenärztin",
+        "tierarzt", "tierärztin", "neurologe", "neurologin", "orthopäde", "orthopädin", "psychologe", "psychologin",
+        "heilpraktiker", "heilpraktikerin", "apotheker", "apothekerin", "hebamme", "krankenschwester", "krankenpfleger",
+        "krankenpflegerin", "altenpfleger", "altenpflegerin", "pflegekraft", "betreuer", "betreuerin", "sozialarbeiter",
+        "sozialarbeiterin", "klassenlehrer", "klassenlehrerin", "erzieher", "erzieherin", "gutachter", "gutachterin",
+        "steuerberaterin", "therapist", "physiotherapist", "lawyer", "attorney", "solicitor", "accountant", "advisor",
+        "adviser", "dentist", "gp", "nurse", "carer", "caregiver", "midwife", "neighbour", "neighbor", "caretaker", "teacher",
+        "counsellor", "counselor", "psychologist",
+    ])
+
+    static func isRole(_ word: String) -> Bool { roles.contains(key(word)) }
+
     /// Everyone greeted at once: "Sehr geehrte Damen und Herren", "Ladies and Gentlemen". No one
     /// alone, and no part of a name (fix, 24 Nov 2026: "Herren" was taken for a person).
     static let everyone: Set<String> = ["damen", "herren", "ladies", "gentlemen"]

@@ -1063,7 +1063,7 @@
   {
     "field" : "body",
     "found" : [
-      "person:Nachbarin Frau Kaczmarek@29+24",
+      "person:Frau Kaczmarek@39+14",
       "street:Sperlingsgasse 4@65+16"
     ],
     "id" : "disguise-corpus.jsonl#r51.0",
@@ -1826,7 +1826,7 @@
       "person:Murat Bektaş@30+12",
       "street:Kastanienallee 7@58+16",
       "postalCity:1010 Wien@76+9",
-      "person:Nachbar Frau Pichler@101+20"
+      "person:Frau Pichler@109+12"
     ],
     "id" : "disguise-unseen.jsonl#u09.0",
     "placeholder" : "Sendungsverfolgung\nEmpfänger: [Person A]\nZustellung an: [Street A], [Postcode A] [Place A]\nHinterlegt bei Nachbar Frau [Person B], 2. Stock\nAbholung bis Freitag",
@@ -3225,12 +3225,12 @@
     "found" : [
       "person:Daniela Sonntag@0+15",
       "street:Reiherstraße@29+12",
-      "person:Schwester Ilka Montag@48+21",
+      "person:Ilka Montag@58+11",
       "street:Dohlenstraße 3@77+14"
     ],
     "id" : "detection-tiers.jsonl#t-note-04.1",
-    "placeholder" : "[Person B] wohnt in der [Street B], ihre Schwester [Person A] in der [Street A].",
-    "standin" : "Jonas Brandt wohnt in der Lindauer Straße, ihre Schwester Birgit Albers in der Lindauer Straße 119."
+    "placeholder" : "[Person A] wohnt in der [Street B], ihre Schwester [Person B] in der [Street A].",
+    "standin" : "Birgit Albers wohnt in der Lindauer Straße, ihre Schwester Jonas Brandt in der Lindauer Straße 119."
   },
   {
     "field" : "body",
