@@ -46,6 +46,7 @@ public struct RuleFinder: NameFinding {
         candidates += unknownWords(read, field: field)
         candidates += lowercaseFirstNames(read, field: field)
         candidates += taggedPlaces(read, field: field)
+        candidates += addressTowns(read, field: field)
         candidates += Shapes.candidates(in: text, field: field)
         candidates += fileNames(in: text, field: field)
         let admitted = candidates.compactMap { Gate.admit($0, typed: typed, words: words) }
@@ -159,6 +160,11 @@ public struct RuleFinder: NameFinding {
         return read.taggedPerson(i) || opinion.isFirstName(token.text)
     }
 
+    /// Fix, 28 Nov 2026: the word after a role, with no title between, is a name (`Ordinary.isNameAfterRole`).
+    func isNameAfterRole(_ i: Int, in read: Reading) -> Bool {
+        !read.inCode(i) && Ordinary.isNameAfterRole(read.tokens[i].text, firstName: isFirstName(i, in: read), words: words)
+    }
+
     // MARK: N2 · a title or a label
 
     /// The words after which a name stands, whatever word it is: a form's label, a greeting.
@@ -190,10 +196,13 @@ public struct RuleFinder: NameFinding {
             // `Inh.`, `Inhaber`: a title as the old rules read it, kept in the name: `Inh. Martina Baume`.
             let owner = ["inh", "inhaber", "inhaberin"].contains(key)
             // `Herren`, `Damen` before a name work as a title: `die Herren Weber und Kurz` (24 Nov 2026).
-            let isTitle = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner || Ordinary.isEveryone(word.text)
+            let titleWord = (Ordinary.isTitle(word.withDot) || Ordinary.isTitle(word.text) || owner || Ordinary.isEveryone(word.text)
                            || Ordinary.anchorsLikeTitle(word.text) || Ordinary.anchorsLikeTitle(word.withDot)) && !between.contains(key)
             let isLabel = Self.labels.contains(key) || (Self.greetingLabels.contains(key) && word.capital)
-            guard isTitle || isLabel else { continue }
+            // Fix, 28 Nov 2026: a role anchors the name after it too (`Arzt Sternwald`, `Our neighbour Sternwald`),
+            // but only a name: with no title between, an everyday noun after it goes as written (`Arzt Termin`).
+            let isRole = Ordinary.isRole(word.text) && !between.contains(key)
+            guard titleWord || isLabel || isRole else { continue }
             // Further titles and particles: `Dr. med.`, `Freiherr von`.
             var j = i + 1
             while j < tokens.count, read.joined(j) || [".", ".-"].contains(tokens[j].gap.trimmingCharacters(in: .whitespaces)) && tokens[j - 1].dot,
@@ -202,6 +211,12 @@ public struct RuleFinder: NameFinding {
             }
             guard j < tokens.count else { continue }
             let first = tokens[j]
+            // Only roles before the name, no title among them (`Frau`, `Herr`, `Dr.`): the role's own, weaker anchor.
+            let roleOnly = isRole && (i..<j).allSatisfy { Ordinary.isRole(tokens[$0].text) }
+            if roleOnly {
+                guard isNameAfterRole(j, in: read) else { continue }
+            } else if !titleWord && !isLabel { continue }
+            let isTitle = titleWord || roleOnly
             let gap = first.gap.trimmingCharacters(in: .whitespaces)
             // A label may have its colon or comma: `Versicherungsnehmer: Gerwin Schiefbein`, `Hallo Bertram,`.
             let allowed = isLabel && !isTitle ? ["", ":", ",", "."] : ["", "."]
@@ -340,7 +355,10 @@ public struct RuleFinder: NameFinding {
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
                 // CAU-205: what someone does, before the name, is no part of it: `Ergotherapeutin Dr. Ilka Sternwald`.
                 // Only in front: a surname may be a role word (`Ilka Pfleger`).
-                while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
+                var cutRole = false
+                while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst(); cutRole = true }
+                // Fix, 28 Nov 2026: what is left after a role is a name only as N2 reads one there (`Nachbarin Garten` is no one).
+                if cutRole, piece.count == 1, !isNameAfterRole(piece[0], in: read) { continue }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).
                 if piece.count == 1, !typed, read.afterArticle(piece[0]) { continue }
                 // L1 with N5 (the lead's reading of 6b): a lone word the tagger read as a person and
@@ -526,6 +544,8 @@ public struct RuleFinder: NameFinding {
                 if let lead = piece.first, Ordinary.isRole(read.tokens[lead].text) {
                     while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
                     if let first = piece.first, Ordinary.isTitle(read.tokens[first].withDot) || Ordinary.isTitle(read.tokens[first].text) { continue }
+                    // Fix, 28 Nov 2026: the word after a role is a person's name or nothing (`Nachbarin Garten`); N2 finds the name.
+                    if piece.count == 1 { continue }
                 }
                 guard let first = piece.first, let last = piece.last else { continue }
                 if piece.count == 1, read.afterArticle(first) { continue }
@@ -534,6 +554,50 @@ public struct RuleFinder: NameFinding {
                 out.append(Gate.Candidate(kind: .place, text: String(read.text[range]), field: field, start: at.start, length: at.length,
                                           evidence: [.tagger], rule: .S4, language: read.language(range.lowerBound)))
             }
+        }
+        return out
+    }
+
+    // MARK: S4 · a town in an address line
+
+    /// The words a town stands after in an address line: `wir wohnen in …`, `sie kommt aus …`.
+    static let townBefore: Set<String> = ["in", "aus"]
+
+    /// Fix, 28 Nov 2026: a made-up town (`Feldau`) went out, because the spell checker knows it as
+    /// written and the tagger did not read it. On a line that holds an address part — a street, a
+    /// postcode with its town, a PO box — a capitalised word right after `in` or `aus`, or right after
+    /// the address part and a comma (`Lindenweg 4, Feldau`), is a town, unless it is an everyday word
+    /// (`aus Versehen`, `in Ordnung`). A town after a postcode is the postcode's shape (S4).
+    func addressTowns(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
+        let text = read.text
+        // Every address part has a number, but a street's name alone (`Lindenstraße`).
+        guard text.contains(where: \.isNumber) || text.contains(where: \.isUppercase) else { return [] }
+        let whole = NSRange(text.startIndex..., in: text)
+        var parts: [Range<String.Index>] = []
+        for regex in Shapes.streets + [Shapes.opened, Shapes.poBox] + Shapes.postal {
+            for match in regex.matches(in: text, range: whole) {
+                if let range = Range(match.range, in: text) { parts.append(range) }
+            }
+        }
+        guard !parts.isEmpty else { return [] }
+        func line(of index: String.Index) -> Range<String.Index> {
+            let start = text[..<index].lastIndex(where: \.isNewline).map { text.index(after: $0) } ?? text.startIndex
+            let end = text[index...].firstIndex(where: \.isNewline) ?? text.endIndex
+            return start..<end
+        }
+        let lines = parts.map { line(of: $0.lowerBound) }
+        var out: [Gate.Candidate] = []
+        for i in read.tokens.indices {
+            let token = read.tokens[i]
+            guard token.capital, token.text.count >= 2, lines.contains(where: { $0.contains(token.range.lowerBound) }),
+                  !parts.contains(where: { $0.overlaps(token.range) }), !read.inCode(i) else { continue }
+            let afterWord = read.joined(i) && Self.townBefore.contains(read.tokens[i - 1].text.lowercased())
+            let afterPart = parts.contains { $0.upperBound <= token.range.lowerBound
+                && text[$0.upperBound..<token.range.lowerBound].trimmingCharacters(in: .whitespaces) == "," }
+            guard afterWord || afterPart, !Ordinary.neverAlone(token.text), words.isEveryday(token.text) != true else { continue }
+            let at = read.offset(token.range)
+            out.append(Gate.Candidate(kind: .place, text: token.text, field: field, start: at.start, length: at.length,
+                                      evidence: [.label], rule: .S4, language: read.language(token.range.lowerBound)))
         }
         return out
     }

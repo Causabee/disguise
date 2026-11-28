@@ -74,6 +74,15 @@ enum Ordinary {
 
     static func isRole(_ word: String) -> Bool { roles.contains(key(word)) }
 
+    /// Fix, 28 Nov 2026: the word right after a role, with no title between, is a name when it is
+    /// written with a capital and is a first name or no everyday word: `Arzt Sternwald`, `Our neighbour
+    /// Sternwald`, `Pfleger Ilka`. An everyday noun is not (`Arzt Termin`, `Nachbarin Garten`); nor is
+    /// a word written small (CAU-258, the owner's choice a). A device that cannot tell hides it.
+    static func isNameAfterRole(_ word: String, firstName: Bool, words: any WordKnowledge) -> Bool {
+        guard word.first?.isUppercase == true, word.count >= 2, !neverAlone(word) else { return false }
+        return firstName || words.isEveryday(word) != true
+    }
+
     /// Everyone greeted at once: "Sehr geehrte Damen und Herren", "Ladies and Gentlemen". No one
     /// alone, and no part of a name (fix, 24 Nov 2026: "Herren" was taken for a person).
     static let everyone: Set<String> = ["damen", "herren", "ladies", "gentlemen"]
@@ -99,10 +108,11 @@ enum Ordinary {
     static let streetEnds = ["straße", "strasse", "str", "weg", "allee", "platz", "gasse", "damm", "ufer", "ring", "chaussee", "steig",
                              "pfad", "stieg", "wall", "graben", "markt", "promenade", "zeile", "twiete", "kai", "lane", "road", "street"]
 
-    /// Never a person or a place alone, on any path, typed or not.
+    /// Never a person or a place alone, on any path, typed or not. A role neither (fix, 28 Nov 2026:
+    /// `Arzt` alone went out as `[Person A]`, and `Arzt Ilka` as one person, role and all).
     static func neverAlone(_ word: String) -> Bool {
         isSmall(word) || isTitle(word) || isGreeting(word) || isCalendar(word) || isCommon(word) || isKindWord(word) || isKin(word)
-            || isEveryone(word)
+            || isEveryone(word) || isRole(word)
     }
 
     /// The lowercase test: does the dictionary know the word written small? An ordinary German

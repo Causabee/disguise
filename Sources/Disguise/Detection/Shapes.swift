@@ -69,6 +69,9 @@ enum Shapes {
     ]
     /// `Am Markt 3`, `Unter den Linden 12`: a street by its opener.
     static let opened = rx(#"\b(?:Am|An der|An den|Im|In der|In den|Auf dem|Auf der|Unter den|Zum|Zur|Hinter dem|Hinter der|Vor dem|Beim|Alt)[ \t]+\p{Lu}[\p{L}\-]+(?:[ \t]+\p{Lu}[\p{L}\-]+)?[ \t]+\d{1,3}[a-zA-Z]?\b(?![.,]\d|[ \t]*(?:Uhr|h\b|Euro|EUR|€|%|Jahre|Tage|Minuten|Stunden|Prozent))"#)
+    /// Fix, 28 Nov 2026: a PO box with its number is an address part, as a street is: `Postfach 4120`,
+    /// `PO Box 4120`, `P.O. Box 4120`. The word alone (`im Postfach`) is no address.
+    static let poBox = rx(#"(?i:(?<![\p{L}])(?:postfach|p\.?[ ]?o\.?[ ]?box)(?:[ \t]*(?:nr\.?|no\.?))?)[ \t]*:?[ \t]*\d{1,6}(?![\p{N}])"#)
     static let fourDigitTowns = [
         "Wien", "St\\. Pölten", "Linz", "Salzburg", "Innsbruck", "Bregenz", "Graz", "Klagenfurt", "Eisenstadt",
         "Zürich", "Zuerich", "Bern", "Luzern", "Altdorf", "Schwyz", "Sarnen", "Stans", "Glarus", "Zug", "Freiburg", "Fribourg",
@@ -102,6 +105,7 @@ enum Shapes {
         Shape(kind: .reference, rule: .S3, regex: digits, leavesFileDates: true),
     ] + streets.map { Shape(kind: .street, rule: .S4, regex: $0) } + [
         Shape(kind: .street, rule: .S4, regex: opened, opensWithWord: true),
+        Shape(kind: .street, rule: .S4, regex: poBox, minimumDigits: 1),
     ] + postal.map { Shape(kind: .postalCity, rule: .S4, regex: $0) } + [
         Shape(kind: .reference, rule: .C1, regex: birth, group: 1, minimumDigits: 4),
         Shape(kind: .reference, rule: .C1, regex: star, group: 1, minimumDigits: 4),
