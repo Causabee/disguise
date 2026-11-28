@@ -194,9 +194,9 @@ struct TitleRolePOBoxTownRulesTests {
         }
     }
 
-    /// The review's probe: nouns of care, health, money, housing, work and shopping, most of them not on
-    /// `EverydayNouns` (only the review's own examples are), after the four words. "Pieces": English.
-    static let adminNouns = [
+    /// The set `EverydayNouns` was built from: nouns of care, health, money, housing, work and shopping.
+    /// The list was grown from its misses, so it is no measure of new words; `heldOutNouns` is.
+    static let listBuildingNouns = [
         "Pflegegrad", "Hüftoperation", "Paragraph", "Gleitzeit", "Kaution", "Widerruf", "Pfändung", "Minijob", "Retoure",
         "Spesen", "Tilgung", "Krankschreibung", "Lieferverzug", "Pieces", "Knieoperation", "Kataraktoperation", "Herzkatheter",
         "Magenspiegelung", "Darmspiegelung", "Mammographie", "Hautkrebsscreening", "Gesundheitscheck", "Zahnarzttermin",
@@ -232,14 +232,58 @@ struct TitleRolePOBoxTownRulesTests {
         "Ausverkauf", "Schlussverkauf", "Treuepunkte", "Kundenkarte", "Kundenkonto", "Passwortänderung", "Zwei-Faktor",
     ]
 
-    /// What the town rule itself takes is measured: the same on every device, from shipped lists only.
-    /// What the older rules hide there too (the dictionary's unknown word, the tagger's lone guess after
-    /// `bei`) differs by device and was so in 1.1.8; it is printed, not counted.
-    @Test("Over-hiding: of the everyday admin and care nouns after in, aus, nach, bei, the town rule takes at most 5 in 100")
-    func overHiding() {
-        #expect(Self.adminNouns.count >= 150)
+    /// Nouns of the same kinds written after the list and the noun ends were made, and never added to
+    /// either (the test checks it): the measure of nouns the list has not seen.
+    static let heldOutNouns = [
+        "Augentropfen", "Nasenspray", "Hustensaft", "Halsschmerzen", "Ohrenschmerzen", "Zahnschmerzen", "Bauchschmerzen",
+        "Muskelkater", "Zerrung", "Prellung", "Verstauchung", "Platzwunde", "Schürfwunde", "Sonnenbrand", "Insektenstich",
+        "Zeckenbiss", "Heuschnupfen", "Pollenallergie", "Laktoseintoleranz", "Glutenunverträglichkeit", "Bluterguss",
+        "Wasserablagerung", "Krampfadern", "Hämorrhoiden", "Sodbrennen", "Reflux", "Magengeschwür", "Nierenschwäche",
+        "Leberwerterhöhung", "Blutarmut", "Eisenmangel", "Vitaminmangel", "Dehydrierung", "Unterzuckerung", "Überzuckerung",
+        "Herzrasen", "Herzstolpern", "Ohnmacht", "Kreislaufkollaps", "Schwächeanfall", "Bettlägerigkeit", "Pflegeaufwand",
+        "Rundumbetreuung", "Nachtwache", "Sitzwache", "Pflegekraftmangel", "Personalmangel", "Zahnarztrechnung", "Arztrechnung",
+        "Laborrechnung", "Privatrechnung", "Zahnzusatz", "Brillenzuschuss", "Festzuschuss", "Heil-und-Kostenplan", "Kostenplan",
+        "Behandlungsplan", "Therapieplan", "Trainingsplan", "Ernährungsplan", "Wochenplan", "Putzplan", "Einkaufsliste",
+        "Wunschliste", "Warteliste", "Nachrückerliste", "Mietspiegel", "Vergleichsmiete", "Indexmiete", "Staffelmiete",
+        "Kaltmiete", "Warmmiete", "Bruttomiete", "Mietsenkung", "Mietpreisbremse", "Nebenkostenpauschale",
+        "Heizkostenpauschale", "Gartenpflege", "Dachrinne", "Fallrohr", "Regenrinne", "Dachboden", "Kellerabteil",
+        "Fahrradkeller", "Waschküche", "Trockenraum", "Müllraum", "Briefkastenschlüssel", "Haustürschlüssel", "Zweitschlüssel",
+        "Ersatzschlüssel", "Schließanlage", "Gegensprechanlage", "Klingelschild", "Namensschild", "Rauchmelder", "Feuerlöscher",
+        "Heizkörper", "Thermostat", "Boiler", "Durchlauferhitzer", "Spülmaschine", "Waschmaschine", "Trockner", "Kühlschrank",
+        "Gefrierschrank", "Herdplatte", "Dunstabzug", "Abfluss", "Silikonfuge", "Gehaltserhöhung", "Lohnerhöhung",
+        "Tariferhöhung", "Inflationsausgleich", "Einmalzahlung", "Sonderzahlung", "Provision", "Bonus", "Gewinnbeteiligung",
+        "Firmenwagen", "Diensthandy", "Dienstlaptop", "Arbeitskleidung", "Schutzkleidung", "Sicherheitsschuhe", "Spind",
+        "Kantine", "Essensmarken", "Betriebsausflug", "Weihnachtsfeier", "Teambesprechung", "Mitarbeitergespräch",
+        "Zielvereinbarung", "Leistungsbeurteilung", "Beförderung", "Versetzung", "Probezeitverlängerung", "Befristung",
+        "Entfristung", "Festanstellung", "Leiharbeit", "Zeitarbeit", "Werkvertrag", "Honorarvertrag", "Freiberuflichkeit",
+        "Scheinselbstständigkeit", "Kassenzettel", "Wechselgeld", "Pfandbon", "Pfandflasche", "Leergut", "Einkaufswagen",
+        "Einkaufstüte", "Mehrwegtasche", "Treuekarte", "Payback", "Coupon", "Rabattmarke", "Sonderposten", "Restposten",
+        "Mängelexemplar", "Vorführgerät", "Ausstellungsstück", "Lieferschwierigkeit", "Vorbestellung", "Wunschtermin",
+        "Zeitfenster", "Lieferfenster", "Abstellgenehmigung", "Nachbarzustellung", "Zustellversuch", "Benachrichtigungskarte",
+        "Abholschein", "Lagerfrist", "Rücksendefrist", "Umtauschfrist", "Kulanzfrist", "Kontostand", "Kontonummer",
+        "Bankleitzahl", "Überweisungsbeleg", "Echtzeitüberweisung", "Auslandsüberweisung", "Wechselkurs", "Bargeldabhebung",
+        "Geldautomat", "Abhebegebühr", "Sollzinsen", "Habenzinsen", "Negativzinsen", "Kontosperrung", "Kartensperrung",
+        "Sperrnummer", "Pinbrief", "Tan-Liste", "Pushtan", "Sicherheitsfrage",
+    ]
+
+    /// Made-up towns with the ends towns have; every one must be hidden after the four words.
+    static let madeUpTownProbe = [
+        "Feldau", "Kleinhorst", "Quellingen", "Moorbrück", "Tannwiesen", "Steinfelde", "Erlenhausen", "Moosheim", "Lindenstadt",
+        "Birkwalde", "Ellerbeck", "Grauenstein", "Moorbruch", "Fichtenhain", "Weidenbüttel", "Ottersleben", "Haselrode",
+        "Ulmenstedt", "Krähwinkel", "Lerchenborn", "Dachsfurt", "Kiefernhagen", "Eschenweiler", "Brombachtal", "Holderbach",
+        "Wiesenhof", "Tannkirchen", "Quendorf", "Mühlberg", "Rabenburg", "Seelitz", "Gramzow", "Tessenach", "Wolfering",
+        "Bühlum", "Haltens", "Reppede", "Merzlar", "Kranichsee", "Sumpfhausen", "Ahornfeld", "Blaubach", "Nebelheim",
+        "Krautingen", "Silbertal", "Fuchsau", "Grünwiese", "Ackerstedt", "Talbrück", "Hirschwald", "Schilfhorst", "Lehmrode",
+        "Mergelstein", "Ginsterbruch", "Wacholderdorf", "Pappelburg", "Kreidenberg", "Torfhausen", "Sandleben", "Heidenau",
+        "Krummbach", "Zwiebelstedt",
+    ]
+
+    /// What the town rule itself takes, and what any rule hides. The town rule reads shipped lists only,
+    /// so its share is the same on every device; the older rules (the dictionary's unknown word, the
+    /// tagger's lone guess after `bei`) differ by device, as in 1.1.8.
+    func overHiding(_ nouns: [String], _ name: String) -> (taken: Double, hidden: Double) {
         var taken: [String] = [], hidden: [String] = [], probes = 0
-        for noun in Self.adminNouns {
+        for noun in nouns {
             for word in ["in", "aus", "nach", "bei"] {
                 let text = "Es geht \(word) \(noun) weiter."
                 probes += 1
@@ -248,10 +292,42 @@ struct TitleRolePOBoxTownRulesTests {
                 if !run(text, typed: false).sent.contains(noun) { hidden.append("\(word) \(noun)") }
             }
         }
-        let share = Double(taken.count) / Double(probes)
-        print("CAU-278 over-hiding: the town rule takes \(taken.count) of \(probes) (\(String(format: "%.1f", share * 100)) %): \(taken)")
-        print("CAU-278 over-hiding: hidden by any rule \(hidden.count) of \(probes) (\(String(format: "%.1f", Double(hidden.count) / Double(probes) * 100)) %): \(hidden)")
-        #expect(share <= 0.05, "\(taken.count) of \(probes): \(taken)")
+        let share = (Double(taken.count) / Double(probes), Double(hidden.count) / Double(probes))
+        print("CAU-278 \(name): the town rule takes \(taken.count) of \(probes) (\(String(format: "%.1f", share.0 * 100)) %): \(taken)")
+        print("CAU-278 \(name): hidden by any rule \(hidden.count) of \(probes) (\(String(format: "%.1f", share.1 * 100)) %): \(hidden)")
+        return share
+    }
+
+    @Test("The nouns the list was built from: the town rule takes at most 5 in 100 of them")
+    func overHidingListBuildingSet() {
+        #expect(Self.listBuildingNouns.count >= 150)
+        #expect(overHiding(Self.listBuildingNouns, "list-building set").taken <= 0.05)
+    }
+
+    /// The real rate, measured on 28 Nov 2026 with a little margin: the town rule took 180 of 788
+    /// (22.8 %), all rules 220 (27.9 %). A rare noun the lists do not know is read as a town: hidden,
+    /// never sent. The bound is a guard against more, not a goal.
+    @Test("Held-out nouns, on no list: the town rule takes at most 25 in 100, all rules at most 30 in 100")
+    func overHidingHeldOut() {
+        #expect(Self.heldOutNouns.count >= 150)
+        for noun in Self.heldOutNouns {
+            #expect(!EverydayNouns.contains(noun) && !Self.listBuildingNouns.contains(noun), "\(noun) is no longer held out")
+        }
+        let share = overHiding(Self.heldOutNouns, "held-out set")
+        #expect(share.taken <= 0.25)
+        #expect(share.hidden <= 0.30)
+    }
+
+    @Test("Every made-up town of the probe is hidden after in, aus, nach and bei")
+    func madeUpTownsHidden() {
+        #expect(Self.madeUpTownProbe.count == 62)
+        var shown: [String] = []
+        for town in Self.madeUpTownProbe {
+            for word in ["in", "aus", "nach", "bei"] where run("Es geht \(word) \(town) weiter.", typed: false).sent.contains(town) {
+                shown.append("\(word) \(town)")
+            }
+        }
+        #expect(shown.isEmpty, "\(shown)")
     }
 
     @Test("The review's care case: in Pflegegrad 3, nach Hüftoperation, bei Pfändung go as written")

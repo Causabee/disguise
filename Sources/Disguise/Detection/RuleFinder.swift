@@ -682,7 +682,8 @@ public struct RuleFinder: NameFinding {
     static let townEnds = ["heim", "feld", "felde", "stadt", "dorf", "berg", "burg", "hausen", "ingen", "bach", "hof", "kirchen",
                            "kirch", "brück", "brücken", "tal", "thal", "wald", "walde", "horst", "hagen", "born", "furt", "rode",
                            "leben", "stedt", "büttel", "beck", "see", "hain", "weiler", "werder", "winkel", "bruch", "heide",
-                           "kamp", "holz", "münster", "brunn", "bronn", "dingen", "lingen", "hude", "siek", "lohe", "ow", "itz"]
+                           "kamp", "holz", "münster", "brunn", "bronn", "dingen", "lingen", "hude", "siek", "lohe", "ow", "itz",
+                           "stein", "wiese", "wiesen"]
 
     /// Fix CAU-278: an everyday German noun rarer than the list's 30,000 words, after `bei`, `aus`, `nach`,
     /// `in`: one with a noun's end no town has (`Verjährung`, `Mobilisation`, `Bronchitis`, `Mammographie`),
@@ -691,6 +692,8 @@ public struct RuleFinder: NameFinding {
     /// the same on every device.
     func isEverydayCompound(_ word: String) -> Bool {
         let lower = word.lowercased()
+        // The second review: ends of papers, the body and fees, before the town ends (`Beinbruch`).
+        if Self.caseEnds.contains(where: { lower.hasSuffix($0) && lower.count >= $0.count + 3 }) { return true }
         if Self.townEnds.contains(where: { lower.hasSuffix($0) }) { return false }
         if Self.nounEnds.contains(where: { lower.hasSuffix($0) && lower.count >= $0.count + 3 }) { return true }
         return isCompound(of: lower, depth: 0)
@@ -723,6 +726,11 @@ public struct RuleFinder: NameFinding {
     /// The ends of German nouns no town name has: `-ung`, `-heit`, `-keit`, `-schaft`, `-tion`.
     static let nounEnds = ["ung", "ungen", "heit", "keit", "schaft", "tion", "tionen", "sion", "ität", "ismus", "itis", "ose", "graphie",
                            "grafie", "therapie", "skopie", "logie", "ierung", "nis"]
+
+    /// The second review's ends: `Geburtsurkunde`, `Kniegelenk`, `Zahnspange`, `Beinbruch`, `Nierenstein`,
+    /// `Parkgebühren`, `Bremsbeläge`, `Feiertagszuschlag`. Checked before the town ends. Not `-bruch` and
+    /// `-stein`: towns end so too, and the made-up `Moorbruch` and `Mergelstein` went out with them.
+    static let caseEnds = ["urkunde", "gelenk", "spange", "gebühr", "gebühren", "beläge", "zuschlag"]
 
     /// The fronts of German compounds that are no word alone: `Rückfragen`, `Hauptsache`, `Nebenkosten`.
     static let compoundFronts: Set<String> = ["rück", "haupt", "neben", "zusatz", "sonder", "gesamt", "zwischen", "wieder",
