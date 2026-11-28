@@ -57,6 +57,12 @@ enum Gate {
 
         switch candidate.kind {
         case .person:
+            // Fix CAU-278: N2's title and the role word after it with no name after that: the role word is
+            // the name (`Herr Pfleger hat geschrieben`), whatever it is alone.
+            if candidate.rule == .N2, evidence.contains(.title), nameWords(text).isEmpty, let first = Pseudonymizer.words(text).first,
+               let last = Pseudonymizer.words(text).last, Ordinary.isTitle(first), !Ordinary.isRole(first), Ordinary.isRole(last) {
+                return admitted()
+            }
             let names = nameWords(text)
             guard !names.isEmpty else { return nil }
             // Read with a title in front (`Herr Herren`, `Herr Sehr`): the word after it is a name,

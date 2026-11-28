@@ -780,6 +780,10 @@ public struct Pseudonymizer: Sendable {
         if let via = tokens.firstIndex(where: { $0.lowercased() == "via" }), via > 0 { tokens = Array(tokens[..<via]) }
         var titles: [String] = []
         while let first = tokens.first {
+            // Fix CAU-278: a role word that is a title too, last after a title that is no role, is the
+            // name: `Herr Pfleger`, `Herr Nachbar` (a surname, with no other name after it). The finder
+            // decides which role words are names there (N2, the surname list); learned, they are hidden.
+            if !legacy, tokens.count == 1, !titles.isEmpty, roles.contains(key(first)), titles.contains(where: { !roles.contains(key($0)) }) { break }
             if legacy ? Pseudonymizer.isTitle(first) : Pseudonymizer.isListTitle(first) { titles.append(first); tokens.removeFirst() }
             else if let glued = gluedTitle(first) { titles.append(glued.title); tokens[0] = glued.rest }
             else { break }

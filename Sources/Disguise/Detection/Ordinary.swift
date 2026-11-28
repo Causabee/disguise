@@ -98,6 +98,23 @@ enum Ordinary {
     /// they are kept out of the stand-in's title (the reviewer, 24 Nov 2026).
     static func anchorsLikeTitle(_ word: String) -> Bool { ["familie", "fräulein", "frl", "frl."].contains(key(word)) }
 
+    /// Fix CAU-278: the words of set phrases after `in`, `aus`, `nach`, `bei` that the shipped everyday
+    /// list does not hold, so they go as written there and are no town: English ones (`in Time`, `in
+    /// Touch`: the list is German), and German ones the list leaves out, rarer than its 30,000 words or
+    /// first names too (`in Person`, `in Kraft`, `in Bar`, `nach Plan`, `in Teilzeit`); and the apps a
+    /// source is read in (`in Outlook`, `bei PayPal`), which name no one.
+    static let setPhrases: Set<String> = [
+        "time", "touch", "advance", "person", "general", "fact", "case", "order", "charge", "mind", "detail", "brief",
+        "total", "writing", "progress", "future", "love", "trouble", "town", "bed", "front", "line", "place", "hand", "use",
+        "question", "stock", "practice", "short", "particular", "addition", "return", "response", "private",
+        "public", "common", "turn", "part", "effect", "full", "transit", "office", "school", "hospital",
+        "kraft", "bar", "plan", "kur", "kurzarbeit", "teilzeit", "vollzeit", "textform", "schriftform", "rücksprache",
+        "kulanz", "dienstschluss", "glatteis", "pfingsten", "silvester",
+        "outlook", "gmail", "excel", "google", "paypal", "telegram", "instagram", "dropbox", "zoom", "safari", "chrome",
+    ]
+
+    static func isSetPhrase(_ word: String) -> Bool { setPhrases.contains(key(word)) }
+
     /// An id of a letter or two and digits — `X1`, `M2`, `T14` — written before a word: no part of a name.
     static func isID(_ word: String) -> Bool { word.wholeMatch(of: /[A-Z]{1,2}[0-9]+/) != nil }
 

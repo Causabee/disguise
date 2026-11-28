@@ -47,10 +47,16 @@ public struct RuleFinder: NameFinding {
         candidates += lowercaseFirstNames(read, field: field)
         candidates += taggedPlaces(read, field: field)
         candidates += addressTowns(read, field: field)
+        let afterWord = townsAfterWord(read, field: field)
+        candidates += afterWord.filter { $0.kind == .place }
         candidates += Shapes.candidates(in: text, field: field)
         candidates += fileNames(in: text, field: field)
         let admitted = candidates.compactMap { Gate.admit($0, typed: typed, words: words) }
-        return Self.resolvingOverlaps(admitted)
+        let resolved = Self.resolvingOverlaps(admitted)
+        // CAU-278: the person after `bei` only where no other rule took the word (`bei Malinowski` is N5's).
+        let after = afterWord.filter { $0.kind == .person }.compactMap { Gate.admit($0, typed: typed, words: words) }
+            .filter { person in !resolved.contains { $0.entity.length > 0 && $0.entity.range.overlaps(person.entity.range) } }
+        return after.isEmpty ? resolved : (resolved + after).sorted { $0.entity.start < $1.entity.start }
     }
 
     // MARK: Reading a text
@@ -165,6 +171,18 @@ public struct RuleFinder: NameFinding {
         !read.inCode(i) && Ordinary.isNameAfterRole(read.tokens[i].text, firstName: isFirstName(i, in: read), opinion: opinion)
     }
 
+    /// Fix CAU-278: a name stands at `j`, right after a title, as N2 reads one there: on the same line,
+    /// after a space or a title's dot, no small word, title or pronoun; written with a capital, or small
+    /// and unknown to the dictionary in lowercase (`Herr Pfleger wojciechowski`), as N2 reads one below.
+    func nameFollowsTitle(_ j: Int, in read: Reading) -> Bool {
+        let next = read.tokens[j]
+        let gap = next.gap.trimmingCharacters(in: .whitespaces)
+        guard !next.gap.contains(where: \.isNewline), gap.isEmpty || gap == "." else { return false }
+        guard !Ordinary.isSmall(next.text), !Ordinary.isTitle(next.withDot), !Self.notAfterTitle.contains(next.text.lowercased()) else { return false }
+        if next.capital { return true }
+        return next.text.count >= 3 && !Ordinary.isCommon(next.text) && Ordinary.knowsLower(next.text, words: words) == false
+    }
+
     // MARK: N2 · a title or a label
 
     /// The words after which a name stands, whatever word it is: a form's label, a greeting.
@@ -209,6 +227,17 @@ public struct RuleFinder: NameFinding {
                   Ordinary.isTitle(tokens[j].withDot) || Ordinary.isTitle(tokens[j].text) || Ordinary.particles.contains(tokens[j].text.lowercased()) && tokens[j].text.first?.isLowercase == true {
                 j += 1
             }
+            // Fix CAU-278: after a title (`Frau`, `Herr`, `Dr.`), a role word that is a surname too (`Pfleger`,
+            // `Nachbar`: on the shipped surname list) was read as a second title, and `Herr Pfleger hat
+            // geschrieben` went out as written. With no name after it, that word is the name: `Herr [Person A]
+            // hat geschrieben`. With one, it stays a visible role, as before: `Herr Pfleger [Person A]`. A role
+            // no list holds as a surname stays a role (`Herr Hausmeister kommt`, `Sehr geehrte Frau Rechtsanwältin`).
+            var roleAsName = false
+            if titleWord, !Ordinary.isRole(word.text), j - 1 > i, tokens[j - 1].capital, Ordinary.isRole(tokens[j - 1].text),
+               opinion.isSurnameAfterRole(tokens[j - 1].text), j == tokens.count || !nameFollowsTitle(j, in: read) {
+                j -= 1
+                roleAsName = true
+            }
             guard j < tokens.count else { continue }
             let first = tokens[j]
             // Only roles before the name, no title among them (`Frau`, `Herr`, `Dr.`): the role's own, weaker anchor.
@@ -223,8 +252,11 @@ public struct RuleFinder: NameFinding {
             guard !first.gap.contains(where: \.isNewline) || (isLabel && gap == ":"), allowed.contains(gap) || gap.isEmpty else { continue }
             let firstKey = first.text.lowercased()
             // After a title a greeting word is a name: `Herr Sehr` (24 Nov 2026); after a label it is not.
-            if Ordinary.isSmall(first.text) || Ordinary.isTitle(first.withDot) || Ordinary.isGreeting(first.text) && !isTitle || Self.notAfterTitle.contains(firstKey) { continue }
-            if first.capital {
+            if !roleAsName, Ordinary.isSmall(first.text) || Ordinary.isTitle(first.withDot) || Ordinary.isGreeting(first.text) && !isTitle
+                || Self.notAfterTitle.contains(firstKey) { continue }
+            if roleAsName {
+                // The role word is the name (CAU-278), whatever it is alone.
+            } else if first.capital {
                 // A label is weaker than a title: the word after it is a name, not a common word.
                 if !isTitle, Ordinary.neverAlone(first.text) { continue }
                 if !isTitle, Self.greetingLabels.contains(key), !isFirstName(j, in: read), Ordinary.knowsLower(first.text, words: words) == true { continue }
@@ -235,7 +267,9 @@ public struct RuleFinder: NameFinding {
             var end = j
             // An initial and the surname after it: `Mrs D. Whittington`.
             let initial = first.text.count == 1 && first.dot && first.capital
-            if initial {
+            if roleAsName {
+                // Nothing after it joins it: no name follows (`nameFollowsTitle`).
+            } else if initial {
                 guard j + 1 < tokens.count, tokens[j + 1].capital, tokens[j + 1].gap == ". " else { continue }
                 end = j + 1
             } else if j + 1 < tokens.count, read.joined(j + 1), tokens[j + 1].capital, first.capital {
@@ -600,6 +634,66 @@ public struct RuleFinder: NameFinding {
         return out
     }
 
+    /// The words a town stands after in running text: `Treffen in …`, `aus …`, `nach …`, `bei …`.
+    static let placeBefore: Set<String> = ["in", "aus", "nach", "bei"]
+
+    /// Fix CAU-278: a made-up town in running text, with no address on the line (`Treffen in Feldau`,
+    /// `Sie kommt aus Feldau`), went out unless Apple's tagger read it. Right after `in`, `aus`, `nach` or
+    /// `bei`, a word written with a capital is a place when it is on no shipped everyday list and no set
+    /// phrase of these words (`in Ordnung`, `nach Hause`, `in Time`): the same on every device. After
+    /// `bei` it is read as a person (`Termin bei Tannhauf`, `bei Ilka`), and only where no other rule took
+    /// it; after the others as a place. Only where the list can be read: without it, nothing changes.
+    func townsAfterWord(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
+        var out: [Gate.Candidate] = []
+        for i in read.tokens.indices where read.joined(i) {
+            let token = read.tokens[i]
+            guard token.capital, token.text.count >= 2, token.text.contains(where: \.isLowercase),
+                  Self.placeBefore.contains(read.tokens[i - 1].text.lowercased()), !read.inCode(i), !read.inCode(i - 1) else { continue }
+            let word = token.text
+            guard !Ordinary.neverAlone(word), !Ordinary.isSetPhrase(word),
+                  opinion.isEveryday(word) == false, !isEverydayCompound(word) else { continue }
+            let at = read.offset(token.range)
+            let person = read.tokens[i - 1].text.lowercased() == "bei"
+            out.append(Gate.Candidate(kind: person ? .person : .place, text: word, field: field, start: at.start,
+                                      length: at.length, evidence: [.shape], rule: .S4, language: read.language(token.range.lowerBound)))
+        }
+        return out
+    }
+
+    /// The ends of German town names: `-heim`, `-feld`, `-stadt`, `-hausen`. A compound of everyday words
+    /// with one of them is a town still (`Steinfeld`, `Neustadt`).
+    static let townEnds = ["heim", "feld", "felde", "stadt", "dorf", "berg", "burg", "hausen", "ingen", "bach", "hof", "kirchen",
+                           "kirch", "brück", "brücken", "tal", "thal", "wald", "walde", "horst", "hagen", "born", "furt", "rode",
+                           "leben", "stedt", "büttel", "beck", "see", "hain", "weiler", "werder", "winkel", "bruch", "heide",
+                           "kamp", "holz", "münster", "brunn", "bronn", "dingen", "lingen", "hude", "siek", "lohe", "ow", "itz"]
+
+    /// Fix CAU-278: a German compound of two everyday words (`Rückfragen`, `Kostengründen`, `Terminabsprache`):
+    /// an everyday noun after `bei`, `aus`, `nach`, `in`, though rarer than the list's 30,000 words. Not
+    /// when it ends as a town does (`Steinfeld`). Read from the shipped list only: the same on every device.
+    func isEverydayCompound(_ word: String) -> Bool {
+        let lower = word.lowercased()
+        if Self.townEnds.contains(where: { lower.hasSuffix($0) }) { return false }
+        let letters = Array(lower)
+        guard letters.count >= 7 else { return false }
+        for cut in 3...(letters.count - 4) {
+            let right = String(letters[cut...])
+            guard opinion.isEveryday(right) == true || Ordinary.isSetPhrase(right) else { continue }
+            let left = String(letters[..<cut])
+            if Self.compoundFronts.contains(left) { return true }
+            for link in ["", "s", "n", "es", "en", "e"] where left.hasSuffix(link) {
+                let stem = String(left.dropLast(link.count))
+                // `Hüftoperation`: the first word loses its end in the compound (`Hüfte`).
+                if stem.count >= 3, opinion.isEveryday(stem) == true || opinion.isEveryday(stem + "e") == true { return true }
+            }
+        }
+        return false
+    }
+
+    /// The fronts of German compounds that are no word alone: `Rückfragen`, `Hauptsache`, `Nebenkosten`.
+    static let compoundFronts: Set<String> = ["rück", "haupt", "neben", "zusatz", "sonder", "gesamt", "zwischen", "wieder",
+                                              "gegen", "ober", "unter", "über", "vor", "nach", "ab", "an", "auf", "aus", "ein",
+                                              "mit", "zu", "fehl", "miss", "teil", "voll", "halb", "fern", "nah"]
+
     // MARK: N6 · a company
 
     static let legalForms: Set<String> = ["gmbh", "mbh", "ag", "ug", "kg", "ohg", "gbr", "se", "kgaa", "ltd", "inc", "llc", "plc", "partg", "e.v"]
@@ -663,6 +757,7 @@ public struct RuleFinder: NameFinding {
             let inside = read.tokens.indices.filter { tag.range.overlaps(read.tokens[$0].range) }
             for piece in Self.pieces(of: inside, { read.tokens[$0].text }) {
                 guard let first = piece.first, let last = piece.last else { continue }
+                if Self.isPOBox(piece, in: read) { continue }
                 let range = read.tokens[first].range.lowerBound..<read.tokens[last].range.upperBound
                 let at = read.offset(range)
                 out.append(Gate.Candidate(kind: .organization, text: String(read.text[range]), field: field, start: at.start, length: at.length,
@@ -670,6 +765,16 @@ public struct RuleFinder: NameFinding {
             }
         }
         return out
+    }
+
+    /// Fix CAU-278: the tagger read `PO` of `Check the PO box today` as a company. `PO box` is an everyday
+    /// phrase; with its number it is an address part, which the PO box shape hides (S4).
+    static func isPOBox(_ piece: [Int], in read: Reading) -> Bool {
+        let words = piece.map { read.tokens[$0].text.lowercased() }
+        guard let first = words.first, ["po", "p"].contains(first), words.allSatisfy({ ["po", "p", "o", "box"].contains($0) }) else { return false }
+        if words.contains("box") { return true }
+        guard let last = piece.last, last + 1 < read.tokens.count, read.tokens[last + 1].text.lowercased() == "box" else { return false }
+        return read.joined(last + 1) || read.tokens[last + 1].gap.trimmingCharacters(in: .whitespaces) == "."
     }
 
     // MARK: N7 · a sender
