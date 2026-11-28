@@ -194,6 +194,94 @@ struct TitleRolePOBoxTownRulesTests {
         }
     }
 
+    /// The review's probe: nouns of care, health, money, housing, work and shopping, most of them not on
+    /// `EverydayNouns` (only the review's own examples are), after the four words. "Pieces": English.
+    static let adminNouns = [
+        "Pflegegrad", "Hüftoperation", "Paragraph", "Gleitzeit", "Kaution", "Widerruf", "Pfändung", "Minijob", "Retoure",
+        "Spesen", "Tilgung", "Krankschreibung", "Lieferverzug", "Pieces", "Knieoperation", "Kataraktoperation", "Herzkatheter",
+        "Magenspiegelung", "Darmspiegelung", "Mammographie", "Hautkrebsscreening", "Gesundheitscheck", "Zahnarzttermin",
+        "Wurzelbehandlung", "Implantat", "Prothese", "Gehhilfe", "Toilettenstuhl", "Badewannenlift", "Duschhocker",
+        "Notrufknopf", "Sturzprophylaxe", "Mobilisation", "Grundpflege", "Behandlungspflege", "Pflegeplanung",
+        "Pflegedokumentation", "Pflegevisite", "Medikamentengabe", "Blutdruckmessung", "Gewichtskontrolle",
+        "Ernährungsberatung", "Diätberatung", "Trinkmenge", "Schluckstörung", "Sondenernährung", "Wundheilung", "Dekubitus",
+        "Kontrakturen", "Gangunsicherheit", "Schwindel", "Atemnot", "Herzinsuffizienz", "Vorhofflimmern", "Schlaganfall",
+        "Herzinfarkt", "Lungenentzündung", "Harnwegsinfekt", "Blasenentzündung", "Bronchitis", "Grippe", "Erkältung", "Fieber",
+        "Durchfall", "Verstopfung", "Übelkeit", "Schlafstörung", "Depression", "Angststörung", "Verwirrtheit", "Nachtunruhe",
+        "Tagesstruktur", "Beschäftigungstherapie", "Gedächtnistraining", "Seniorentreff", "Begegnungsstätte", "Mittagstisch",
+        "Fahrdienstleistung", "Begleitdienst", "Besuchsdienst", "Alltagsbegleitung", "Haushaltshilfe", "Putzhilfe",
+        "Einkaufshilfe", "Nachbarschaftshilfe", "Kurzzeitpflegeplatz", "Heimplatz", "Wohngruppe", "Betreutes",
+        "Seniorenwohnung", "Barrierefreiheit", "Rampe", "Haltegriffe", "Wohnberatung", "Pflegestützpunkt", "Sozialberatung",
+        "Rentenberatung", "Steuerberatung", "Schuldenberatung", "Verbraucherberatung", "Mieterverein", "Mieterbund",
+        "Nebenkostennachzahlung", "Heizkostenabrechnung", "Wasserverbrauch", "Stromverbrauch", "Abschlagsänderung",
+        "Preiserhöhung", "Sonderkündigungsrecht", "Vertragsverlängerung", "Tarifänderung", "Mobilfunkvertrag", "Handyvertrag",
+        "Internetanschluss", "Glasfaser", "Router", "Störung", "Entstörung", "Technikertermin", "Portierung",
+        "Rufnummernmitnahme", "Kündigungsbestätigung", "Eingangsbestätigung", "Zahlungseingang", "Zahlungserinnerung",
+        "Mahnbescheid", "Vollstreckungsbescheid", "Kontopfändung", "Lohnpfändung", "Ratenvereinbarung", "Zahlungsplan",
+        "Schuldenregulierung", "Privatinsolvenz", "Restschuldbefreiung", "Kontoführung", "Kontoführungsgebühr", "Dispo",
+        "Dispokredit", "Überziehung", "Kreditkarte", "Girokarte", "Onlinebanking", "Überweisungslimit", "Sparbuch", "Festgeld",
+        "Tagesgeld", "Bausparvertrag", "Riester", "Lebensversicherung", "Berufsunfähigkeit", "Zahnzusatzversicherung",
+        "Reiseversicherung", "Rechtsschutzversicherung", "Kfz-Versicherung", "Beitragserhöhung", "Beitragsrückerstattung",
+        "Selbstbehalt", "Leistungsantrag", "Kostenübernahme", "Kostenzusage", "Genehmigung", "Ablehnungsbescheid",
+        "Widerspruchsfrist", "Klagefrist", "Fristverlängerung", "Aufschub", "Verjährung", "Arbeitsamt", "Arbeitssuche",
+        "Jobsuche", "Vermittlung", "Eingliederungsvereinbarung", "Maßnahme", "Sperrzeit", "Krankenschein", "Attest",
+        "Bescheinigung", "Lohnfortzahlung", "Entgeltfortzahlung", "Urlaubsgeld", "Weihnachtsgeld", "Prämie", "Zulage",
+        "Nachtzuschlag", "Fahrtkosten", "Pendlerpauschale", "Jobticket", "Dienstwagen", "Gleitzeitkonto", "Zeiterfassung",
+        "Stempelkarte", "Dienstplan", "Schichtplan", "Personalgespräch", "Abmahnung", "Aufhebungsvertrag", "Freistellung",
+        "Elternzeitantrag", "Wiedereinstieg", "Paketzustellung", "Lieferadresse", "Rechnungsadresse", "Retourenschein",
+        "Rücksendeetikett", "Erstattungsbetrag", "Ersatzlieferung", "Teillieferung", "Nachlieferung", "Lieferengpass",
+        "Ausverkauf", "Schlussverkauf", "Treuepunkte", "Kundenkarte", "Kundenkonto", "Passwortänderung", "Zwei-Faktor",
+    ]
+
+    /// What the town rule itself takes is measured: the same on every device, from shipped lists only.
+    /// What the older rules hide there too (the dictionary's unknown word, the tagger's lone guess after
+    /// `bei`) differs by device and was so in 1.1.8; it is printed, not counted.
+    @Test("Over-hiding: of the everyday admin and care nouns after in, aus, nach, bei, the town rule takes at most 5 in 100")
+    func overHiding() {
+        #expect(Self.adminNouns.count >= 150)
+        var taken: [String] = [], hidden: [String] = [], probes = 0
+        for noun in Self.adminNouns {
+            for word in ["in", "aus", "nach", "bei"] {
+                let text = "Es geht \(word) \(noun) weiter."
+                probes += 1
+                let finder = RuleFinder()
+                if !finder.townsAfterWord(RuleFinder.Reading(text: text, finder: finder), field: .body).isEmpty { taken.append("\(word) \(noun)") }
+                if !run(text, typed: false).sent.contains(noun) { hidden.append("\(word) \(noun)") }
+            }
+        }
+        let share = Double(taken.count) / Double(probes)
+        print("CAU-278 over-hiding: the town rule takes \(taken.count) of \(probes) (\(String(format: "%.1f", share * 100)) %): \(taken)")
+        print("CAU-278 over-hiding: hidden by any rule \(hidden.count) of \(probes) (\(String(format: "%.1f", Double(hidden.count) / Double(probes) * 100)) %): \(hidden)")
+        #expect(share <= 0.05, "\(taken.count) of \(probes): \(taken)")
+    }
+
+    @Test("The review's care case: in Pflegegrad 3, nach Hüftoperation, bei Pfändung go as written")
+    func careNounsStay() {
+        for text in ["Er ist in Pflegegrad 3.", "Sie ist nach Hüftoperation zu Hause.", "Das Konto ist in Pfändung.", "Sie ist nach Schlaganfall in Kurzzeitpflege."] {
+            #expect(run(text, typed: false).sent == text, "\(text) ⇒ \(run(text, typed: false).sent)")
+        }
+    }
+
+    @Test("The everyday nouns hold no first name or surname of the shipped lists, and no old detail of F024")
+    func everydayNounsHoldNoName() {
+        let lists = NameKnowledge.shared
+        #expect(EverydayNouns.words.count >= 250)
+        for word in EverydayNouns.words {
+            #expect(lists.isFirstName(word) == false && lists.isSurname(word) == false, "\(word)")
+            #expect(!F024NamesTests.old.contains(F024NamesTests.hash(word)), "an old detail")
+        }
+    }
+
+    @Test("A word written small after Herr Pfleger never decides: Pfleger is hidden on every device")
+    func smallWordAfterRole() {
+        for typed in [true, false] {
+            for text in ["Herr Pfleger whatsappt gerade.", "Herr Pfleger hat geschrieben.", "Herr Nachbar mailt morgen."] {
+                let sent = run(text, typed: typed).sent
+                #expect(!sent.contains("Pfleger") && !sent.contains("Nachbar"), "typed \(typed): \(text) ⇒ \(sent)")
+                #expect(sent.hasPrefix("Herr [Person A]"), "typed \(typed): \(text) ⇒ \(sent)")
+            }
+        }
+    }
+
     @Test("A first name after bei is a person, and hidden")
     func firstNameAfterBei() {
         for typed in [true, false] {

@@ -172,14 +172,25 @@ public struct RuleFinder: NameFinding {
     }
 
     /// Fix CAU-278: a name stands at `j`, right after a title, as N2 reads one there: on the same line,
-    /// after a space or a title's dot, no small word, title or pronoun; written with a capital, or small
-    /// and unknown to the dictionary in lowercase (`Herr Pfleger wojciechowski`), as N2 reads one below.
+    /// after a space or a title's dot, no small word, title or pronoun, and written with a capital. A word
+    /// written small never is one here, whatever the device's dictionary says of it (`Herr Pfleger
+    /// whatsappt`): the role word is the name, the same on every device.
     func nameFollowsTitle(_ j: Int, in read: Reading) -> Bool {
         let next = read.tokens[j]
         let gap = next.gap.trimmingCharacters(in: .whitespaces)
         guard !next.gap.contains(where: \.isNewline), gap.isEmpty || gap == "." else { return false }
         guard !Ordinary.isSmall(next.text), !Ordinary.isTitle(next.withDot), !Self.notAfterTitle.contains(next.text.lowercased()) else { return false }
-        if next.capital { return true }
+        return next.capital
+    }
+
+    /// The word written small after a title that N2 has always read as a name (`frau wojciechowski`):
+    /// unknown to the dictionary in lowercase. After a role word that is the name, 1.1.8 hid it, and it
+    /// stays hidden as a name of its own; it no longer decides whether the role word is hidden.
+    func smallNameAfterTitle(_ j: Int, in read: Reading) -> Bool {
+        let next = read.tokens[j]
+        let gap = next.gap.trimmingCharacters(in: .whitespaces)
+        guard !next.gap.contains(where: \.isNewline), gap.isEmpty, !next.capital, !Ordinary.isSmall(next.text),
+              !Self.notAfterTitle.contains(next.text.lowercased()) else { return false }
         return next.text.count >= 3 && !Ordinary.isCommon(next.text) && Ordinary.knowsLower(next.text, words: words) == false
     }
 
@@ -235,6 +246,12 @@ public struct RuleFinder: NameFinding {
             var roleAsName = false
             if titleWord, !Ordinary.isRole(word.text), j - 1 > i, tokens[j - 1].capital, Ordinary.isRole(tokens[j - 1].text),
                opinion.isSurnameAfterRole(tokens[j - 1].text), j == tokens.count || !nameFollowsTitle(j, in: read) {
+                // What 1.1.8 hid after the role, a word written small the dictionary does not know, stays hidden.
+                if j < tokens.count, smallNameAfterTitle(j, in: read) {
+                    let at = read.offset(tokens[j].range)
+                    out.append(Gate.Candidate(kind: .person, text: tokens[j].text, field: field, start: at.start, length: at.length,
+                                              evidence: [.title], rule: .N2))
+                }
                 j -= 1
                 roleAsName = true
             }
@@ -650,7 +667,7 @@ public struct RuleFinder: NameFinding {
             guard token.capital, token.text.count >= 2, token.text.contains(where: \.isLowercase),
                   Self.placeBefore.contains(read.tokens[i - 1].text.lowercased()), !read.inCode(i), !read.inCode(i - 1) else { continue }
             let word = token.text
-            guard !Ordinary.neverAlone(word), !Ordinary.isSetPhrase(word),
+            guard !Ordinary.neverAlone(word), !Ordinary.isSetPhrase(word), !EverydayNouns.contains(word),
                   opinion.isEveryday(word) == false, !isEverydayCompound(word) else { continue }
             let at = read.offset(token.range)
             let person = read.tokens[i - 1].text.lowercased() == "bei"
@@ -667,27 +684,45 @@ public struct RuleFinder: NameFinding {
                            "leben", "stedt", "büttel", "beck", "see", "hain", "weiler", "werder", "winkel", "bruch", "heide",
                            "kamp", "holz", "münster", "brunn", "bronn", "dingen", "lingen", "hude", "siek", "lohe", "ow", "itz"]
 
-    /// Fix CAU-278: a German compound of two everyday words (`Rückfragen`, `Kostengründen`, `Terminabsprache`):
-    /// an everyday noun after `bei`, `aus`, `nach`, `in`, though rarer than the list's 30,000 words. Not
-    /// when it ends as a town does (`Steinfeld`). Read from the shipped list only: the same on every device.
+    /// Fix CAU-278: an everyday German noun rarer than the list's 30,000 words, after `bei`, `aus`, `nach`,
+    /// `in`: one with a noun's end no town has (`Verjährung`, `Mobilisation`, `Bronchitis`, `Mammographie`),
+    /// or a compound of everyday words, of two or more (`Rückfragen`, `Terminabsprache`,
+    /// `Kontoführungsgebühr`). Not when it ends as a town does (`Steinfeld`). Read from shipped lists only:
+    /// the same on every device.
     func isEverydayCompound(_ word: String) -> Bool {
         let lower = word.lowercased()
         if Self.townEnds.contains(where: { lower.hasSuffix($0) }) { return false }
+        if Self.nounEnds.contains(where: { lower.hasSuffix($0) && lower.count >= $0.count + 3 }) { return true }
+        return isCompound(of: lower, depth: 0)
+    }
+
+    /// A word on a shipped everyday list, or a compound of them: front, link (`s`, `n`, `es`, `en`, `e`), end.
+    private func isEverydayPart(_ part: String, depth: Int) -> Bool {
+        if opinion.isEveryday(part) == true || Ordinary.isSetPhrase(part) || EverydayNouns.contains(part) { return true }
+        return depth < 2 && isCompound(of: part, depth: depth + 1)
+    }
+
+    private func isCompound(of lower: String, depth: Int) -> Bool {
         let letters = Array(lower)
-        guard letters.count >= 7 else { return false }
-        for cut in 3...(letters.count - 4) {
+        guard letters.count >= 6 else { return false }
+        for cut in 2...(letters.count - 3) {
             let right = String(letters[cut...])
-            guard opinion.isEveryday(right) == true || Ordinary.isSetPhrase(right) else { continue }
+            guard opinion.isEveryday(right) == true || Ordinary.isSetPhrase(right) || EverydayNouns.contains(right) else { continue }
             let left = String(letters[..<cut])
             if Self.compoundFronts.contains(left) { return true }
             for link in ["", "s", "n", "es", "en", "e"] where left.hasSuffix(link) {
                 let stem = String(left.dropLast(link.count))
-                // `Hüftoperation`: the first word loses its end in the compound (`Hüfte`).
-                if stem.count >= 3, opinion.isEveryday(stem) == true || opinion.isEveryday(stem + "e") == true { return true }
+                guard stem.count >= 3 else { continue }
+                // `Hüftoperation`, `Sparbuch`, `Lieferadresse`: the first word loses its end in the compound.
+                if ["", "e", "en", "n"].contains(where: { opinion.isEveryday(stem + $0) == true }) || isEverydayPart(stem, depth: depth) { return true }
             }
         }
         return false
     }
+
+    /// The ends of German nouns no town name has: `-ung`, `-heit`, `-keit`, `-schaft`, `-tion`.
+    static let nounEnds = ["ung", "ungen", "heit", "keit", "schaft", "tion", "tionen", "sion", "ität", "ismus", "itis", "ose", "graphie",
+                           "grafie", "therapie", "skopie", "logie", "ierung", "nis"]
 
     /// The fronts of German compounds that are no word alone: `Rückfragen`, `Hauptsache`, `Nebenkosten`.
     static let compoundFronts: Set<String> = ["rück", "haupt", "neben", "zusatz", "sonder", "gesamt", "zwischen", "wieder",
