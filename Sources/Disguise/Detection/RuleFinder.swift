@@ -47,16 +47,11 @@ public struct RuleFinder: NameFinding {
         candidates += lowercaseFirstNames(read, field: field)
         candidates += taggedPlaces(read, field: field)
         candidates += addressTowns(read, field: field)
-        let afterWord = townsAfterWord(read, field: field)
-        candidates += afterWord.filter { $0.kind == .place }
+        candidates += townsAfterWord(read, field: field)
         candidates += Shapes.candidates(in: text, field: field)
         candidates += fileNames(in: text, field: field)
         let admitted = candidates.compactMap { Gate.admit($0, typed: typed, words: words) }
-        let resolved = Self.resolvingOverlaps(admitted)
-        // CAU-278: the person after `bei` only where no other rule took the word (`bei Malinowski` is N5's).
-        let after = afterWord.filter { $0.kind == .person }.compactMap { Gate.admit($0, typed: typed, words: words) }
-            .filter { person in !resolved.contains { $0.entity.length > 0 && $0.entity.range.overlaps(person.entity.range) } }
-        return after.isEmpty ? resolved : (resolved + after).sorted { $0.entity.start < $1.entity.start }
+        return Self.resolvingOverlaps(admitted)
     }
 
     // MARK: Reading a text
@@ -654,12 +649,12 @@ public struct RuleFinder: NameFinding {
     /// The words a town stands after in running text: `Treffen in …`, `aus …`, `nach …`, `bei …`.
     static let placeBefore: Set<String> = ["in", "aus", "nach", "bei"]
 
-    /// Fix CAU-278: a made-up town in running text, with no address on the line (`Treffen in Feldau`,
-    /// `Sie kommt aus Feldau`), went out unless Apple's tagger read it. Right after `in`, `aus`, `nach` or
-    /// `bei`, a word written with a capital is a place when it is on no shipped everyday list and no set
-    /// phrase of these words (`in Ordnung`, `nach Hause`, `in Time`): the same on every device. After
-    /// `bei` it is read as a person (`Termin bei Tannhauf`, `bei Ilka`), and only where no other rule took
-    /// it; after the others as a place. Only where the list can be read: without it, nothing changes.
+    /// Fix CAU-278, as the owner chose on 28 Nov ("b — only clear cases"): a made-up town in running
+    /// text, with no address on the line, is hidden when it is clearly a town: right after `in`, `aus`,
+    /// `nach` or `bei`, a word written with a capital that ends as towns do (`Erlenhausen`, `Moosheim`,
+    /// `Lindenstadt`), on no shipped everyday list, no set phrase and no everyday noun. A town without such
+    /// an end goes as written there, as in 1.1.8 (`Treffen in Kleinhorst`); in an address it is hidden
+    /// (`addressTowns`). Shipped lists only: the same on every device; without them, nothing changes.
     func townsAfterWord(_ read: Reading, field: Entity.Field) -> [Gate.Candidate] {
         var out: [Gate.Candidate] = []
         for i in read.tokens.indices where read.joined(i) {
@@ -667,14 +662,35 @@ public struct RuleFinder: NameFinding {
             guard token.capital, token.text.count >= 2, token.text.contains(where: \.isLowercase),
                   Self.placeBefore.contains(read.tokens[i - 1].text.lowercased()), !read.inCode(i), !read.inCode(i - 1) else { continue }
             let word = token.text
-            guard !Ordinary.neverAlone(word), !Ordinary.isSetPhrase(word), !EverydayNouns.contains(word),
+            guard hasTownEnd(word), !Ordinary.neverAlone(word), !Ordinary.isSetPhrase(word), !EverydayNouns.contains(word),
                   opinion.isEveryday(word) == false, !isEverydayCompound(word) else { continue }
             let at = read.offset(token.range)
-            let person = read.tokens[i - 1].text.lowercased() == "bei"
-            out.append(Gate.Candidate(kind: person ? .person : .place, text: word, field: field, start: at.start,
+            out.append(Gate.Candidate(kind: .place, text: word, field: field, start: at.start,
                                       length: at.length, evidence: [.shape], rule: .S4, language: read.language(token.range.lowerBound)))
         }
         return out
+    }
+
+    /// The ends that make a word in running text clearly a town (the owner's "b"), with three letters
+    /// or more before them. Not the ends everyday words have as often (`-tal`, `-hof`, `-see`, `-holz`).
+    static let proseTownEnds = ["heim", "stadt", "hausen", "dorf", "burg", "berg", "feld", "felde", "furt", "hofen", "ingen", "ow",
+                                "itz", "bach", "au", "stein", "wiesen", "born", "rode", "leben", "stedt", "büttel", "beck", "hagen",
+                                "horst", "brück", "kirchen", "weiler", "walde", "hain"]
+
+    /// `-au` is a town's end (`Feldau`, `Lindenau`), but not where an everyday word ends the word:
+    /// `Bau`, `Ausbau`, `Umbau`, `Frau`, `Stau`, `Schau`.
+    func hasTownEnd(_ word: String) -> Bool {
+        let lower = word.lowercased()
+        guard let end = Self.proseTownEnds.filter({ lower.hasSuffix($0) && lower.count >= $0.count + 3 }).max(by: { $0.count < $1.count })
+        else { return false }
+        if end == "au" {
+            let letters = Array(lower)
+            for cut in 0...(letters.count - 3) {
+                let tail = String(letters[cut...])
+                if opinion.isEveryday(tail) == true || EverydayNouns.contains(tail) { return false }
+            }
+        }
+        return true
     }
 
     /// The ends of German town names: `-heim`, `-feld`, `-stadt`, `-hausen`. A compound of everyday words

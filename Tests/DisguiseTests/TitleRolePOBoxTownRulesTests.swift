@@ -186,7 +186,7 @@ struct TitleRolePOBoxTownRulesTests {
     func sameTextEverywhere() {
         for typed in [true, false] {
             for (text, sent) in [("Treffen in Feldau.", "Treffen in [Place A]."), ("Sie kommt aus Feldau.", "Sie kommt aus [Place A]."),
-                                 ("Wir fahren nach Kleinhorst.", "Wir fahren nach [Place A]."), ("Er wohnt bei Feldau.", "Er wohnt bei [Person A]."),
+                                 ("Wir fahren nach Kleinhorst.", "Wir fahren nach [Place A]."), ("Er wohnt bei Feldau.", "Er wohnt bei [Place A]."),
                                  ("Herr Nachbar kommt morgen.", "Herr [Person A] kommt morgen."), ("Check the PO box today.", "Check the PO box today."),
                                  ("Alles in Ordnung, bis nach Hause.", "Alles in Ordnung, bis nach Hause.")] {
                 #expect(run(text, typed: typed).sent == sent, "typed \(typed): \(text) ⇒ \(run(text, typed: typed).sent)")
@@ -266,16 +266,22 @@ struct TitleRolePOBoxTownRulesTests {
         "Sperrnummer", "Pinbrief", "Tan-Liste", "Pushtan", "Sicherheitsfrage",
     ]
 
-    /// Made-up towns with the ends towns have; every one must be hidden after the four words.
-    static let madeUpTownProbe = [
+    /// Made-up towns with a town's end (`RuleFinder.proseTownEnds`): every one is hidden after the four words.
+    static let madeUpTownsWithEnd = [
         "Feldau", "Kleinhorst", "Quellingen", "Moorbrück", "Tannwiesen", "Steinfelde", "Erlenhausen", "Moosheim", "Lindenstadt",
-        "Birkwalde", "Ellerbeck", "Grauenstein", "Moorbruch", "Fichtenhain", "Weidenbüttel", "Ottersleben", "Haselrode",
-        "Ulmenstedt", "Krähwinkel", "Lerchenborn", "Dachsfurt", "Kiefernhagen", "Eschenweiler", "Brombachtal", "Holderbach",
-        "Wiesenhof", "Tannkirchen", "Quendorf", "Mühlberg", "Rabenburg", "Seelitz", "Gramzow", "Tessenach", "Wolfering",
-        "Bühlum", "Haltens", "Reppede", "Merzlar", "Kranichsee", "Sumpfhausen", "Ahornfeld", "Blaubach", "Nebelheim",
-        "Krautingen", "Silbertal", "Fuchsau", "Grünwiese", "Ackerstedt", "Talbrück", "Hirschwald", "Schilfhorst", "Lehmrode",
-        "Mergelstein", "Ginsterbruch", "Wacholderdorf", "Pappelburg", "Kreidenberg", "Torfhausen", "Sandleben", "Heidenau",
-        "Krummbach", "Zwiebelstedt",
+        "Birkwalde", "Ellerbeck", "Grauenstein", "Fichtenhain", "Weidenbüttel", "Ottersleben", "Haselrode", "Ulmenstedt",
+        "Lerchenborn", "Dachsfurt", "Kiefernhagen", "Eschenweiler", "Holderbach", "Tannkirchen", "Quendorf", "Mühlberg",
+        "Rabenburg", "Seelitz", "Gramzow", "Sumpfhausen", "Ahornfeld", "Blaubach", "Nebelheim", "Krautingen", "Fuchsau",
+        "Ackerstedt", "Talbrück", "Schilfhorst", "Lehmrode", "Mergelstein", "Wacholderdorf", "Pappelburg", "Kreidenberg",
+        "Torfhausen", "Sandleben", "Heidenau", "Krummbach", "Zwiebelstedt",
+    ]
+
+    /// Made-up towns with no such end (`-bruch`, `-tal`, `-hof`, `-see`, `-ach`, `-ing`, …): in running text
+    /// they may go out as written, as in 1.1.8 (the owner, 28 Nov: "b — only clear cases"); in an address
+    /// they are hidden.
+    static let madeUpTownsWithoutEnd = [
+        "Moorbruch", "Krähwinkel", "Brombachtal", "Wiesenhof", "Tessenach", "Wolfering", "Bühlum", "Haltens", "Reppede",
+        "Merzlar", "Kranichsee", "Silbertal", "Grünwiese", "Hirschwald", "Ginsterbruch",
     ]
 
     /// What the town rule itself takes, and what any rule hides. The town rule reads shipped lists only,
@@ -304,30 +310,51 @@ struct TitleRolePOBoxTownRulesTests {
         #expect(overHiding(Self.listBuildingNouns, "list-building set").taken <= 0.05)
     }
 
-    /// The real rate, measured on 28 Nov 2026 with a little margin: the town rule took 180 of 788
-    /// (22.8 %), all rules 220 (27.9 %). A rare noun the lists do not know is read as a town: hidden,
-    /// never sent. The bound is a guard against more, not a goal.
-    @Test("Held-out nouns, on no list: the town rule takes at most 25 in 100, all rules at most 30 in 100")
+    /// The owner, 28 Nov: "b — only clear cases". The town rule fires only on a town's end, so on the
+    /// held-out nouns it takes next to none (bound 3 in 100). What all rules hide there is the older
+    /// rules' (the dictionary's unknown word, the tagger's guess after `bei`), as in 1.1.8: printed.
+    @Test("Held-out nouns, on no list: the town rule takes at most 3 in 100")
     func overHidingHeldOut() {
         #expect(Self.heldOutNouns.count >= 150)
         for noun in Self.heldOutNouns {
             #expect(!EverydayNouns.contains(noun) && !Self.listBuildingNouns.contains(noun), "\(noun) is no longer held out")
         }
-        let share = overHiding(Self.heldOutNouns, "held-out set")
-        #expect(share.taken <= 0.25)
-        #expect(share.hidden <= 0.30)
+        #expect(overHiding(Self.heldOutNouns, "held-out set").taken <= 0.03)
     }
 
-    @Test("Every made-up town of the probe is hidden after in, aus, nach and bei")
+    @Test("Every made-up town with a town's end is hidden after in, aus, nach and bei")
     func madeUpTownsHidden() {
-        #expect(Self.madeUpTownProbe.count == 62)
+        #expect(Self.madeUpTownsWithEnd.count + Self.madeUpTownsWithoutEnd.count == 62)
         var shown: [String] = []
-        for town in Self.madeUpTownProbe {
+        for town in Self.madeUpTownsWithEnd {
             for word in ["in", "aus", "nach", "bei"] where run("Es geht \(word) \(town) weiter.", typed: false).sent.contains(town) {
                 shown.append("\(word) \(town)")
             }
         }
         #expect(shown.isEmpty, "\(shown)")
+    }
+
+    @Test("Guard: -au is a town's end, but not where an everyday word ends the word: Ausbau, Umbau, Neubau")
+    func auIsNoTownInEverydayWords() {
+        for text in ["Das Haus ist nach Ausbau fertig.", "Die Küche ist in Umbau.", "Fragen bei Neubau klären.", "Die Straße ist in Rückbau.",
+                     "Er steht in Stau."] {
+            #expect(run(text, typed: false).sent == text, "\(text) ⇒ \(run(text, typed: false).sent)")
+        }
+    }
+
+    /// The owner, 28 Nov: "b — only clear cases". A made-up town with no town's end may go out in a
+    /// plain sentence (printed: which do, on this device); in an address line it is hidden.
+    @Test("A made-up town with no town's end: hidden in an address, may go out in running text")
+    func madeUpTownsWithoutEndInAddress() {
+        var inProse: [String] = []
+        for town in Self.madeUpTownsWithoutEnd {
+            for text in ["Anschrift: Lindenweg 4, \(town)", "Lindenweg 4 in \(town)", "79098 \(town)"] {
+                let sent = run(text, typed: false).sent
+                #expect(!sent.contains(town), "\(text) ⇒ \(sent)")
+            }
+            if run("Treffen in \(town).", typed: false).sent.contains(town) { inProse.append(town) }
+        }
+        print("CAU-278 made-up towns with no town's end that go out in \"Treffen in …\": \(inProse)")
     }
 
     @Test("The review's care case: in Pflegegrad 3, nach Hüftoperation, bei Pfändung go as written")
@@ -382,9 +409,13 @@ struct TitleRolePOBoxTownRulesTests {
         ["PO", "Box"].contains(word) && text.range(of: #"\bP\.?O\.? [Bb]ox(?![ \t]*:?[ \t]*\d)"#, options: .regularExpression) != nil
     }
 
+    /// Against 1.1.8's own output on the same kind of device: recorded from a clean 141aef6 on the Mac
+    /// and on the Causabee Tests iPhone simulator. The two differ in 90 of 9,346 probes, all the tagger's
+    /// (the Mac's reads `Reha`, `Theory` as places, the simulator's does not), as they did in 1.1.8.
     @Test("Nothing 1.1.8 hid goes out now: every word it hid is hidden still, but a PO box without a number")
     func nothingLessHiddenThan118() throws {
-        let file = F024GoldenTests.fixtures.appendingPathComponent("cau-278-1.1.8.json")
+        let record = DetectionMeasureTests.isSimulator ? "cau-278-1.1.8-simulator.json" : "cau-278-1.1.8.json"
+        let file = F024GoldenTests.fixtures.appendingPathComponent(record)
         let probes = try JSONDecoder().decode([Probe].self, from: Data(contentsOf: file))
         #expect(probes.count > 9000)
         for probe in probes {
