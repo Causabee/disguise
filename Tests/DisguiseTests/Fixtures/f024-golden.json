@@ -1949,11 +1949,12 @@
       "phone:0161 496 0775@49+13",
       "person:mrs d'aubert's@87+14",
       "person:sina@128+4",
-      "street:27 Harcourt Street@146+18"
+      "street:27 Harcourt Street@146+18",
+      "place:Bath@166+4"
     ],
     "id" : "disguise-unseen.jsonl#u17.0",
-    "placeholder" : "ask dr [Person A] about the bloods, ring reception on [Phone A]. dads birthday 14 june. mrs [Person B] letter - reply by friday. [Person C]'s idea: book [Street A], Bath for the weekend",
-    "standin" : "ask dr Albers about the bloods, ring reception on 0122 627 1127. dads birthday 14 june. mrs Brandt letter - reply by friday. Birgit's idea: book 82 Lindauer Street, Bath for the weekend"
+    "placeholder" : "ask dr [Person A] about the bloods, ring reception on [Phone A]. dads birthday 14 june. mrs [Person B] letter - reply by friday. [Person C]'s idea: book [Street A], [Place A] for the weekend",
+    "standin" : "ask dr Albers about the bloods, ring reception on 0122 627 1127. dads birthday 14 june. mrs Brandt letter - reply by friday. Birgit's idea: book 82 Lindauer Street, Friedrichshain for the weekend"
   },
   {
     "field" : "body",

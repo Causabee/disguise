@@ -7,8 +7,11 @@ import Testing
 /// scans), notes, the chat, and tasks and dates added by hand.
 /// 1. A role with a bare surname: `Arzt Sternwald hat geschrieben`, `Our neighbour Sternwald called`.
 ///    The spell checker knows `Sternwald` as written (it reads it as `Stern` and `Wald`), so no rule
-///    took it. A role followed by a capitalised word that is not an everyday word reads as a name;
-///    an everyday noun after a role stays (`Arzt Termin`, `Nachbarin Garten`), and a title always guards.
+///    took it. A role followed by a capitalised word reads as a name when the word is a first name,
+///    on the surname list, or not on the shipped everyday list (the same on every device). An everyday
+///    noun no list holds as a name stays after a role that is no title (`Arzt Termin`); a role that is
+///    a title (`Nachbarin`, `Pfleger`) still guards whatever follows, as in 1.1.7. Nothing 1.1.7 hid
+///    goes out now (the regression test against 1.1.7's own output).
 /// 2. `Unterschrift: Pfleger Ilka`: `Pfleger` is a role here (`Pseudonymizer.roles`), so only the name
 ///    is hidden — right as it is, kept by a guard.
 /// 3. `Postfach 4120` went out, and a made-up town (`Feldau`) in an address line: the PO box is an
@@ -67,8 +70,8 @@ struct RoleSurnamePlaceRulesTests {
 
     @Test("Guard: an everyday noun after a role goes as written, and so does the role")
     func everydayNounAfterRole() {
-        let texts = ["Arzt Termin am Montag.", "Nachbarin Garten gießen.", "Hausarzt Rezept abholen.", "Pfleger Schlüssel zurückgeben.",
-                     "Nachbar Hecke schneiden.", "Ärztin Befund besprechen.", "Steuerberater Rechnung bezahlen.",
+        let texts = ["Arzt Termin am Montag.", "Hausarzt Rezept abholen.", "Ärztin Befund besprechen.", "Zahnarzt Rechnung bezahlen.",
+                     "Physiotherapeutin Unterlagen schicken.",
                      // CAU-258, the owner's choice a: written small, an ordinary word goes as written.
                      "arzt termin morgen", "nachbarin garten gießen"]
         for typed in [true, false] {
@@ -76,6 +79,69 @@ struct RoleSurnamePlaceRulesTests {
                 let (found, sent, _) = run(text, typed: typed)
                 #expect(sent == text, "typed \(typed): \(text) ⇒ \(sent) (found \(found))")
             }
+        }
+    }
+
+    /// The reviewer's surnames that are words too: 1.1.7 hid them after `Nachbar`; they stay hidden,
+    /// and after `Arzt` and `Our neighbour` they are hidden now too. The surname list wins over the everyday
+    /// words. Two of the reviewer's eighteen are not written here: F024 AC-2 marks them as old details.
+    static let surnameWords = ["Bauer", "Schäfer", "Krüger", "Groß", "Weiß", "König", "Hahn", "Maurer", "Zimmermann",
+                               "Schuster", "Herbst", "Bär", "Hase", "Specht", "Wald", "Busch"]
+
+    @Test("A surname that is a word too, after Nachbar, Arzt or Our neighbour, is hidden")
+    func surnameWordsAfterRole() {
+        for typed in [true, false] {
+            for name in Self.surnameWords {
+                for (text, role) in [("Nachbar \(name) kommt morgen.", "Nachbar"), ("Arzt \(name) kommt morgen.", "Arzt"),
+                                     ("Our neighbour \(name) called.", "neighbour")] {
+                    let (found, sent, _) = run(text, typed: typed)
+                    #expect(sent.contains(role), "typed \(typed): \(text) ⇒ \(sent)")
+                    #expect(!sent.contains(name), "typed \(typed): \(text) ⇒ \(sent) (found \(found))")
+                }
+            }
+        }
+    }
+
+    @Test("A role that is a title guards whatever follows, as in 1.1.7")
+    func titleRoleGuardsAsBefore() {
+        for typed in [true, false] {
+            for (text, name) in [("Nachbarin Garten gießen.", "Garten"), ("Pfleger Schlüssel zurückgeben.", "Schlüssel"),
+                                 ("Nachbar Hecke schneiden.", "Hecke")] {
+                let (_, sent, _) = run(text, typed: typed)
+                #expect(!sent.contains(name), "typed \(typed): \(text) ⇒ \(sent)")
+            }
+        }
+    }
+
+    @Test("The everyday list gives the same answers on every device, and the text sent is the same")
+    func everydaySameEverywhere() {
+        let answers: [(String, Bool)] = [("Termin", true), ("Garten", true), ("Ordnung", true), ("Versehen", true),
+                                         ("Berlin", false), ("Sternwald", false), ("Feldau", false)]
+        for (word, everyday) in answers {
+            #expect(NameKnowledge.shared.isEveryday(word) == everyday, "\(word): \(String(describing: NameKnowledge.shared.isEveryday(word)))")
+        }
+        for typed in [true, false] {
+            #expect(run("Lindenweg 4, Berlin", typed: typed).sent == "[Street A], [Place A]")
+            #expect(run("Arzt Termin am Montag.", typed: typed).sent == "Arzt Termin am Montag.")
+            #expect(run("Arzt Sternwald hat geschrieben.", typed: typed).sent == "Arzt [Person A] hat geschrieben.")
+        }
+    }
+
+    struct Probe: Codable { var text: String; var typed: Bool; var sent: String }
+
+    static func words(_ text: String) -> Set<String> { Set(text.matches(of: /[\p{L}]+/).map { String($0.output) }) }
+
+    @Test("Nothing 1.1.7 hid goes out now: every word it hid is hidden still, but a role word (CAU-205)")
+    func nothingLessHiddenThan117() throws {
+        let file = F024GoldenTests.fixtures.appendingPathComponent("role-place-1.1.7.json")
+        let probes = try JSONDecoder().decode([Probe].self, from: Data(contentsOf: file))
+        #expect(probes.count > 1000)
+        for probe in probes {
+            let now = run(probe.text, typed: probe.typed).sent
+            let all = Self.words(probe.text)
+            let hiddenThen = all.subtracting(Self.words(probe.sent)).filter { !Ordinary.isRole($0) }
+            let hiddenNow = all.subtracting(Self.words(now))
+            #expect(hiddenThen.isSubset(of: hiddenNow), "typed \(probe.typed): \(probe.text) ⇒ 1.1.7 \(probe.sent), now \(now)")
         }
     }
 

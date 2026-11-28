@@ -47,6 +47,20 @@ struct SecondOpinion: Sendable {
         return lists.isSurname(word) == true
     }
 
+    /// Fix, 28 Nov 2026: on the shipped list of everyday words, the same on every device; nil when
+    /// it cannot be read. Never raises a name: it only lets an everyday word after a role or in an
+    /// address line go as written.
+    func isEveryday(_ word: String) -> Bool? {
+        lists.isEveryday(word)
+    }
+
+    /// Fix, 28 Nov 2026: on the surname list, for the word right after a role, a common word too
+    /// (`Arzt Groß`, `Our neighbour Weiß`); the list folds ß to ss. A list that cannot be read says yes.
+    func isSurnameAfterRole(_ word: String) -> Bool {
+        let spelled = word.replacingOccurrences(of: "ß", with: "ss")
+        return [word, spelled].contains { lists.isSurname($0) != false }
+    }
+
     /// On either list. For a word another rule already doubts, never for a word alone.
     func isName(_ word: String) -> Bool {
         guard !Self.neverRaised(word) else { return false }

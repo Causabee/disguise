@@ -74,13 +74,18 @@ enum Ordinary {
 
     static func isRole(_ word: String) -> Bool { roles.contains(key(word)) }
 
-    /// Fix, 28 Nov 2026: the word right after a role, with no title between, is a name when it is
-    /// written with a capital and is a first name or no everyday word: `Arzt Sternwald`, `Our neighbour
-    /// Sternwald`, `Pfleger Ilka`. An everyday noun is not (`Arzt Termin`, `Nachbarin Garten`); nor is
-    /// a word written small (CAU-258, the owner's choice a). A device that cannot tell hides it.
-    static func isNameAfterRole(_ word: String, firstName: Bool, words: any WordKnowledge) -> Bool {
-        guard word.first?.isUppercase == true, word.count >= 2, !neverAlone(word) else { return false }
-        return firstName || words.isEveryday(word) != true
+    /// Fix, 28 Nov 2026: the word right after a role that is no title (`Arzt`, `our neighbour`), with no
+    /// title between, is a name when it is written with a capital and is a first name, a surname the
+    /// list holds, or no everyday word: `Arzt Sternwald`, `Our neighbour Bauer`. The surname list wins
+    /// over the everyday words (`Arzt Koch`). An everyday noun no list holds as a name goes as written
+    /// (`Arzt Termin`), and so does a word written small (CAU-258, the owner's choice a). The lists
+    /// ship with the package, so every device answers the same; one that cannot be read hides.
+    static func isNameAfterRole(_ word: String, firstName: Bool, opinion: SecondOpinion) -> Bool {
+        guard word.first?.isUppercase == true, word.count >= 2, !isSmall(word), !isTitle(word), !isGreeting(word), !isCalendar(word),
+              !isKindWord(word), !isKin(word), !isEveryone(word), !isRole(word) else { return false }
+        if firstName || opinion.isSurnameAfterRole(word) { return true }
+        // A word of the common list (`Groß`) no surname list holds goes as written.
+        return !isCommon(word) && opinion.isEveryday(word) != true
     }
 
     /// Everyone greeted at once: "Sehr geehrte Damen und Herren", "Ladies and Gentlemen". No one

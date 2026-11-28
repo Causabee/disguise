@@ -13,7 +13,7 @@ struct NameListsTests {
 
     @Test("F024 AC-1 · each list loads from the package's own bundle")
     func loads() {
-        for name in ["first-names", "surnames", "words"] {
+        for name in ["first-names", "surnames", "words", "everyday"] {
             #expect(NameKnowledge.bundled(name) != nil, "\(name).lzfse is not in the package's bundle")
         }
         #expect(NameKnowledge.shared.counts.first > 10_000 && NameKnowledge.shared.counts.last > 10_000)
@@ -43,13 +43,13 @@ struct NameListsTests {
         let folder = Self.sources.appendingPathComponent("Resources/Names")
         let licences = try String(contentsOf: folder.appendingPathComponent("LICENCES.txt"), encoding: .utf8)
         var total = 0
-        for list in ["first-names", "surnames", "words"] {
+        for list in ["first-names", "surnames", "words", "everyday"] {
             let file = folder.appendingPathComponent("\(list).lzfse")
             total += try FileManager.default.attributesOfItem(atPath: file.path)[.size] as! Int
             let block = licences.components(separatedBy: "\(list).lzfse").dropFirst().first?.components(separatedBy: "\n\n").first ?? ""
             #expect(block.contains("Source:"), "\(list): no source")
             #expect(block.contains("Date: 20"), "\(list): no date")
-            // All three are CC0 today, so no credit line is owed anywhere.
+            // All four are CC0 today, so no credit line is owed anywhere.
             #expect(block.contains("Licence: CC0"), "\(list): not CC0")
         }
         #expect(total <= 3_000_000)

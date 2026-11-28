@@ -22,3 +22,10 @@ words.lzfse
   Licence: CC0 1.0 — the sentences "are released under a CC0 public domain Creative Commons license"
           (Common Voice README, "Licensing and content source", read 2026-11-17)
   Date: 2026-11-17
+
+everyday.lzfse
+  Source: built from the two lists above by scripts/everyday-list.py: the 30,000 commonest words of words.lzfse
+          without every word first-names.lzfse holds (28,664 words), folded, sorted. Read by the rules after a role
+          and in an address line (fix, 2026-11-28). The same file on every device.
+  Licence: CC0 1.0 (as above)
+  Date: 2026-11-28

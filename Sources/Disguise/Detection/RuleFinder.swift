@@ -162,7 +162,7 @@ public struct RuleFinder: NameFinding {
 
     /// Fix, 28 Nov 2026: the word after a role, with no title between, is a name (`Ordinary.isNameAfterRole`).
     func isNameAfterRole(_ i: Int, in read: Reading) -> Bool {
-        !read.inCode(i) && Ordinary.isNameAfterRole(read.tokens[i].text, firstName: isFirstName(i, in: read), words: words)
+        !read.inCode(i) && Ordinary.isNameAfterRole(read.tokens[i].text, firstName: isFirstName(i, in: read), opinion: opinion)
     }
 
     // MARK: N2 · a title or a label
@@ -212,7 +212,7 @@ public struct RuleFinder: NameFinding {
             guard j < tokens.count else { continue }
             let first = tokens[j]
             // Only roles before the name, no title among them (`Frau`, `Herr`, `Dr.`): the role's own, weaker anchor.
-            let roleOnly = isRole && (i..<j).allSatisfy { Ordinary.isRole(tokens[$0].text) }
+            let roleOnly = isRole && !titleWord && (i..<j).allSatisfy { Ordinary.isRole(tokens[$0].text) }
             if roleOnly {
                 guard isNameAfterRole(j, in: read) else { continue }
             } else if !titleWord && !isLabel { continue }
@@ -355,10 +355,7 @@ public struct RuleFinder: NameFinding {
                 while let last = piece.last, piece.count > 1, Ordinary.isKin(read.tokens[last].text) { piece.removeLast() }
                 // CAU-205: what someone does, before the name, is no part of it: `Ergotherapeutin Dr. Ilka Sternwald`.
                 // Only in front: a surname may be a role word (`Ilka Pfleger`).
-                var cutRole = false
-                while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst(); cutRole = true }
-                // Fix, 28 Nov 2026: what is left after a role is a name only as N2 reads one there (`Nachbarin Garten` is no one).
-                if cutRole, piece.count == 1, !isNameAfterRole(piece[0], in: read) { continue }
+                while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
                 // A lone word right after an article is a noun: `Ihr Tarif`, `die Nachbarn` (N5's lone-word test).
                 if piece.count == 1, !typed, read.afterArticle(piece[0]) { continue }
                 // L1 with N5 (the lead's reading of 6b): a lone word the tagger read as a person and
@@ -544,8 +541,6 @@ public struct RuleFinder: NameFinding {
                 if let lead = piece.first, Ordinary.isRole(read.tokens[lead].text) {
                     while let first = piece.first, piece.count > 1, Ordinary.isRole(read.tokens[first].text) { piece.removeFirst() }
                     if let first = piece.first, Ordinary.isTitle(read.tokens[first].withDot) || Ordinary.isTitle(read.tokens[first].text) { continue }
-                    // Fix, 28 Nov 2026: the word after a role is a person's name or nothing (`Nachbarin Garten`); N2 finds the name.
-                    if piece.count == 1 { continue }
                 }
                 guard let first = piece.first, let last = piece.last else { continue }
                 if piece.count == 1, read.afterArticle(first) { continue }
@@ -594,10 +589,13 @@ public struct RuleFinder: NameFinding {
             let afterWord = read.joined(i) && Self.townBefore.contains(read.tokens[i - 1].text.lowercased())
             let afterPart = parts.contains { $0.upperBound <= token.range.lowerBound
                 && text[$0.upperBound..<token.range.lowerBound].trimmingCharacters(in: .whitespaces) == "," }
-            guard afterWord || afterPart, !Ordinary.neverAlone(token.text), words.isEveryday(token.text) != true else { continue }
+            // A word right before the next address part names it, not a town: `1010 Wien, Zweigstelle 8001 Zürich`.
+            let beforePart = parts.contains { $0.lowerBound >= token.range.upperBound
+                && text[token.range.upperBound..<$0.lowerBound].allSatisfy { $0 == " " || $0 == "\t" } }
+            guard afterWord || afterPart, !beforePart, !Ordinary.neverAlone(token.text), opinion.isEveryday(token.text) != true else { continue }
             let at = read.offset(token.range)
             out.append(Gate.Candidate(kind: .place, text: token.text, field: field, start: at.start, length: at.length,
-                                      evidence: [.label], rule: .S4, language: read.language(token.range.lowerBound)))
+                                      evidence: [.shape], rule: .S4, language: read.language(token.range.lowerBound)))
         }
         return out
     }

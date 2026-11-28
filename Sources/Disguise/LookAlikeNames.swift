@@ -17,11 +17,6 @@ public protocol WordKnowledge: Sendable {
     /// CAU-258: what the dictionary of one language (`de`, `en`) offers for a word it does not know.
     /// Empty when it offers nothing or cannot tell.
     func guesses(_ word: String, language: String) -> [String]
-    /// Fix, 28 Nov 2026: an everyday word of German or English — one of the words people write, not
-    /// only one the spell checker lets pass. The spell checker passes `Sternwald` and `Feldau` as
-    /// written (it reads `Stern` and `Wald`, `Feld` and `Au`); everyday words they are not. Nil when
-    /// the device cannot tell.
-    func isEveryday(_ word: String) -> Bool?
 }
 
 extension WordKnowledge {
@@ -31,8 +26,6 @@ extension WordKnowledge {
     public func knows(_ word: String, language: String) -> Bool? { knows(word) }
     /// A dictionary that cannot tell offers nothing: no word is taken for a typo by it.
     public func guesses(_ word: String, language: String) -> [String] { [] }
-    /// A dictionary that cannot tell answers as `knows`.
-    public func isEveryday(_ word: String) -> Bool? { knows(word) }
 }
 
 /// The system's spell checker: `NSSpellChecker` on the Mac, `UITextChecker` on iPhone and iPad.
@@ -94,22 +87,6 @@ public final class SystemWords: WordKnowledge, @unchecked Sendable {
         return []
         #endif
     }
-
-    /// Fix, 28 Nov 2026: the word is in the German or the English vocabulary of Apple's word
-    /// embeddings, as written or small — on the device, nothing is looked up. Nil when neither is there.
-    public func isEveryday(_ word: String) -> Bool? {
-        lock.lock(); defer { lock.unlock() }
-        let key = "everyday\u{0}" + word
-        if let known = verdicts[key] { return known }
-        let found = vocabularies
-        guard !found.isEmpty else { return nil }
-        let lower = word.lowercased()
-        let known = found.contains { $0.contains(word) || $0.contains(lower) }
-        verdicts[key] = known
-        return known
-    }
-
-    private lazy var vocabularies: [NLEmbedding] = [NLLanguage.german, .english].compactMap { NLEmbedding.wordEmbedding(for: $0) }
 
     private var tagged: Int {
         #if canImport(AppKit)

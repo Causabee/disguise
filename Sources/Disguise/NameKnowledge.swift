@@ -10,9 +10,15 @@ public protocol NameKnowing: Sendable {
     /// Nil when the list could not be read: nothing may then be said of the word by it.
     func isFirstName(_ word: String) -> Bool?
     func isSurname(_ word: String) -> Bool?
+    /// Fix, 28 Nov 2026: on the shipped list of everyday words (`everyday.lzfse`), the same on every
+    /// device. Nil when it cannot be read: the rules then hide.
+    func isEveryday(_ word: String) -> Bool?
 }
 
 extension NameKnowing {
+    /// A list that cannot tell says nothing: the rules hide.
+    public func isEveryday(_ word: String) -> Bool? { nil }
+
     /// On either name list. Nil when a list could not be read and the other does not have it.
     public func isName(_ word: String) -> Bool? {
         let first = isFirstName(word), last = isSurname(word)
@@ -192,6 +198,21 @@ public final class NameKnowledge: NameKnowing, @unchecked Sendable {
 
     public func isFirstName(_ word: String) -> Bool? { names().0.map { $0.contains(word) } }
     public func isSurname(_ word: String) -> Bool? { names().1.map { $0.contains(word) } }
+
+    /// Fix, 28 Nov 2026: the everyday words, on first need, once for the process (about 0.3 MB).
+    private var everydayLoaded = false
+    private var everyday: PackedWords?
+
+    public func isEveryday(_ word: String) -> Bool? {
+        lock.lock()
+        if !everydayLoaded {
+            everyday = Self.unpack(load("everyday")).flatMap { PackedWords(data: $0, ranked: false) }
+            everydayLoaded = true
+        }
+        let list = everyday
+        lock.unlock()
+        return list.map { $0.contains(word) }
+    }
 
     public var counts: (first: Int, last: Int) { let n = names(); return (n.0?.count ?? 0, n.1?.count ?? 0) }
 
